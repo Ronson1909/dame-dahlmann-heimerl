@@ -13,5 +13,5 @@ package dame;
  * @version 1.0
  */
 public interface IKI {
-    public java.util.ArrayList<Zug> getNextMove(Spielbrett sb);
+    public java.util.ArrayList<Zug> gibNaechstenZug(Spielbrett sb, int eigeneFarbe);
 }

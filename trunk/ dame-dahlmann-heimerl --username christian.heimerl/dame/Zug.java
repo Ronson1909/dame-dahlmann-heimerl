@@ -65,4 +65,8 @@ public class Zug {
 
         return true;
     }
+
+    public boolean istGueltigerZug(Spielbrett sb) {
+
+    }
 }
