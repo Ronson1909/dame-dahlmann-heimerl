@@ -1,6 +1,6 @@
 package dame;
 
-public class Spielbrett {
+public class Spielbrett implements Cloneable {
 	
 	private final int LEER = 0;
 	private final int SCHWARZ = 1;
@@ -19,18 +19,22 @@ public class Spielbrett {
 	 */
 	public Spielbrett() {
 		spielbrett = new int[8][8];
-		for (int x=0; x<8; x++) {
-			for (int y=0; y<8; y++) {
-				if ((x+y)%2 == 0)
-					if (x<3)
+		for (int y=0; y<8; y++) {
+			for (int x=0; x<8; x++) {
+				if ((y+x)%2 == 0)
+					if (y<3)
 						spielbrett[x][y] = SCHWARZ;
-					else if (x>4)
+					else if (y>4)
 						spielbrett[x][y] = WEISS;
 				else
 					spielbrett[x][y] = LEER;
 			}
 		}
 		schwarzAmZug = true;
+		gibAus();
+		weissAmZug();
+		gibAus();
+		schwarzAmZug();
 		gibAus();
 	}
 	
@@ -40,8 +44,8 @@ public class Spielbrett {
 	public void schwarzAmZug() {
 		if (!schwarzAmZug) {
 			int temp;
-			for (int x=0; x<3; x++) {
-				for (int y=0; y<8; y++) {
+			for (int y=0; y<3; y++) {
+				for (int x=0; x<8; x++) {
 					temp = spielbrett[x][y];
 					spielbrett[x][y] = spielbrett[7-x][7-y];
 					spielbrett[7-x][7-y] = temp;
@@ -57,8 +61,8 @@ public class Spielbrett {
 	public void weissAmZug() {
 		if (schwarzAmZug) {
 			int temp;
-			for (int x=0; x<3; x++) {
-				for (int y=0; y<8; y++) {
+			for (int y=0; y<3; y++) {
+				for (int x=0; x<8; x++) {
 					temp = spielbrett[x][y];
 					spielbrett[x][y] = spielbrett[7-x][7-y];
 					spielbrett[7-x][7-y] = temp;
@@ -76,15 +80,15 @@ public class Spielbrett {
 		int y1 = z.gibStartY();
 		int x2 = z.gibEndeX();
 		int y2 = z.gibEndeY();
-		
+		return false;
 	}
 	
 	public void macheZug() {
 		
 	}
 	
-	public int[][] spielbrettKopie() {
-		return spielbrett.clone();
+	public Spielbrett spielbrettKopie() {
+		return this.clone();
 	}
 	
 	/**
@@ -93,11 +97,11 @@ public class Spielbrett {
 	public void gibAus() {
 		System.out.println("  - - - - - - - - - - - - - - -");
 		String linie;
-		for (int i=7; i>=0; i--) {
+		for (int y=7; y>=0; y--) {
 			linie = "| ";
-			for (int j=0; j<8; j++) {
+			for (int x=0; x<8; x++) {
 				String symbol = "";
-				switch (spielbrett[i][j]) {
+				switch (spielbrett[x][y]) {
 					case 0 : symbol = " "; break;
 					case 1 : symbol = "X"; break;
 					case 2 : symbol = "O"; break;
@@ -121,8 +125,8 @@ public class Spielbrett {
 		long start1 = System.currentTimeMillis();
 		for (int i=0; i<1000000; i++) {
 			int[][] temp = new int[8][8];
-			for (int x=0; x<8; x++) {
-				for (int y=0; y<8; y++) {
+			for (int y=0; y<8; y++) {
+				for (int x=0; x<8; x++) {
 					temp[x][y] = spielbrett[7-x][7-y];
 				}
 			}
@@ -133,8 +137,8 @@ public class Spielbrett {
 		long start2 = System.currentTimeMillis();
 		for (int i=0; i<1000000; i++) {
 			int temp;
-			for (int x=0; x<3; x++) {
-				for (int y=0; y<8; y++) {
+			for (int y=0; y<3; y++) {
+				for (int x=0; x<8; x++) {
 					temp = spielbrett[x][y];
 					spielbrett[x][y] = spielbrett[7-x][7-y];
 					spielbrett[7-x][7-y] = temp;
@@ -146,4 +150,12 @@ public class Spielbrett {
 		System.out.println("Dauer Methode 2 = " + (ende2-start2));
 	}
 	
+	public Spielbrett clone() {
+		return new Spielbrett(spielbrett.clone(), schwarzAmZug);
+	}
+	
+	private Spielbrett(int[][] brett, boolean schwarzAmZug) {
+		spielbrett = brett;
+		this.schwarzAmZug = schwarzAmZug;
+	}
 }
