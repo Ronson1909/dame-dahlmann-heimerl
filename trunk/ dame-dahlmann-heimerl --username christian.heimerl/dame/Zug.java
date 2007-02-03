@@ -54,19 +54,34 @@ public class Zug {
     }
 
     public boolean hatGueltigeKoordinaten() {
+        //Feldbegrenzungen
         if (endeY<0 || endeY>7 || startY<0 || startY>7)
             return false;
 
+        //Feldbegrenzungen
         if (endeX<0 || endeX>7 || startX<0 || startX>7)
             return false;
 
-        if (startX % 2 != startY || endeX % 2 != endeY)
+        //weiße Felder sind ungültig
+        if (startX % 2 != startY % 2 || endeX % 2 != endeY % 2)
             return false;
 
         return true;
     }
 
     public boolean istGueltigerZug(Spielbrett sb) {
+        //prüfe: ist eigener Stein
 
+        //prüfe: Ziel ist freies Feld
+
+        //wenn keine Dame
+        //prüfe: richtige Richtung (nach oben)
+
+        //prüfe: Felder liegen nebeneinander
+
+        //prüfe: oder erlaubter Sprung über Gegner
+
+        //wenn Dame
+        //prüfe: erlaubter Sprung über Gegner
     }
 }
