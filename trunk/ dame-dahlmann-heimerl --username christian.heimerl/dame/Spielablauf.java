@@ -17,10 +17,10 @@ public class Spielablauf {
         kis[0]=null;
         kis[1]=null;
 
-        Zuruecksetzen();
+        zuruecksetzen();
     }
 
-    private kis[2];
+    private IKI kis[] = new IKI[2];
     private Spielbrett sb;
 
     public void zuruecksetzen() {
@@ -28,6 +28,14 @@ public class Spielablauf {
     }
 
     public void starten() {
+        int aktuelleFarbe = 1;
 
+        do {
+            kis[aktuelleFarbe].gibNaechstenZug(sb, aktuelleFarbe+1);
+            if (aktuelleFarbe==1)
+                aktuelleFarbe=0;
+            else
+                aktuelleFarbe=2;
+        } while (true);
     }
 }
