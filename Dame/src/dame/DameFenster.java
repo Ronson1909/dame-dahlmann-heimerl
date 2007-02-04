@@ -9,7 +9,7 @@ import javax.swing.JFrame;
 public class DameFenster extends JFrame {
 	public static void main(String[] args) {
 		DameFenster main = new DameFenster();
-		main.setSpielbrett(new Spielbrett());
+		//main.setSpielbrett(new Spielbrett());
 		main.setSize(200, 200);
 		main.setVisible(true);
     }
@@ -34,7 +34,7 @@ public class DameFenster extends JFrame {
 	}
 
 	
-	private Spielbrett sb;
+	private Spielbrett sb = new Spielbrett();
 	
 	public Spielbrett getSpielbrett() {
 		return sb;
@@ -48,11 +48,19 @@ public class DameFenster extends JFrame {
 	@Override
 	public void paint(Graphics g) {
 		// TODO Auto-generated method stub
-		final float SteinPercentage = 100;
 		
 		g.clearRect(0, 0, this.getWidth(), this.getHeight());
+
+		if (sb == null)
+			return;
 		
-		int Feldbreite = Math.min(this.getHeight(), this.getWidth()) / 8; 
+		final float SteinPercentage = 75;
+		final int leftBorder = 0; 
+		final int rightBorder = 0; 
+		final int topBorder = 25; 
+		final int bottomBorder = 0; 
+		final int Feldbreite = Math.min(this.getHeight()-topBorder-bottomBorder, this.getWidth()-leftBorder-rightBorder) / 8; 
+		final int ZweiterKreisOffset = (int)(0.1 * Feldbreite);
 		
 		for (int x=0;x<8;x++) {
 			for (int y=0;y<8;y++) {
@@ -61,24 +69,56 @@ public class DameFenster extends JFrame {
 				else
 					g.setColor(java.awt.Color.white);
 					
-				g.fillRect(Feldbreite*x, y*Feldbreite, Feldbreite, Feldbreite);
+				g.fillRect(leftBorder + Feldbreite*x, topBorder + y*Feldbreite, Feldbreite, Feldbreite);
 
-				int kreisX=(int)(Feldbreite*x + Feldbreite * SteinPercentage / 200);
-				int kreisY=(int)(Feldbreite*y + Feldbreite * SteinPercentage / 200);
+				int kreisX=(int)(leftBorder + Feldbreite*x + Feldbreite * (100-SteinPercentage) / 200);
+				int kreisY=(int)(topBorder + Feldbreite*y + Feldbreite * (100-SteinPercentage) / 200);
 				int kreisD=(int)(Feldbreite * SteinPercentage / 100);
 
-				switch (sb.gibFeld) {
+				switch (sb.gibFeld(x,y)) {
 				case Spielbrett.SCHWARZ:
-					g.setColor(java.awt.Color.white);
-					g.drawOval(kreisX, kreisY, kreisD, kreisD);
+				case Spielbrett.SCHWARZ_D:
 					g.setColor(java.awt.Color.black);
 					g.fillOval(kreisX, kreisY, kreisD, kreisD);
+					g.setColor(java.awt.Color.white);
+					g.drawOval(kreisX, kreisY, kreisD, kreisD);
+
+					g.setColor(java.awt.Color.black);
+					g.fillOval(kreisX-ZweiterKreisOffset, kreisY-ZweiterKreisOffset, kreisD, kreisD);
+					g.setColor(java.awt.Color.white);
+					g.drawOval(kreisX-ZweiterKreisOffset, kreisY-ZweiterKreisOffset, kreisD, kreisD);
 					break;
 				case Spielbrett.WEISS:
-					g.setColor(java.awt.Color.black);
-					g.drawOval(kreisX, kreisY, kreisD, kreisD);
+				case Spielbrett.WEISS_D:
 					g.setColor(java.awt.Color.white);
 					g.fillOval(kreisX, kreisY, kreisD, kreisD);
+					g.setColor(java.awt.Color.black);
+					g.drawOval(kreisX, kreisY, kreisD, kreisD);
+
+					g.setColor(java.awt.Color.white);
+					g.fillOval(kreisX-ZweiterKreisOffset, kreisY-ZweiterKreisOffset, kreisD, kreisD);
+					g.setColor(java.awt.Color.black);
+					g.drawOval(kreisX-ZweiterKreisOffset, kreisY-ZweiterKreisOffset, kreisD, kreisD);
+					break;
+				}
+
+				kreisX-=ZweiterKreisOffset;
+				kreisY-=ZweiterKreisOffset;
+				
+				switch (sb.gibFeld(x,y)) {
+				case Spielbrett.SCHWARZ_D:
+					g.setColor(java.awt.Color.black);
+					g.fillOval(kreisX-ZweiterKreisOffset, kreisY-ZweiterKreisOffset, kreisD, kreisD);
+					g.setColor(java.awt.Color.white);
+					g.drawOval(kreisX-ZweiterKreisOffset, kreisY-ZweiterKreisOffset, kreisD, kreisD);
+
+					break;
+				case Spielbrett.WEISS_D:
+					g.setColor(java.awt.Color.white);
+					g.fillOval(kreisX-ZweiterKreisOffset, kreisY-ZweiterKreisOffset, kreisD, kreisD);
+					g.setColor(java.awt.Color.black);
+					g.drawOval(kreisX-ZweiterKreisOffset, kreisY-ZweiterKreisOffset, kreisD, kreisD);
+
 					break;
 				}
 				
