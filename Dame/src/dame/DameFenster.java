@@ -55,19 +55,19 @@ public class DameFenster extends JFrame {
 			return;
 		
 		final float SteinPercentage = 75;
-		final int leftBorder = 0; 
-		final int rightBorder = 0; 
+		final int leftBorder = 5; 
+		final int rightBorder = 5; 
 		final int topBorder = 25; 
-		final int bottomBorder = 0; 
+		final int bottomBorder = 5; 
 		final int Feldbreite = Math.min(this.getHeight()-topBorder-bottomBorder, this.getWidth()-leftBorder-rightBorder) / 8; 
 		final int ZweiterKreisOffset = (int)(0.1 * Feldbreite);
 		
 		for (int x=0;x<8;x++) {
 			for (int y=0;y<8;y++) {
 				if ((x+y) % 2 ==0)
-					g.setColor(java.awt.Color.black);
-				else
 					g.setColor(java.awt.Color.white);
+				else
+					g.setColor(java.awt.Color.black);
 					
 				g.fillRect(leftBorder + Feldbreite*x, topBorder + y*Feldbreite, Feldbreite, Feldbreite);
 
