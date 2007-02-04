@@ -75,7 +75,7 @@ public class DameFenster extends JFrame {
 				int kreisY=(int)(topBorder + Feldbreite*y + Feldbreite * (100-SteinPercentage) / 200);
 				int kreisD=(int)(Feldbreite * SteinPercentage / 100);
 
-				switch (sb.gibFeld(x,y)) {
+				switch (sb.gibFeld(x,7-y)) {
 				case Spielbrett.SCHWARZ:
 				case Spielbrett.SCHWARZ_D:
 					g.setColor(java.awt.Color.black);
@@ -105,7 +105,7 @@ public class DameFenster extends JFrame {
 				kreisX-=ZweiterKreisOffset;
 				kreisY-=ZweiterKreisOffset;
 				
-				switch (sb.gibFeld(x,y)) {
+				switch (sb.gibFeld(x,7-y)) {
 				case Spielbrett.SCHWARZ_D:
 					g.setColor(java.awt.Color.black);
 					g.fillOval(kreisX-ZweiterKreisOffset, kreisY-ZweiterKreisOffset, kreisD, kreisD);
