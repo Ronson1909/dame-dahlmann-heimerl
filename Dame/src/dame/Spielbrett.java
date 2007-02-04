@@ -106,7 +106,7 @@ public class Spielbrett implements Cloneable {
 			return false;
 		
 		//prüfe: ist eigener Stein falls erster Zug
-		//if (testeObEigener && (!((spielbrett[x1][y1] == SCHWARZ || spielbrett[x1][y1] == SCHWARZ_D) && schwarzAmZug) && !((spielbrett[x1][y1] == WEISS || spielbrett[x1][y1] == WEISS_D) && !schwarzAmZug))) //vermutlich falsch
+		//if (testeObEigener && (!((spielbrett[x1][y1] == SCHWARZ || spielbrett[x1][y1] == SCHWARZ_D) && schwarzAmZug) && !((spielbrett[x1][y1] == WEISS || spielbrett[x1][y1] == WEISS_D) && !schwarzAmZug)))
 		if (testeObEigener) {
 			if (schwarzAmZug) {
 				if (spielbrett[x1][y1] != SCHWARZ && spielbrett[x1][y1] != SCHWARZ_D)
@@ -147,6 +147,13 @@ public class Spielbrett implements Cloneable {
 				return false;
 			
 			//prüfe: kein Sprung aber Sprung ist möglich
+			if (!erlaubterSprung) {
+				for (int y=0; y<8; y++) {
+					for (int x=0; x<8; x++) {
+						
+					}
+				}
+			}
 			
 		}
 		
@@ -155,7 +162,10 @@ public class Spielbrett implements Cloneable {
 			//prüfe: erlaubter Sprung über Gegner
 		}
 		
-		return false;
+		else { //Sollte nie erreicht werden!
+			System.out.println("Irgendwo in zugIstGueltig() muss ein FEHLER sein!");
+			return false;
+		}
 	}
 	
 	/**
@@ -206,6 +216,25 @@ public class Spielbrett implements Cloneable {
 	public void macheZug(ArrayList<Zug> z) {
 		
 	}
+	
+	/**
+	 * Prüft ob die Koordinaten gültig sind
+	 */
+	private boolean koordinatenGueltig(int x, int y) {
+        //Feldbegrenzungen
+        if (y<0 || y>7)
+            return false;
+
+        //Feldbegrenzungen
+        if (x<0 || x>7)
+            return false;
+
+        //weiße Felder sind ungültig
+        if (x%2 != y%2)
+            return false;
+
+        return true;
+    }
 	
 	/**
 	 * Konsolenausgabe des aktuellen Spielbretts
