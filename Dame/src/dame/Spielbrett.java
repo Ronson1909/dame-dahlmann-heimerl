@@ -97,13 +97,26 @@ public class Spielbrett implements Cloneable {
 		int x2 = z.gibEndeX();
 		int y2 = z.gibEndeY();
 		
+		//prüfe: Hat Zug gültige Koordinaten?
+		if (!z.hatGueltigeKoordinaten())
+			return false;
+		
         //prüfe: Ziel ist freies Feld
 		if (spielbrett[x2][y2] != LEER)
 			return false;
 		
 		//prüfe: ist eigener Stein falls erster Zug
-		if (testeObEigener && (!((spielbrett[x1][y1] == SCHWARZ || spielbrett[x1][y1] == SCHWARZ_D) && schwarzAmZug) && !((spielbrett[x1][y1] == WEISS || spielbrett[x1][y1] == WEISS_D) && !schwarzAmZug)))
-			return false;
+		//if (testeObEigener && (!((spielbrett[x1][y1] == SCHWARZ || spielbrett[x1][y1] == SCHWARZ_D) && schwarzAmZug) && !((spielbrett[x1][y1] == WEISS || spielbrett[x1][y1] == WEISS_D) && !schwarzAmZug))) //vermutlich falsch
+		if (testeObEigener) {
+			if (schwarzAmZug) {
+				if (spielbrett[x1][y1] != SCHWARZ && spielbrett[x1][y1] != SCHWARZ_D)
+					return false;
+			}
+			else {
+				if (spielbrett[x1][y1] != WEISS && spielbrett[x1][y1] != WEISS_D)
+					return false;
+			}
+		}
 		
         //wenn keine Dame
 		if (spielbrett[x1][y1] == SCHWARZ || spielbrett[x1][y1] == WEISS) {
@@ -112,9 +125,29 @@ public class Spielbrett implements Cloneable {
 				return false;
 
 	        //prüfe: Felder liegen nebeneinander
-			
+			boolean angrenzendeFelder = false;
+			if ((y2 == y1+1) && (x2 == x1+1 || x2 == x1-1))
+				angrenzendeFelder = true;
 			
 	        //prüfe: oder erlaubter Sprung über Gegner
+			boolean erlaubterSprung = false;
+			if ((y2 == y1+2) && (x2 == x1+2 || x2 == x1-2)) {
+				int uebersprungen = spielbrett[(x1+x2)/2][y1+1];
+				if (schwarzAmZug) {
+					if (uebersprungen == WEISS || uebersprungen == WEISS_D)
+						erlaubterSprung = true;
+				}
+				else { //Weiss am Zug
+					if (uebersprungen == SCHWARZ || uebersprungen == SCHWARZ_D)
+						erlaubterSprung = true;
+				}
+			}
+				
+			if (!angrenzendeFelder && !erlaubterSprung)
+				return false;
+			
+			//prüfe: kein Sprung aber Sprung ist möglich
+			
 		}
 		
 		//wenn Dame
@@ -134,7 +167,6 @@ public class Spielbrett implements Cloneable {
 		int ende_x1 = temp.gibEndeX();
 		int ende_y1 = temp.gibEndeY();
 		int start_x2, start_y2;
-		
 		for (int i=1; i<z.size(); i++) {
 			temp = z.get(i);
 			start_x2 = temp.gibStartX();
@@ -147,7 +179,15 @@ public class Spielbrett implements Cloneable {
 		}
 		
 		//Pruefe ob alle einzelnen Zuege gueltig
-		return false;
+		if (!zugIstGueltig(z.get(0)))
+			return false;
+		for (int i=1; i<z.size(); i++) {
+			if (!zugIstGueltig(z.get(i), false))
+				return false;
+		}
+		
+		//Dann ist wohl die Zugfolge gueltig.
+		return true;
 	}
 	
 	/**
