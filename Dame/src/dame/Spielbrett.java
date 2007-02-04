@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 public class Spielbrett implements Cloneable {
 	
-	public final int LEER = 0;
-	public final int SCHWARZ = 1;
-	public final int WEISS = 2;
-	public final int SCHWARZ_D = 3;
+	public static final int LEER = 0;
+	public static final int SCHWARZ = 1;
+	public static final int WEISS = 2;
+	public static final int SCHWARZ_D = 3;
 	public final int WEISS_D = 4;
 	
 	private boolean schwarzAmZug;
