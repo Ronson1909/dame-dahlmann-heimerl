@@ -16,6 +16,13 @@ public class Zug {
     public Zug() {
     }
 
+    public Zug(int startX, int startY, int endeX, int endeY) {
+    	setzeStartX(startX);
+    	setzeStartY(startY);
+    	setzeEndeX(endeX);
+    	setzeEndeY(endeY);
+    }
+
     private int startX;
     private int startY;
     private int endeX;
@@ -53,6 +60,10 @@ public class Zug {
         endeY=wert;
     }
 
+    public Zug gibUmgekehrtenZug() {
+    	return new Zug(endeX, endeY, startX, startY);
+    }
+    
     public boolean hatGueltigeKoordinaten() {
         //Feldbegrenzungen
         if (endeY<0 || endeY>7 || startY<0 || startY>7)
@@ -83,5 +94,6 @@ public class Zug {
 
         //wenn Dame
         //prüfe: erlaubter Sprung über Gegner
+    	return true;
     }
 }
