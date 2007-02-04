@@ -1,12 +1,15 @@
 package dame;
 
+import java.util.ArrayList;
+
 public class Spielbrett implements Cloneable {
 	
-	private final int LEER = 0;
-	private final int SCHWARZ = 1;
-	private final int WEISS = 2;
-	private final int DAMES = 3;
-	private final int DAMEW = 4;
+	public final int LEER = 0;
+	public final int SCHWARZ = 1;
+	public final int WEISS = 2;
+	public final int SCHWARZ_D = 3;
+	public final int WEISS_D = 4;
+	
 	private boolean schwarzAmZug;
 	private int[][] spielbrett;
 	
@@ -21,21 +24,27 @@ public class Spielbrett implements Cloneable {
 		spielbrett = new int[8][8];
 		for (int y=0; y<8; y++) {
 			for (int x=0; x<8; x++) {
-				if ((y+x)%2 == 0)
+				if ((y+x)%2 == 0) {
 					if (y<3)
 						spielbrett[x][y] = SCHWARZ;
 					else if (y>4)
 						spielbrett[x][y] = WEISS;
+					else
+						spielbrett[x][y] = LEER;
+				}
 				else
-					spielbrett[x][y] = LEER;
+					spielbrett[x][y] = -1;
 			}
 		}
 		schwarzAmZug = true;
-		gibAus();
-		weissAmZug();
-		gibAus();
-		schwarzAmZug();
-		gibAus();
+		//gibAus();
+	}
+	
+	/**
+	 * Gibt die aktuelle Belegung des gewünschten Feldes zurück.
+	 */
+	public int gibFeld(int x, int y) {
+		return spielbrett[x][y];
 	}
 	
 	/**
@@ -80,28 +89,71 @@ public class Spielbrett implements Cloneable {
 		int y1 = z.gibStartY();
 		int x2 = z.gibEndeX();
 		int y2 = z.gibEndeY();
+		
+        //prüfe: Ziel ist freies Feld
+		if (spielbrett[x2][y2] != LEER)
+			return false;
+		
+		//prüfe: ist eigener Stein
+		if (!((spielbrett[x1][y1] == SCHWARZ || spielbrett[x1][y1] == SCHWARZ_D) && schwarzAmZug) && !((spielbrett[x1][y1] == WEISS || spielbrett[x1][y1] == WEISS_D) && !schwarzAmZug))
+			return false;
+		
+        //wenn keine Dame
+		if (spielbrett[x1][y1] == SCHWARZ || spielbrett[x1][y1] == WEISS) {
+			//prüfe: richtige Richtung (nach oben)
+			if (y2 <= y1)
+				return false;
+
+	        //prüfe: Felder liegen nebeneinander
+			
+			
+	        //prüfe: oder erlaubter Sprung über Gegner
+		}
+		
+		//wenn Dame
+		else if (spielbrett[x1][y1] == SCHWARZ_D || spielbrett[x1][y1] == WEISS_D) {
+			//prüfe: erlaubter Sprung über Gegner
+		}
+		
 		return false;
 	}
 	
-	public void macheZug() {
+	/**
+	 * Prüft ob eine Zugfolge gültig ist.
+	 */
+	public boolean zugIstGueltig(ArrayList<Zug> z) {
+		return false;
+	}
+	
+	/**
+	 * Führt Zug aus.
+	 */
+	public void macheZug(Zug z) {
+		if (!zugIstGueltig(z)) {
+			throw new IllegalArgumentException("Dieser Zug ist nicht gültig!");
+		}
 		
 	}
 	
-	public Spielbrett spielbrettKopie() {
-		return this.clone();
+	/**
+	 * Führt Zugfolge aus.
+	 */
+	public void macheZug(ArrayList<Zug> z) {
+		
 	}
 	
 	/**
 	 * Konsolenausgabe des aktuellen Spielbretts
 	 */
 	public void gibAus() {
-		System.out.println("  - - - - - - - - - - - - - - -");
+		System.out.println(" - - - - - - - - - - - - - - - - -");
 		String linie;
 		for (int y=7; y>=0; y--) {
 			linie = "| ";
 			for (int x=0; x<8; x++) {
 				String symbol = "";
 				switch (spielbrett[x][y]) {
+					case -1 : symbol = " "; break;
 					case 0 : symbol = " "; break;
 					case 1 : symbol = "X"; break;
 					case 2 : symbol = "O"; break;
@@ -112,7 +164,7 @@ public class Spielbrett implements Cloneable {
 				linie += symbol + " | ";
 			}
 			System.out.println(linie);
-			System.out.println("  - - - - - - - - - - - - - - -");
+			System.out.println("- - - - - - - - - - - - - - - - -");
 		}
 		System.out.println();
 	}
