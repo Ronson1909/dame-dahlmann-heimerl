@@ -8,7 +8,7 @@ public class Spielbrett implements Cloneable {
 	public static final int SCHWARZ = 1;
 	public static final int WEISS = 2;
 	public static final int SCHWARZ_D = 3;
-	public final int WEISS_D = 4;
+	public static final int WEISS_D = 4;
 	
 	private boolean schwarzAmZug;
 	private int[][] spielbrett;
@@ -85,6 +85,13 @@ public class Spielbrett implements Cloneable {
 	 * Prüft ob der Zug gültig ist.
 	 */
 	public boolean zugIstGueltig(Zug z) {
+		return zugIstGueltig(z, true);
+	}
+	
+	/**
+	 * Prüft ob der Zug gültig ist.
+	 */
+	public boolean zugIstGueltig(Zug z, boolean testeObEigener) {
 		int x1 = z.gibStartX();
 		int y1 = z.gibStartY();
 		int x2 = z.gibEndeX();
@@ -94,8 +101,8 @@ public class Spielbrett implements Cloneable {
 		if (spielbrett[x2][y2] != LEER)
 			return false;
 		
-		//prüfe: ist eigener Stein
-		if (!((spielbrett[x1][y1] == SCHWARZ || spielbrett[x1][y1] == SCHWARZ_D) && schwarzAmZug) && !((spielbrett[x1][y1] == WEISS || spielbrett[x1][y1] == WEISS_D) && !schwarzAmZug))
+		//prüfe: ist eigener Stein falls erster Zug
+		if (testeObEigener && (!((spielbrett[x1][y1] == SCHWARZ || spielbrett[x1][y1] == SCHWARZ_D) && schwarzAmZug) && !((spielbrett[x1][y1] == WEISS || spielbrett[x1][y1] == WEISS_D) && !schwarzAmZug)))
 			return false;
 		
         //wenn keine Dame
@@ -122,6 +129,16 @@ public class Spielbrett implements Cloneable {
 	 * Prüft ob eine Zugfolge gültig ist.
 	 */
 	public boolean zugIstGueltig(ArrayList<Zug> z) {
+		boolean zusammenhaengend = true;
+		Zug temp = z.get(0);
+		Zug temp2;
+		for (int i=1; i<z.size(); i++) {
+			temp2 = z.get(i);
+			if ((temp.gibEndeX() != temp2.gibStartX()) || (temp.gibEndeY() != temp2.gibStartY())) {
+				return false;
+			}
+			temp = temp2;
+		}
 		return false;
 	}
 	
