@@ -129,16 +129,24 @@ public class Spielbrett implements Cloneable {
 	 * Prüft ob eine Zugfolge gültig ist.
 	 */
 	public boolean zugIstGueltig(ArrayList<Zug> z) {
-		boolean zusammenhaengend = true;
+		//Pruefe ob Zusammenhaengend
 		Zug temp = z.get(0);
-		Zug temp2;
+		int ende_x1 = temp.gibEndeX();
+		int ende_y1 = temp.gibEndeY();
+		int start_x2, start_y2;
+		
 		for (int i=1; i<z.size(); i++) {
-			temp2 = z.get(i);
-			if ((temp.gibEndeX() != temp2.gibStartX()) || (temp.gibEndeY() != temp2.gibStartY())) {
+			temp = z.get(i);
+			start_x2 = temp.gibStartX();
+			start_y2 = temp.gibStartY();
+			if ((ende_x1 != start_x2) || (ende_y1 != start_y2)) {
 				return false;
 			}
-			temp = temp2;
+			ende_x1 = temp.gibEndeX();
+			ende_y1 = temp.gibEndeY();
 		}
+		
+		//Pruefe ob alle einzelnen Zuege gueltig
 		return false;
 	}
 	
