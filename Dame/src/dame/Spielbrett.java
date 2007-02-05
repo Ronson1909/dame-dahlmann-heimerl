@@ -13,6 +13,11 @@ public class Spielbrett implements Cloneable {
 	private boolean schwarzAmZug;
 	private int[][] spielbrett;
 	
+	private int eigenerStein;// = schwarzAmZug ? SCHWARZ : WEISS;
+	private int eigeneDame;// = schwarzAmZug ? SCHWARZ_D : WEISS_D;
+	private int gegnerStein;// = schwarzAmZug ? WEISS : SCHWARZ;
+	private int gegnerDame;// = schwarzAmZug ? WEISS_D : SCHWARZ_D;
+	
 	public static void main(String[] args) {
 		new Spielbrett();
 	}
@@ -37,7 +42,28 @@ public class Spielbrett implements Cloneable {
 			}
 		}
 		schwarzAmZug = true;
+		eigenerStein = SCHWARZ;
+		eigeneDame = SCHWARZ_D;
+		gegnerStein = WEISS;
+		gegnerDame = WEISS_D;
 		//gibAus();
+	}
+	
+	/**
+	 * Erzeugt ein neues Spielbrett mit der übergebenen Aufstellung und dem übergebenen aktuellen Spieler. 
+	 * Diese Methode sollte nur von clone() aufgerufen werden!
+	 */
+	private Spielbrett(int[][] brett, boolean schwarzAmZug) {
+		spielbrett = brett;
+		this.schwarzAmZug = schwarzAmZug;
+		eigenerStein = schwarzAmZug ? SCHWARZ : WEISS;
+		eigeneDame = schwarzAmZug ? SCHWARZ_D : WEISS_D;
+		gegnerStein = schwarzAmZug ? WEISS : SCHWARZ;
+		gegnerDame = schwarzAmZug ? WEISS_D : SCHWARZ_D;
+	}
+	
+	public Spielbrett clone() {
+		return new Spielbrett(spielbrett.clone(), schwarzAmZug);
 	}
 	
 	/**
@@ -61,6 +87,10 @@ public class Spielbrett implements Cloneable {
 				}
 			}
 			schwarzAmZug = true;
+			eigenerStein = SCHWARZ;
+			eigeneDame = SCHWARZ_D;
+			gegnerStein = WEISS;
+			gegnerDame = WEISS_D;
 		}
 	}
 	
@@ -78,7 +108,42 @@ public class Spielbrett implements Cloneable {
 				}
 			}
 			schwarzAmZug = false;
+			eigenerStein = WEISS;
+			eigeneDame = WEISS_D;
+			gegnerStein = SCHWARZ;
+			gegnerDame = SCHWARZ_D;
 		}
+	}
+	
+	/**
+	 * Prüft ob für den aktuellen Spieler ein Sprung möglich ist.
+	 */
+	public boolean sprungIstMoeglich() {
+
+		for (int y=0; y<8; y++) {
+			for (int x=0; x<8; x++) {
+				//falls normeler Stein auf betrachtetem Feld
+				if (spielbrett[x][y] == eigenerStein) {
+					if ( koordinatenGueltig(x-2,y+2) && 
+							spielbrett[x-2][y+2] == LEER && 
+							(spielbrett[x-1][y+1] == gegnerStein || 
+									spielbrett[x-1][y+1] == gegnerDame) ) {
+						return true;
+					}
+					if ( koordinatenGueltig(x+2,y+2) && 
+							spielbrett[x+2][y+2] == LEER && 
+							(spielbrett[x+1][y+1] == gegnerStein || 
+									spielbrett[x+1][y+1] == gegnerDame) ) {
+						return true;
+					}
+				}
+				//falls Dame auf betrachtetem Feld
+				else if (spielbrett[x][y] == eigeneDame) {
+					
+				}
+			}
+		}
+		return false;
 	}
 	
 	/**
@@ -106,20 +171,13 @@ public class Spielbrett implements Cloneable {
 			return false;
 		
 		//prüfe: ist eigener Stein falls erster Zug
-		//if (testeObEigener && (!((spielbrett[x1][y1] == SCHWARZ || spielbrett[x1][y1] == SCHWARZ_D) && schwarzAmZug) && !((spielbrett[x1][y1] == WEISS || spielbrett[x1][y1] == WEISS_D) && !schwarzAmZug)))
 		if (testeObEigener) {
-			if (schwarzAmZug) {
-				if (spielbrett[x1][y1] != SCHWARZ && spielbrett[x1][y1] != SCHWARZ_D)
-					return false;
-			}
-			else {
-				if (spielbrett[x1][y1] != WEISS && spielbrett[x1][y1] != WEISS_D)
-					return false;
-			}
+			if (spielbrett[x1][y1] != eigenerStein && spielbrett[x1][y1] != eigeneDame)
+				return false;
 		}
 		
         //wenn keine Dame
-		if (spielbrett[x1][y1] == SCHWARZ || spielbrett[x1][y1] == WEISS) {
+		if (spielbrett[x1][y1] == eigenerStein) {
 			//prüfe: richtige Richtung (nach oben)
 			if (y2 <= y1)
 				return false;
@@ -133,14 +191,8 @@ public class Spielbrett implements Cloneable {
 			boolean erlaubterSprung = false;
 			if ((y2 == y1+2) && (x2 == x1+2 || x2 == x1-2)) {
 				int uebersprungen = spielbrett[(x1+x2)/2][y1+1];
-				if (schwarzAmZug) {
-					if (uebersprungen == WEISS || uebersprungen == WEISS_D)
-						erlaubterSprung = true;
-				}
-				else { //Weiss am Zug
-					if (uebersprungen == SCHWARZ || uebersprungen == SCHWARZ_D)
-						erlaubterSprung = true;
-				}
+				if (uebersprungen == gegnerStein || uebersprungen == gegnerDame)
+					erlaubterSprung = true;
 			}
 				
 			if (!angrenzendeFelder && !erlaubterSprung)
@@ -148,17 +200,14 @@ public class Spielbrett implements Cloneable {
 			
 			//prüfe: kein Sprung aber Sprung ist möglich
 			if (!erlaubterSprung) {
-				for (int y=0; y<8; y++) {
-					for (int x=0; x<8; x++) {
-						
-					}
-				}
+				
 			}
 			
+			return true;
 		}
 		
 		//wenn Dame
-		else if (spielbrett[x1][y1] == SCHWARZ_D || spielbrett[x1][y1] == WEISS_D) {
+		else if (spielbrett[x1][y1] == eigeneDame) {
 			//prüfe: erlaubter Sprung über Gegner
 		}
 		
@@ -294,14 +343,5 @@ public class Spielbrett implements Cloneable {
 		long ende2 = System.currentTimeMillis();
 		System.out.println("Dauer Methode 1 = " + (ende1-start1));
 		System.out.println("Dauer Methode 2 = " + (ende2-start2));
-	}
-	
-	public Spielbrett clone() {
-		return new Spielbrett(spielbrett.clone(), schwarzAmZug);
-	}
-	
-	private Spielbrett(int[][] brett, boolean schwarzAmZug) {
-		spielbrett = brett;
-		this.schwarzAmZug = schwarzAmZug;
 	}
 }
