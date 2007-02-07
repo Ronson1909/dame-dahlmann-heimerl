@@ -354,7 +354,7 @@ public class Spielbrett implements Cloneable {
 					return false;
 			}
 			
-			//prüfe: kein Sprung aber Sprung ist möglich
+			//prüfe: kein Sprung aber Sprung ist möglich (Zugfolge ist schon ausgeschlossen)
 			if (!erlaubterSprung) { //identisch mit if (angrenzendeFelder) {
 				if (sprungIstMoeglich())
 					return false;
@@ -368,15 +368,63 @@ public class Spielbrett implements Cloneable {
 			//prüfe: erlaubter Sprung über Gegner
 			//...
 			
-			//Testen ob übersprungenes Feld auch gegnerischer Stein!
+			//prüfe: Zielfeld auf einer der Diagonalen vom Startfeld aus
+			if (Math.abs(x2-x1) != Math.abs(y2-y1))
+				return false;
+			
+			//prüfe: Alle Felder zwischen Startfeld und einem Feld vor Zielfeld leer
+			int xSchritt = (int) Math.signum(x2-x1); //(x2 > x1) ? +1 : -1;
+			int ySchritt = (int) Math.signum(y2-y1); //(y2 > y1) ? +1 : -1;
+			int testX=x1+xSchritt, testY=y1+ySchritt;
+			while (testX < x2-xSchritt && testY < y2-ySchritt) {
+				if (spielbrett[testX][testY] != LEER)
+					return false;
+				testX += xSchritt;
+				testY += ySchritt;
+			}
+			if (testX != x2-xSchritt || testY != y2-ySchritt)
+				System.out.println("ProgrammierFEHLER!!!");
+			
+			boolean sprung = (spielbrett[testX][testY] == LEER) ? false : true;
+				
+			//prüfe: oder erlaubter Sprung über Gegner => Nur ein Feld vor Zielfeld mit gegnerischem Stein belegt, sonst alle leer
+			boolean erlaubterSprung = false;
+			if (spielbrett[testX][testY] == gegnerStein || spielbrett[testX][testY] == gegnerDame)
+				erlaubterSprung = true;
 
-			if (zugFolge && erlaubterSprung) { //auf dem temporären Brett den übersprungenen Stein entfernen
-				int xKorrektur = (x2 > x1) ? -1 : +1;
-				int yKorrektur = (y2 > y1) ? -1 : +1;
-				TEMP_spielbrett[x2+xKorrektur][y2+yKorrektur] = LEER;
+			//prüfe: Sprung, aber inkorrekt
+			if (sprung && !erlaubterSprung)
+				return false;
+			
+			//prüfe: Zugfolge darf nur aus Sprüngen bestehen
+			if (zugFolge && !sprung)
+				return false;
+			
+			//prüfe: kein Sprung aber Sprung ist möglich (Zugfolge ist schon ausgeschlossen)
+			if (!sprung) {
+				if (sprungIstMoeglich())
+					return false;
 			}
 			
-			//erst hier prüfen, ob weiterer Sprung möglich wäre.
+			 //auf dem temporären Brett den übersprungenen Stein entfernen
+			if (zugFolge) {
+				int xKorrektur = (int) Math.signum(x1-x2); //(x2 > x1) ? -1 : +1;
+				int yKorrektur = (int) Math.signum(y1-y2); //(y2 > y1) ? -1 : +1;
+				
+				if (xKorrektur != -1*xSchritt || yKorrektur != -1*ySchritt)
+					System.out.println("PROGRAMMIERFEHLER!");
+					//falls das nie auftritt können die zwei int-Werte hier drüber weg.
+				
+				//TEMP_spielbrett[x2+xKorrektur][y2+yKorrektur] = LEER;
+				//TEMP_spielbrett[x2-xSchritt][y2-ySchritt] = LEER;
+				TEMP_spielbrett[testX][testY] = LEER;
+			}
+			
+			//prüfe: Es wurde gesprungen, aber nicht alle möglichen Sprünge wurden ausgeführt. (Wird anhand TEMP_spielbrett geprüft).
+			if (letzterZug && erlaubterSprung) {
+				if (weitererSprungIstMoeglich(x2, y2, true))
+					return false;
+			}
 			
 			return true;
 		}
