@@ -48,7 +48,9 @@ public class Spielbrett implements Cloneable {
 		eigeneDame = SCHWARZ_D;
 		gegnerStein = WEISS;
 		gegnerDame = WEISS_D;
-		//gibAus();
+		gibAus();
+		System.out.println("Sprung ist möglich ? " + sprungIstMoeglich());
+		System.out.println(zugIstGueltig(new Zug(1,5,0,4)));
 	}
 	
 	/**
@@ -297,6 +299,47 @@ public class Spielbrett implements Cloneable {
 	}
 	
 	/**
+	 * Prüft ob eine Zugfolge gültig ist.
+	 */
+	private boolean zugIstGueltig(ArrayList<Zug> z) {
+		if (z.size() <= 1) return false;
+		
+		//Pruefe ob Zusammenhaengend
+		Zug temp = z.get(0);
+		boolean zugMitDame = (spielbrett[temp.gibStartX()][temp.gibStartY()] == eigeneDame);
+		
+		if (zugMitDame)
+			TEMP_spielbrett = spielbrett.clone(); //Um die übersprungenen Steine für die Tests entfernen zu können
+		
+		int ende_x1 = temp.gibEndeX();
+		int ende_y1 = temp.gibEndeY();
+		int start_x2, start_y2;
+		for (int i=1; i<z.size(); i++) { //Züge durchgehen
+			temp = z.get(i);
+			start_x2 = temp.gibStartX();
+			start_y2 = temp.gibStartY();
+			if ((ende_x1 != start_x2) || (ende_y1 != start_y2)) { //Prüfen ob Ende des vorherigen = Start des aktuellen
+				return false;
+			}
+			ende_x1 = temp.gibEndeX();
+			ende_y1 = temp.gibEndeY();
+		}
+		
+		//Prüfe ob alle einzelnen Züge gültig
+		if (!zugIstGueltig(z.get(0), true, false, zugMitDame)) //Beim ersten Zug auch prüfen ob Ausgangspunkt eigener Stein
+			return false;
+		for (int i=1; i<z.size()-1; i++) {
+			if (!zugIstGueltig(z.get(i), false, false, zugMitDame)) //Bei den mittleren Zügen Korrektheit ohne Sonderfälle prüfen
+				return false;
+		}
+		if (!zugIstGueltig(z.get(z.size()-1), false, true, zugMitDame)) //Beim letzten Sprung prüfen, ob weiterer Sprung möglich wäre
+			return false;
+		
+		//Dann ist wohl die Zugfolge gueltig.
+		return true;
+	}
+	
+	/**
 	 * Prüft ob der Zug gültig ist.
 	 */
 	private boolean zugIstGueltig(Zug z, boolean ersterZug, boolean letzterZug, boolean zugMitDame) {
@@ -373,6 +416,7 @@ public class Spielbrett implements Cloneable {
 				return false;
 			
 			//prüfe: Alle Felder zwischen Startfeld und einem Feld vor Zielfeld leer
+			//x- und ySchritt von Ursprungsposition aus gesehen!
 			int xSchritt = (int) Math.signum(x2-x1); //(x2 > x1) ? +1 : -1;
 			int ySchritt = (int) Math.signum(y2-y1); //(y2 > y1) ? +1 : -1;
 			int testX=x1+xSchritt, testY=y1+ySchritt;
@@ -408,6 +452,7 @@ public class Spielbrett implements Cloneable {
 			
 			 //auf dem temporären Brett den übersprungenen Stein entfernen
 			if (zugFolge) {
+				//x- und yKorrektur vom Zielfeld aus gesehen um übersprungen Stein zu erreichen
 				int xKorrektur = (int) Math.signum(x1-x2); //(x2 > x1) ? -1 : +1;
 				int yKorrektur = (int) Math.signum(y1-y2); //(y2 > y1) ? -1 : +1;
 				
@@ -436,54 +481,27 @@ public class Spielbrett implements Cloneable {
 	}
 	
 	/**
-	 * Prüft ob eine Zugfolge gültig ist.
-	 */
-	private boolean zugIstGueltig(ArrayList<Zug> z) {
-		if (z.size() <= 1) return false;
-		
-		//Pruefe ob Zusammenhaengend
-		Zug temp = z.get(0);
-		boolean zugMitDame = (spielbrett[temp.gibStartX()][temp.gibStartY()] == eigeneDame);
-		
-		if (zugMitDame)
-			TEMP_spielbrett = spielbrett.clone(); //Um die übersprungenen Steine für die Tests entfernen zu können
-		
-		int ende_x1 = temp.gibEndeX();
-		int ende_y1 = temp.gibEndeY();
-		int start_x2, start_y2;
-		for (int i=1; i<z.size(); i++) { //Züge durchgehen
-			temp = z.get(i);
-			start_x2 = temp.gibStartX();
-			start_y2 = temp.gibStartY();
-			if ((ende_x1 != start_x2) || (ende_y1 != start_y2)) { //Prüfen ob Ende des vorherigen = Start des aktuellen
-				return false;
-			}
-			ende_x1 = temp.gibEndeX();
-			ende_y1 = temp.gibEndeY();
-		}
-		
-		//Prüfe ob alle einzelnen Züge gültig
-		if (!zugIstGueltig(z.get(0), true, false, zugMitDame)) //Beim ersten Zug auch prüfen ob Ausgangspunkt eigener Stein
-			return false;
-		for (int i=1; i<z.size()-1; i++) {
-			if (!zugIstGueltig(z.get(i), false, false, zugMitDame)) //Bei den mittleren Zügen Korrektheit ohne Sonderfälle prüfen
-				return false;
-		}
-		if (!zugIstGueltig(z.get(z.size()-1), false, true, zugMitDame)) //Beim letzten Sprung prüfen, ob weiterer Sprung möglich wäre
-			return false;
-		
-		//Dann ist wohl die Zugfolge gueltig.
-		return true;
-	}
-	
-	/**
 	 * Führt Zug aus.
 	 */
 	public void macheZug(Zug z) {
 		if (!zugIstGueltig(z)) {
 			throw new IllegalArgumentException("Dieser Zug ist nicht gültig!");
 		}
+		int x1 = z.gibStartX();
+		int y1 = z.gibStartY();
+		int x2 = z.gibEndeX();
+		int y2 = z.gibEndeY();
 		
+		if (y2 == 7) //Oberste Zeile -> Umwandelung zur Dame
+			spielbrett[x2][y2] = eigeneDame;
+		else
+			spielbrett[x2][y2] = spielbrett[x1][y1];
+		
+		spielbrett[x1][y1] = LEER;
+		//x- und yKorrektur vom Zielfeld aus gesehen um übersprungen Stein zu erreichen
+		int xKorrektur = (int) Math.signum(x1-x2); //(x2 > x1) ? -1 : +1;
+		int yKorrektur = (int) Math.signum(y1-y2); //(y2 > y1) ? -1 : +1;
+		spielbrett[x2+xKorrektur][y2+yKorrektur] = LEER;
 	}
 	
 	/**
@@ -518,29 +536,29 @@ public class Spielbrett implements Cloneable {
 	/**
 	 * Konsolenausgabe des aktuellen Spielbretts
 	 */
-//	private void gibAus() {
-//		System.out.println(" - - - - - - - - - - - - - - - - -");
-//		String linie;
-//		for (int y=7; y>=0; y--) {
-//			linie = "| ";
-//			for (int x=0; x<8; x++) {
-//				String symbol = "";
-//				switch (spielbrett[x][y]) {
-//					case -1 : symbol = " "; break;
-//					case 0 : symbol = " "; break;
-//					case 1 : symbol = "X"; break;
-//					case 2 : symbol = "O"; break;
-//					case 3 : symbol = "T"; break;
-//					case 4 : symbol = "D"; break;
-//				}
-//					
-//				linie += symbol + " | ";
-//			}
-//			System.out.println(linie);
-//			System.out.println("- - - - - - - - - - - - - - - - -");
-//		}
-//		System.out.println();
-//	}
+	private void gibAus() {
+		System.out.println(" - - - - - - - - - - - - - - - - -");
+		String linie;
+		for (int y=7; y>=0; y--) {
+			linie = "| ";
+			for (int x=0; x<8; x++) {
+				String symbol = "";
+				switch (spielbrett[x][y]) {
+					case -1 : symbol = " "; break;
+					case 0 : symbol = " "; break;
+					case 1 : symbol = "X"; break;
+					case 2 : symbol = "O"; break;
+					case 3 : symbol = "T"; break;
+					case 4 : symbol = "D"; break;
+				}
+					
+				linie += symbol + " | ";
+			}
+			System.out.println(linie);
+			System.out.println("- - - - - - - - - - - - - - - - -");
+		}
+		System.out.println();
+	}
 	
 	
 	/**
