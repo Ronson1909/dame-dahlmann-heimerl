@@ -179,21 +179,28 @@ public class DameComponent extends javax.swing.JList {
 
 					//*****************************************
 
-					//hier muss noch das flag rein bzgl. vorherigem Sprung (siehe unten)
-					if (sb.zugIstGueltig(z, true, true, istDame)) {
-						//jetzt ist es ein Zug und kein Sprung, oder?
+					if (sb.zugIstGueltig(z, true, false, istDame)) {
+						//jetzt ist es definitiv ein Sprung mit dem eigenen Stein
+						//(und sicher kein Zug)
+						//es wird auch nicht geprüft, ob weitere Sprünge möglich sind
+
+						// --->
+						//Zug temporär committen und zwischenspeichern in einer
+						//Zugfolge (fürs endgültige committen bei Doppelklick)
 						
-						//Zug gleich ganz committen
-					}
-					else if (sb.zugIstGueltig(z, false, true, istDame)) {
-						//jetzt ist es ein Sprung und kein Zug, oder?
-						
-						//Zug temporär committen
 						//flag setzen, dass es einen Sprung gab
 						
 					}
+
+					//hier muss noch das flag rein bzgl. vorherigem Sprung (siehe oben)
+					//nicht dass gesprungen wurde und jetzt auf einmal noch gezogen wird
+					else if (sb.zugIstGueltig(z, true, false, istDame)) {
+						//jetzt ist es ein Zug (weil Sprünge oben schon dran waren)
+						
+						//Zug gleich ganz committen
+					}
 					else {
-						System.out.println("Zug ist ungültig")
+						System.out.println("Zug ist ungültig");
 					}
 					
 					//*****************************************
