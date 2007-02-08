@@ -27,6 +27,14 @@ public class Zug {
     private int startY;
     private int endeX;
     private int endeY;
+    
+    //Notwendig, um Züge rückgängig zu machen, da
+    //bei Damen nicht eindeutig ist, ob es ein langer
+    //Zug war oder ein Sprung.
+    //Zwar würde ein boolean-Feld reichen, ich denke,
+    //so ist man flexibler.
+    private int uebersprungenerSteinX = -1;
+    private int uebersprungenerSteinY = -1;
 
     public int gibStartX() {
         return startX;
@@ -58,6 +66,22 @@ public class Zug {
 
     public void setzeEndeY(int wert) {
         endeY=wert;
+    }
+
+    public int gibUebersprungenerSteinX() {
+        return uebersprungenerSteinX;
+    }
+
+    public void setzeUebersprungenerSteinX(int wert) {
+    	uebersprungenerSteinX=wert;
+    }
+
+    public int gibUebersprungenerSteinY() {
+        return uebersprungenerSteinY;
+    }
+
+    public void setzeUebersprungenerSteinY(int wert) {
+    	uebersprungenerSteinY=wert;
     }
 
     public Zug gibUmgekehrtenZug() {
