@@ -342,7 +342,7 @@ public class Spielbrett implements Cloneable {
 	/**
 	 * Prüft ob der Zug gültig ist.
 	 */
-	private boolean zugIstGueltig(Zug z, boolean ersterZug, boolean letzterZug, boolean zugMitDame) {
+	public boolean zugIstGueltig(Zug z, boolean ersterZug, boolean letzterZug, boolean zugMitDame) {
 		boolean zugFolge = !(ersterZug && letzterZug); //Wenn zugleich erster und letzter Zug, dann keine Zugfolge
 		int x1 = z.gibStartX();
 		int y1 = z.gibStartY();
