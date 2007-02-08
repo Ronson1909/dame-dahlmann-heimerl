@@ -39,6 +39,7 @@ public class DameComponent extends javax.swing.JList {
 	}
 
 	private final float SteinPercentage = 75;
+	private final int ZweiterKreisOffsetPercentage = 10;
 	private final int leftBorder = 0; 
 	private final int rightBorder = 0; 
 	private final int topBorder = 0; 
@@ -78,7 +79,11 @@ public class DameComponent extends javax.swing.JList {
 		}
 		
 		if (clickedCoord.x!=-1 && clickedCoord.y!=-1) {
-			zeichneFigur(g, sb.gibFeld(clickedCoord.x,7-clickedCoord.y), mouseCoord.x, mouseCoord.y, java.awt.Color.white, java.awt.Color.gray);
+			final int ZweiterKreisOffset = (int)(Feldbreite * ZweiterKreisOffsetPercentage / 100);
+
+			int paintX = (int) (mouseCoord.x-Feldbreite*SteinPercentage/200+ZweiterKreisOffset);
+			int paintY = (int) (mouseCoord.y-Feldbreite*SteinPercentage/200+ZweiterKreisOffset);
+			zeichneFigur(g, sb.gibFeld(clickedCoord.x,7-clickedCoord.y), paintX, paintY, java.awt.Color.white, java.awt.Color.gray);
 		}
 		
 	
@@ -104,7 +109,7 @@ public class DameComponent extends javax.swing.JList {
 
 	private void zeichneFigur(Graphics g, int figur, int kreisX, int kreisY, java.awt.Color foreground, java.awt.Color background) {
 		final int Feldbreite = getFeldbreite(); 
-		final int ZweiterKreisOffset = (int)(0.1 * Feldbreite);
+		final int ZweiterKreisOffset = (int)(Feldbreite * ZweiterKreisOffsetPercentage / 100);
 		final int kreisD=(int)(Feldbreite * SteinPercentage / 100);
 
 		switch (figur) {
