@@ -48,9 +48,9 @@ public class Spielbrett implements Cloneable {
 		eigeneDame = SCHWARZ_D;
 		gegnerStein = WEISS;
 		gegnerDame = WEISS_D;
-		gibAus();
-		System.out.println("Sprung ist möglich ? " + sprungIstMoeglich());
-		System.out.println(zugIstGueltig(new Zug(1,5,0,4)));
+		//gibAus();
+		//System.out.println("Sprung ist möglich ? " + sprungIstMoeglich());
+		//System.out.println(zugIstGueltig(new Zug(1,5,0,4)));
 	}
 	
 	/**
