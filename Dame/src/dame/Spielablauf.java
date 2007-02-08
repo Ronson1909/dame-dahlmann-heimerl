@@ -19,13 +19,13 @@ public class Spielablauf {
     private Spielbrett sb;
     private ArrayList<ArrayList<Zug>> bisherigeZuege = new ArrayList<ArrayList<Zug>>();
 
+	/*
 	public static void main(String[] args) {
 		DameFenster df = new DameFenster();
 		df.setSize(200, 100);
 		df.setVisible(true);
 		return;
 
-		/*
     	Spielablauf sa = new Spielablauf();
     	ArrayList<Zug> za = new ArrayList<Zug>();
     	za.add(new Zug(0,0,1,1));
@@ -38,8 +38,8 @@ public class Spielablauf {
     	
     	sa.bisherigeZuege.add(za2);
     	sa.gibAus();
-    	*/
     }
+   	*/
     
 	public Spielablauf() {
     	//Die KI's laden.
@@ -54,28 +54,94 @@ public class Spielablauf {
      */
     public void zuruecksetzen() {
         sb=new Spielbrett();
+        aktuelleFarbe = 1;
     }
+
+    /**
+     * Gibt das Spielbrett zurück.
+     * @return Das aktuelle Spielbrett.
+     */
+    public Spielbrett getSpielbrett() {
+    	return sb;
+    }
+
+    /**
+     * Gibt das aktuelle, interne Spielbrett zurück, das immer wieder gedreht wird.
+     * @return Das aktuelle Spielbrett.
+     */
+    public Spielbrett getSpielbrettInt() {
+    	return sb;
+    }
+
+    private int aktuelleFarbe = 1;
 
    /**
     * Startet ein Spiel.
     *
     */
     public void starten() {
-        int aktuelleFarbe = 1;
+        while (kis[aktuelleFarbe] != null) {
+           	if (aktuelleFarbe == 1) {
+           		sb.schwarzAmZug();
+           	}
+           	else {
+           		sb.weissAmZug();
+           	}
+           	
+           	Spielbrett tmpSB = sb.clone();
+           	ArrayList<Zug> zugfolge = kis[aktuelleFarbe].gibNaechstenZug(tmpSB, aktuelleFarbe+1);
+           	macheZugInt(zugfolge);
+        };
+    }
 
-        do {
-        	Spielbrett tmpSB = sb.clone();
-        	ArrayList<Zug> zuege = kis[aktuelleFarbe].gibNaechstenZug(tmpSB, aktuelleFarbe+1);
-            //sb.macheZug(zuege);
-            bisherigeZuege.add(zuege);
-            
+    /**
+     * Macht die Zugfolge ohne danach die KI (wenn überhaupt nötig) zu starten.
+     * Archiviert die Zugfolge außerdem zum Rückgängigmachen. 
+     * @param z Die durchzuführende Zugfolge.
+     */
+	private void macheZugInt(ArrayList<Zug> z) {
+		try {
+			if (z.size()>=1) {
+				sb.macheZug(z.get(0));
+			}
+			else {
+				sb.macheZug(z);
+			}
+
+			bisherigeZuege.add(z);
+
             if (aktuelleFarbe==1)
                 aktuelleFarbe=0;
             else
                 aktuelleFarbe=1;
-        } while (true);
-    }
-    
+
+           	if (aktuelleFarbe == 1) {
+           		sb.schwarzAmZug();
+           	}
+           	else {
+           		sb.weissAmZug();
+           	}
+		}
+		catch (Exception ex) {
+			System.out.println("Konnte Zug im Spielablauf nicht ausführen: " + ex.toString());
+		}
+	}
+
+	/**
+	 * Macht die Zugfolge und startet danach die KI (wenn nötig).
+     * Archiviert die Zugfolge außerdem zum Rückgängigmachen.
+	 * @param z Die durchzuführende Zugfolge.
+	 */
+    public void macheZug(ArrayList<Zug> z) {
+    	macheZugInt(z);
+
+		if (kis[aktuelleFarbe] != null) {
+        	Spielbrett tmpSB = sb.clone();
+        	ArrayList<Zug> zugfolge = kis[aktuelleFarbe].gibNaechstenZug(tmpSB, aktuelleFarbe+1);
+           	macheZug(zugfolge);
+		}
+	}
+
     public void gibAus() {
         int aktuelleFarbe = 1;
         
