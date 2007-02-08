@@ -107,6 +107,15 @@ public class DameComponent extends javax.swing.JList {
 		}
 	}
 
+	/**
+	 * Zeichnet
+	 * @param g Das Graphikobjekt.
+	 * @param figur Der Stein (also normal oder Dame und welche Farbe).
+	 * @param kreisX Die X-Koordinate des Zentrums des Kreises der Bodenfläche.
+	 * @param kreisY Die Y-Koordinate des Zentrums des Kreises der Bodenfläche.
+	 * @param foreground Vordergrundfarbe für Rand.
+	 * @param background Hintergrundfarbe für Füllung.
+	 */
 	private void zeichneFigur(Graphics g, int figur, int kreisX, int kreisY, java.awt.Color foreground, java.awt.Color background) {
 		final int Feldbreite = getFeldbreite(); 
 		final int ZweiterKreisOffset = (int)(Feldbreite * ZweiterKreisOffsetPercentage / 100);
@@ -164,8 +173,33 @@ public class DameComponent extends javax.swing.JList {
 				//MouseUp
 				if (clickedCoord.x != -1 && clickedCoord.y != -1) {
 					java.awt.Point dest = convertControlCoordsToFieldCoords(e.getX(), e.getY());
+
+					Zug z = new Zug(clickedCoord.x, 7-clickedCoord.y, dest.x, 7-dest.y);
+					boolean istDame = sb.gibFeld(clickedCoord.x, 7-clickedCoord.y) == Spielbrett.SCHWARZ_D || sb.gibFeld(clickedCoord.x, 7-clickedCoord.y) == Spielbrett.WEISS_D;
+
+					//*****************************************
+
+					//hier muss noch das flag rein bzgl. vorherigem Sprung (siehe unten)
+					if (sb.zugIstGueltig(z, true, true, istDame)) {
+						//jetzt ist es ein Zug und kein Sprung, oder?
+						
+						//Zug gleich ganz committen
+					}
+					else if (sb.zugIstGueltig(z, false, true, istDame)) {
+						//jetzt ist es ein Sprung und kein Zug, oder?
+						
+						//Zug temporär committen
+						//flag setzen, dass es einen Sprung gab
+						
+					}
+					else {
+						System.out.println("Zug ist ungültig")
+					}
+					
+					//*****************************************
+					
 					try {
-						sb.macheZug(new Zug(clickedCoord.x, 7-clickedCoord.y, dest.x, 7-dest.y));
+						sb.macheZug(z);
 					}
 					catch (Exception ex) {
 						System.out.println(ex.toString());
@@ -194,10 +228,21 @@ public class DameComponent extends javax.swing.JList {
 		super.processMouseMotionEvent(e);
 	}
 
+	/**
+	 * Berechnet die Seitenlänge eines Feldquadrats in Pixeln.
+	 * @return
+	 */
 	private int getFeldbreite() {
 		return Math.min(this.getHeight()-topBorder-bottomBorder, this.getWidth()-leftBorder-rightBorder) / 8;
 	}
 	
+	/**
+	 * Konvertiert Grafikkoordinaten in Spielbrettkoordinaten bzw. (-1,-1),
+	 * wenn es außerhalb ist.
+	 * @param xControl Die Grafik-X-Koordinate. 
+	 * @param yControl Die Grafik-X-Koordinate.
+	 * @return Die Spielbrettkoordinaten in einem java.awt.Point.
+	 */
 	private java.awt.Point convertControlCoordsToFieldCoords(int xControl, int yControl) {
 		java.awt.Point pnt = new java.awt.Point();
 		
