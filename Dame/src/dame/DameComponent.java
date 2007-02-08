@@ -194,7 +194,7 @@ public class DameComponent extends javax.swing.JList {
 
 					//hier muss noch das flag rein bzgl. vorherigem Sprung (siehe oben)
 					//nicht dass gesprungen wurde und jetzt auf einmal noch gezogen wird
-					else if (sb.zugIstGueltig(z, true, false, istDame)) {
+					else if (sb.zugIstGueltig(z, true, true, istDame)) {
 						//jetzt ist es ein Zug (weil Sprünge oben schon dran waren)
 						
 						//Zug gleich ganz committen
