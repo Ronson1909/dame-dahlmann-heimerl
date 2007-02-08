@@ -1,6 +1,8 @@
 package dame;
 
 import java.util.ArrayList;
+import java.io.*;
+import java.util.HashMap;
 
 public class Spielbrett implements Cloneable {
 	
@@ -48,9 +50,78 @@ public class Spielbrett implements Cloneable {
 		eigeneDame = SCHWARZ_D;
 		gegnerStein = WEISS;
 		gegnerDame = WEISS_D;
-		//gibAus();
-		//System.out.println("Sprung ist möglich ? " + sprungIstMoeglich());
-		//System.out.println(zugIstGueltig(new Zug(1,5,0,4)));
+		
+		
+		boolean konsolenspiel = true;
+		if (konsolenspiel) {
+			gibAus(true);
+			HashMap<String, Integer> zahlen = new HashMap<String, Integer>();
+			zahlen.put("A", 1); zahlen.put("B", 2); zahlen.put("C", 3); zahlen.put("D", 4);
+			zahlen.put("E", 5); zahlen.put("F", 6); zahlen.put("G", 7); zahlen.put("H", 8);
+			try {
+				BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+				String s;
+				String[] folge, koord;
+				int x1, y1, x2, y2;
+				while((s = in.readLine()) != null && !s.equals("exit")) {//&& s.length() != 0)
+					
+					folge = s.split(",");
+					if (folge.length == 1) {
+						koord = folge[0].split("-");
+						x1 = zahlen.get(String.valueOf(koord[0].charAt(0))) -1;
+						y1 = Integer.parseInt(String.valueOf(koord[0].charAt(1))) -1;
+						x2 = zahlen.get(String.valueOf(koord[1].charAt(0))) -1;
+						y2 = Integer.parseInt(String.valueOf(koord[1].charAt(1))) -1;
+						
+						System.out.println(x1 +" "+ y1 +" "+ x2 +" "+ y2);
+						if (!schwarzAmZug) { //Rücktransformation
+							x1 = 7-x1;
+							y1 = 7-y1;
+							x2 = 7-x2;
+							y2 = 7-y2;
+							System.out.println(x1 +" "+ y1 +" "+ x2 +" "+ y2);
+						}
+						
+						//System.out.println(x1 +" "+ y1 +" "+ x2 +" "+ y2);
+						Zug z = new Zug(x1, y1, x2, y2);
+						try {
+							macheZug(z);
+						} catch (IllegalArgumentException e) { System.out.println(e.getMessage()+"\n"); continue; }
+					}
+					else {	
+						ArrayList<Zug> z = new ArrayList<Zug>();
+						for (int i=0; i<folge.length; i++) {
+							koord = folge[i].split("-");
+							x1 = zahlen.get(String.valueOf(koord[0].charAt(0))) -1;
+							y1 = Integer.parseInt(String.valueOf(koord[0].charAt(1))) -1;
+							x2 = zahlen.get(String.valueOf(koord[1].charAt(0))) -1;
+							y2 = Integer.parseInt(String.valueOf(koord[1].charAt(1))) -1;
+							
+							System.out.println(x1 +" "+ y1 +" "+ x2 +" "+ y2);
+							if (!schwarzAmZug) { //Rücktransformation
+								x1 = 7-x1;
+								y1 = 7-y1;
+								x2 = 7-x2;
+								y2 = 7-y2;
+								System.out.println(x1 +" "+ y1 +" "+ x2 +" "+ y2);
+							}
+							
+							//System.out.println(x1 +" "+ y1 +" "+ x2 +" "+ y2);
+							z.add(new Zug(x1, y1, x2, y2));
+						}
+						try {
+							macheZug(z);
+						} catch (IllegalArgumentException e) { System.out.println(e.getMessage()+"\n"); continue; }
+					}
+					andererSpielerAmZug();
+					gibAus(true);
+				}
+			} catch (IOException e) {
+				// TODO Automatisch erstellter Catch-Block
+				e.printStackTrace();
+			}
+		}//end-if Konsolenspiel
+		
 	}
 	
 	/**
@@ -78,12 +149,22 @@ public class Spielbrett implements Cloneable {
 	}
 	
 	/**
+	 * Ändert die Ausrichtung des Brettes auf die Sichtweise des anderen Spielers
+	 */
+	public void andererSpielerAmZug() {
+		if (schwarzAmZug)
+			weissAmZug();
+		else
+			schwarzAmZug();
+	}
+	
+	/**
 	 * Ändert die Ausrichtung des Brettes auf die Sichtweise von Spieler Schwarz
 	 */
 	public void schwarzAmZug() {
 		if (!schwarzAmZug) {
 			int temp;
-			for (int y=0; y<3; y++) {
+			for (int y=0; y<=3; y++) {
 				for (int x=0; x<8; x++) {
 					temp = spielbrett[x][y];
 					spielbrett[x][y] = spielbrett[7-x][7-y];
@@ -104,7 +185,7 @@ public class Spielbrett implements Cloneable {
 	public void weissAmZug() {
 		if (schwarzAmZug) {
 			int temp;
-			for (int y=0; y<3; y++) {
+			for (int y=0; y<=3; y++) {
 				for (int x=0; x<8; x++) {
 					temp = spielbrett[x][y];
 					spielbrett[x][y] = spielbrett[7-x][7-y];
@@ -119,6 +200,27 @@ public class Spielbrett implements Cloneable {
 		}
 	}
 	
+	
+	/**
+	 * Prüft ob für den aktuellen Spieler, ausgehend von Feld x,y ein Sprung in Richtung der anderen Parameter möglich ist.
+	 */
+	private boolean pruefeSprung(int x, int y, int xRichtung, int yRichtung, boolean aufTempBrett) {
+		int xSollLeer = x+2*xRichtung;
+		int ySollLeer = y+2*yRichtung;
+		int xSollGegner = x+xRichtung;
+		int ySollGegner = y+yRichtung;
+		if (!aufTempBrett) //so wird es aus sprungIstMoeglich aufgerufen
+			return ( koordinatenGueltig(xSollLeer,ySollLeer) && 
+					spielbrett[xSollLeer][ySollLeer] == LEER && 
+					(spielbrett[xSollGegner][ySollGegner] == gegnerStein || 
+							spielbrett[xSollGegner][ySollGegner] == gegnerDame) );
+		else //so wird es aus weitererSprungIstMoeglich aufgerufen: Getestet wir auf dem TEMP_spielbrett
+			return ( koordinatenGueltig(xSollLeer,ySollLeer) && 
+					TEMP_spielbrett[xSollLeer][ySollLeer] == LEER && 
+					(TEMP_spielbrett[xSollGegner][ySollGegner] == gegnerStein || 
+							TEMP_spielbrett[xSollGegner][ySollGegner] == gegnerDame) );
+	}
+	
 	/**
 	 * Prüft ob für den aktuellen Spieler überhaupt ein Sprung möglich ist.
 	 */
@@ -130,18 +232,10 @@ public class Spielbrett implements Cloneable {
 				
 				//falls normeler Stein auf betrachtetem Feld
 				if (spielbrett[x][y] == eigenerStein) {
-					if ( koordinatenGueltig(x-2,y+2) && 
-							spielbrett[x-2][y+2] == LEER && 
-							(spielbrett[x-1][y+1] == gegnerStein || 
-									spielbrett[x-1][y+1] == gegnerDame) ) {
+					if (pruefeSprung(x, y, -1, +1, false))
 						return true;
-					}
-					if ( koordinatenGueltig(x+2,y+2) && 
-							spielbrett[x+2][y+2] == LEER && 
-							(spielbrett[x+1][y+1] == gegnerStein || 
-									spielbrett[x+1][y+1] == gegnerDame) ) {
+					if (pruefeSprung(x, y, +1, +1, false))
 						return true;
-					}
 				}
 				//falls Dame auf betrachtetem Feld
 				else if (spielbrett[x][y] == eigeneDame) {
@@ -154,12 +248,8 @@ public class Spielbrett implements Cloneable {
 						testX--;
 						testY--;
 					}
-					if ( koordinatenGueltig(testX-2,testY-2) && 
-							spielbrett[testX-2][testY-2] == LEER && 
-							(spielbrett[testX-1][testY-1] == gegnerStein || 
-									spielbrett[testX-1][testY-1] == gegnerDame) ) {
+					if (pruefeSprung(testX, testY, -1, -1, false))
 						return true;
-					}
 					
 					//Teste nach unten rechts
 					testX = x;
@@ -168,12 +258,8 @@ public class Spielbrett implements Cloneable {
 						testX++;
 						testY--;
 					}
-					if ( koordinatenGueltig(testX+2,testY-2) && 
-							spielbrett[testX+2][testY-2] == LEER && 
-							(spielbrett[testX+1][testY-1] == gegnerStein || 
-									spielbrett[testX+1][testY-1] == gegnerDame) ) {
+					if (pruefeSprung(testX, testY, +1, -1, false))
 						return true;
-					}
 					
 					//Teste nach oben rechts
 					testX = x;
@@ -182,26 +268,18 @@ public class Spielbrett implements Cloneable {
 						testX++;
 						testY++;
 					}
-					if ( koordinatenGueltig(testX+2,testY+2) && 
-							spielbrett[testX+2][testY+2] == LEER && 
-							(spielbrett[testX+1][testY+1] == gegnerStein || 
-									spielbrett[testX+1][testY+1] == gegnerDame) ) {
+					if (pruefeSprung(testX, testY, +1, +1, false))
 						return true;
-					}
 					
 					//Teste nach oben links
 					testX = x;
 					testY = y;
 					while (koordinatenGueltig(testX-1, testY+1) && spielbrett[testX-1][testY+1] == LEER) { //Zeiger auf letztes freies Feld in der Diagonalen vor nicht-leerem Feld bzw. Spielfeldrand
 						testX--;
-						testY--;
+						testY++;
 					}
-					if ( koordinatenGueltig(testX-2,testY+2) && 
-							spielbrett[testX-2][testY+2] == LEER && 
-							(spielbrett[testX-1][testY+1] == gegnerStein || 
-									spielbrett[testX-1][testY+1] == gegnerDame) ) {
+					if (pruefeSprung(testX, testY, -1, +1, false))
 						return true;
-					}
 				} //end-if Dame auf betrachtetem Feld
 			} //end-for x
 		} //end-for y
@@ -215,18 +293,10 @@ public class Spielbrett implements Cloneable {
 				
 		//falls mit normelem Stein gesprungen
 		if (!sprungMitDame) {
-			if ( koordinatenGueltig(x-2,y+2) && 
-					spielbrett[x-2][y+2] == LEER && 
-					(spielbrett[x-1][y+1] == gegnerStein || 
-							spielbrett[x-1][y+1] == gegnerDame) ) {
+			if (pruefeSprung(x, y, -1, +1, false))
 				return true;
-			}
-			if ( koordinatenGueltig(x+2,y+2) && 
-					spielbrett[x+2][y+2] == LEER && 
-					(spielbrett[x+1][y+1] == gegnerStein || 
-							spielbrett[x+1][y+1] == gegnerDame) ) {
+			if (pruefeSprung(x, y, +1, +1, false))
 				return true;
-			}
 		}
 		//falls mit Dame gesprungen //Ausschließen dass vorherige Sprünge der Zugfolge wieder als Möglichkeiten gefunden werden: Arbeiten auf TEMP_spielbrett
 		else {
@@ -239,12 +309,8 @@ public class Spielbrett implements Cloneable {
 				testX--;
 				testY--;
 			}
-			if ( koordinatenGueltig(testX-2,testY-2) && 
-					TEMP_spielbrett[testX-2][testY-2] == LEER && 
-					(TEMP_spielbrett[testX-1][testY-1] == gegnerStein || 
-							TEMP_spielbrett[testX-1][testY-1] == gegnerDame) ) {
+			if (pruefeSprung(testX, testY, -1, -1, true))
 				return true;
-			}
 			
 			//Teste nach unten rechts
 			testX = x;
@@ -253,12 +319,8 @@ public class Spielbrett implements Cloneable {
 				testX++;
 				testY--;
 			}
-			if ( koordinatenGueltig(testX+2,testY-2) && 
-					TEMP_spielbrett[testX+2][testY-2] == LEER && 
-					(TEMP_spielbrett[testX+1][testY-1] == gegnerStein || 
-							TEMP_spielbrett[testX+1][testY-1] == gegnerDame) ) {
+			if (pruefeSprung(testX, testY, +1, -1, true))
 				return true;
-			}
 			
 			//Teste nach oben rechts
 			testX = x;
@@ -267,26 +329,18 @@ public class Spielbrett implements Cloneable {
 				testX++;
 				testY++;
 			}
-			if ( koordinatenGueltig(testX+2,testY+2) && 
-					TEMP_spielbrett[testX+2][testY+2] == LEER && 
-					(TEMP_spielbrett[testX+1][testY+1] == gegnerStein || 
-							TEMP_spielbrett[testX+1][testY+1] == gegnerDame) ) {
+			if (pruefeSprung(testX, testY, +1, +1, true))
 				return true;
-			}
 			
 			//Teste nach oben links
 			testX = x;
 			testY = y;
 			while (koordinatenGueltig(testX-1, testY+1) && TEMP_spielbrett[testX-1][testY+1] == LEER) { //Zeiger auf letztes freies Feld in der Diagonalen vor nicht-leerem Feld bzw. Spielfeldrand
 				testX--;
-				testY--;
+				testY++;
 			}
-			if ( koordinatenGueltig(testX-2,testY+2) && 
-					TEMP_spielbrett[testX-2][testY+2] == LEER && 
-					(TEMP_spielbrett[testX-1][testY+1] == gegnerStein || 
-							TEMP_spielbrett[testX-1][testY+1] == gegnerDame) ) {
+			if (pruefeSprung(testX, testY, -1, +1, true))
 				return true;
-			}
 		} //end-if Dame auf betrachtetem Feld
 		return false;
 	}
@@ -302,7 +356,9 @@ public class Spielbrett implements Cloneable {
 	 * Prüft ob eine Zugfolge gültig ist.
 	 */
 	private boolean zugIstGueltig(ArrayList<Zug> z) {
-		if (z.size() <= 1) return false;
+		if (z.size() == 0) return false;
+		if (z.size() == 1)
+			return zugIstGueltig(z.get(0));
 		
 		//Pruefe ob Zusammenhaengend
 		Zug temp = z.get(0);
@@ -555,28 +611,44 @@ public class Spielbrett implements Cloneable {
 	/**
 	 * Konsolenausgabe des aktuellen Spielbretts
 	 */
-	private void gibAus() {
-		System.out.println(" - - - - - - - - - - - - - - - - -");
-		String linie;
-		for (int y=7; y>=0; y--) {
-			linie = "| ";
-			for (int x=0; x<8; x++) {
-				String symbol = "";
-				switch (spielbrett[x][y]) {
-					case -1 : symbol = " "; break;
-					case 0 : symbol = " "; break;
-					case 1 : symbol = "X"; break;
-					case 2 : symbol = "O"; break;
-					case 3 : symbol = "T"; break;
-					case 4 : symbol = "D"; break;
+	private void gibAus(boolean zurueckgedreht) {
+		int[][] tempsb = spielbrett.clone();
+		if (zurueckgedreht) {
+			if (!schwarzAmZug) {
+				int temp;
+				for (int y=0; y<=3; y++) {
+					for (int x=0; x<8; x++) {
+						temp = tempsb[x][y];
+						tempsb[x][y] = tempsb[7-x][7-y];
+						tempsb[7-x][7-y] = temp;
+					}
 				}
-					
-				linie += symbol + " | ";
 			}
-			System.out.println(linie);
-			System.out.println("- - - - - - - - - - - - - - - - -");
+			System.out.println("     A   B   C   D   E   F   G   H  ");
+			System.out.println("   - - - - - - - - - - - - - - - - -");
+			String linie;
+			for (int y=8; y>=1; y--) {
+				linie = y + "  | ";
+				for (int x=1; x<=8; x++) {
+					String symbol = "";
+					switch (tempsb[x-1][y-1]) {
+						case -1 : symbol = " "; break;
+						case 0 : symbol = " "; break;
+						case 1 : symbol = "X"; break;
+						case 2 : symbol = "O"; break;
+						case 3 : symbol = "T"; break;
+						case 4 : symbol = "D"; break;
+					}
+						
+					linie += symbol + " | ";
+				}
+				linie += " " + y;
+				System.out.println(linie);
+				System.out.println("   - - - - - - - - - - - - - - - - -");
+			}
+			System.out.println("     A   B   C   D   E   F   G   H  ");
+			System.out.println();
 		}
-		System.out.println();
 	}
 	
 	
