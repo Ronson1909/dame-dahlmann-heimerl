@@ -160,7 +160,7 @@ public class DameComponent extends javax.swing.JList {
 				if (clickedCoord.x != -1 && clickedCoord.y != -1) {
 					java.awt.Point dest = convertControlCoordsToFieldCoords(e.getX(), e.getY());
 					try {
-						sb.macheZug(new Zug(clickedCoord.x, clickedCoord.y, dest.x, dest.y));
+						sb.macheZug(new Zug(clickedCoord.x, 7-clickedCoord.y, dest.x, 7-dest.y));
 					}
 					catch (Exception ex) {
 						System.out.println(ex.toString());
