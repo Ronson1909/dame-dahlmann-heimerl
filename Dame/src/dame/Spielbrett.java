@@ -511,7 +511,26 @@ public class Spielbrett implements Cloneable {
 		if (!zugIstGueltig(z)) {
 			throw new IllegalArgumentException("Dieser Zug ist nicht gültig!");
 		}
-		
+		int x1, y1, x2, y2, startStein = 0;
+		for (int i=0; i<z.size(); i++) {
+			x1 = z.get(i).gibStartX();
+			y1 = z.get(i).gibStartY();
+			x2 = z.get(i).gibEndeX();
+			y2 = z.get(i).gibEndeY();
+			if (i==0) //Nur im ersten Durchlauf wird festgehalten, mit welchem Stein gesprungen wird.
+				startStein = spielbrett[x1][y1];
+			
+			if (y2 == 7) //Oberste Zeile -> Umwandelung zur Dame
+				spielbrett[x2][y2] = eigeneDame;
+			else
+				spielbrett[x2][y2] = startStein;
+			
+			spielbrett[x1][y1] = LEER;
+			//x- und yKorrektur vom Zielfeld aus gesehen um übersprungen Stein zu erreichen
+			int xKorrektur = (int) Math.signum(x1-x2); //(x2 > x1) ? -1 : +1;
+			int yKorrektur = (int) Math.signum(y1-y2); //(y2 > y1) ? -1 : +1;
+			spielbrett[x2+xKorrektur][y2+yKorrektur] = LEER;	
+		}
 	}
 	
 	/**
