@@ -122,7 +122,7 @@ public class Spielbrett implements Cloneable {
 	/**
 	 * Prüft ob für den aktuellen Spieler überhaupt ein Sprung möglich ist.
 	 */
-	private boolean sprungIstMoeglich() {
+	public boolean sprungIstMoeglich() {
 
 		for (int y=0; y<8; y++) {
 			for (int x=0; x<8; x++) {
