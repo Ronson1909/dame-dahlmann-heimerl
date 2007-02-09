@@ -52,7 +52,7 @@ public class Spielbrett implements Cloneable {
 		gegnerDame = WEISS_D;
 		
 		
-		boolean konsolenspiel = true;
+		boolean konsolenspiel = false;
 		if (konsolenspiel) {
 			gibAus(true);
 			HashMap<String, Integer> zahlen = new HashMap<String, Integer>();

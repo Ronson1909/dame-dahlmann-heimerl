@@ -101,12 +101,7 @@ public class Spielablauf {
      */
 	private void macheZugInt(ArrayList<Zug> z) {
 		try {
-			if (z.size()>=1) {
-				sb.macheZug(z.get(0));
-			}
-			else {
-				sb.macheZug(z);
-			}
+			sb.macheZug(z);
 
 			bisherigeZuege.add(z);
 

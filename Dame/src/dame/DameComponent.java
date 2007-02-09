@@ -32,14 +32,14 @@ public class DameComponent extends javax.swing.JList {
 	private Spielbrett sb;// = new Spielbrett();
 
 	//Das Spielbrett das verwaltet wird.
-	private Spielbrett sbmain;
+	//private Spielbrett sbmain;
 	
 	/**
 	 * Gibt das angezeigte Spielbrett zurück.
 	 * @return Das angezeigte Spielbrett.
 	 */
 	public Spielbrett getSpielbrett() {
-		return sbmain;
+		return sb;
 	}
 
 	/**
@@ -47,8 +47,8 @@ public class DameComponent extends javax.swing.JList {
 	 * @param wert Das neue Spielbrett.
 	 */
 	public void setSpielbrett(Spielbrett wert) {
-		sbmain=wert;
-		sb=sbmain.clone();
+		//sbmain=wert;
+		sb=wert;//sbmain.clone();
 		this.repaint();
 	}
 
@@ -183,7 +183,7 @@ public class DameComponent extends javax.swing.JList {
 	private java.awt.Point clickedCoord=new java.awt.Point(-1,-1);
 	private java.awt.Point mouseCoord=new java.awt.Point();
 	
-	private ArrayList<Zug> z = new ArrayList<Zug>();
+	private ArrayList<Zug> tempZugfolge = new ArrayList<Zug>();
 	
 	protected void processMouseEvent(MouseEvent e) {
 		if (e.getID()==MouseEvent.MOUSE_PRESSED) {
@@ -225,20 +225,32 @@ public class DameComponent extends javax.swing.JList {
 						//(und sicher kein Zug)
 						//es wird auch nicht geprüft, ob weitere Sprünge möglich sind
 
-						// --->
-						//Zug temporär committen und zwischenspeichern in einer
-						//Zugfolge (fürs endgültige committen bei Doppelklick)
-						
-						//flag setzen, dass es einen Sprung gab
-						
+						//Folgendes ist nur wahr, wenn kein weiterer Sprung möglich ist.
+						if (sb.zugIstGueltig(z, true, true, istDame)) {
+							// --> Zug gleich ganz committen
+							ArrayList<Zug> zugfolge = new ArrayList<Zug>();
+							zugfolge.add(z);
+							tempZugfolge.clear();
+							
+							beendeZug(zugfolge);
+						}
+						else {
+							// --->
+							//Zug temporär committen und zwischenspeichern in einer
+							//Zugfolge (fürs endgültige committen bei Doppelklick)
+							tempZugfolge.add(z);
+
+							//flag setzen, dass es einen Sprung gab
+							//(das flag ist die size von tempZugfolge)
+						}
 					}
 
-					//hier muss noch das flag rein bzgl. vorherigem Sprung (siehe oben)
+					//prüfe die size von tempZugfolge
 					//nicht dass gesprungen wurde und jetzt auf einmal noch gezogen wird
-					else if (sb.zugIstGueltig(z, true, true, istDame)) {
+					else if (tempZugfolge.size()==0 && sb.zugIstGueltig(z, true, true, istDame)) {
 						//jetzt ist es ein Zug (weil Sprünge oben schon dran waren)
 						
-						//Zug gleich ganz committen
+						// --> Zug gleich ganz committen
 						ArrayList<Zug> zugfolge = new ArrayList<Zug>();
 						zugfolge.add(z);
 						
