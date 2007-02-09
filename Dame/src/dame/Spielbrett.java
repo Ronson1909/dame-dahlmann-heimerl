@@ -138,7 +138,14 @@ public class Spielbrett implements Cloneable {
 	}
 	
 	public Spielbrett clone() {
-		return new Spielbrett(spielbrett.clone(), schwarzAmZug);
+		return new Spielbrett(spielbrettKopie(), schwarzAmZug);
+	}
+	
+	private int[][] spielbrettKopie() {
+		int[][] temp = new int[8][8];
+		for (int i=0; i<8; i++)
+			temp[i] = spielbrett[i].clone();
+		return temp;
 	}
 	
 	/**
@@ -365,7 +372,7 @@ public class Spielbrett implements Cloneable {
 		boolean zugMitDame = (spielbrett[temp.gibStartX()][temp.gibStartY()] == eigeneDame);
 		
 		if (zugMitDame)
-			TEMP_spielbrett = spielbrett.clone(); //Um die übersprungenen Steine für die Tests entfernen zu können
+			TEMP_spielbrett = spielbrettKopie(); //Um die übersprungenen Steine für die Tests entfernen zu können
 		
 		int ende_x1 = temp.gibEndeX();
 		int ende_y1 = temp.gibEndeY();
@@ -612,7 +619,11 @@ public class Spielbrett implements Cloneable {
 	 * Konsolenausgabe des aktuellen Spielbretts
 	 */
 	private void gibAus(boolean zurueckgedreht) {
-		int[][] tempsb = spielbrett.clone();
+		//ACHTUNG: spielbrett.clone() funktioniert NICHT, 
+		//da nur Referenzen zu den Arrays in der zweiten Dimension kopiert werden. 
+		//clone funktioniert nur bei eindimensionalen Arrays mit Standard-Datentypen.
+		int[][] tempsb = spielbrettKopie();
+		
 		if (zurueckgedreht) {
 			if (!schwarzAmZug) {
 				int temp;
