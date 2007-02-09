@@ -12,7 +12,7 @@ package dame;
  * @author unbekannt
  * @version 1.0
  */
-public class Zug {
+public class Zug implements java.io.Serializable {
     public Zug() {
     }
 
