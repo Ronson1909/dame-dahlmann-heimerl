@@ -99,7 +99,10 @@ public class DameComponent extends javax.swing.JList {
 		//Wenn das Stein gerade gezogen (Drag'n'Drop)
 		//wird, dann diesen Stein grau zeichnen.
 		if (clickedCoord.x!=-1 && clickedCoord.y!=-1) {
-			final int ZweiterKreisOffset = (int)(Feldbreite * ZweiterKreisOffsetPercentage / 100);
+			int ZweiterKreisOffset = (int)(Feldbreite * ZweiterKreisOffsetPercentage / 100);
+			if (sb.gibFeld(clickedCoord.x,7-clickedCoord.y)==Spielbrett.SCHWARZ_D || sb.gibFeld(clickedCoord.x,7-clickedCoord.y)==Spielbrett.WEISS_D) {
+				ZweiterKreisOffset*=2;
+			}
 
 			int paintX = (int) (mouseCoord.x-Feldbreite*SteinPercentage/200+ZweiterKreisOffset);
 			int paintY = (int) (mouseCoord.y-Feldbreite*SteinPercentage/200+ZweiterKreisOffset);

@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * @author unbekannt
  * @version 1.0
  */
-public class Spielablauf {
+public class Spielablauf implements java.io.Serializable {
     private IKI kis[] = new IKI[2];
     private Spielbrett sb;
     private ArrayList<ArrayList<Zug>> bisherigeZuege = new ArrayList<ArrayList<Zug>>();
@@ -69,9 +69,9 @@ public class Spielablauf {
      * Gibt das aktuelle, interne Spielbrett zurück, das immer wieder gedreht wird.
      * @return Das aktuelle Spielbrett.
      */
-    public Spielbrett getSpielbrettInt() {
-    	return sb;
-    }
+    //public Spielbrett getSpielbrettInt() {
+    //	return sb;
+    //}
 
     private int aktuelleFarbe = 1;
 

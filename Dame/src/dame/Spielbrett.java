@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.io.*;
 import java.util.HashMap;
 
-public class Spielbrett implements Cloneable {
+public class Spielbrett implements Cloneable, Serializable {
 	
 	public static final int LEER = 0;
 	public static final int SCHWARZ = 1;
