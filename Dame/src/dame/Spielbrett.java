@@ -616,6 +616,34 @@ public class Spielbrett implements Cloneable, Serializable {
     }
 	
 	/**
+	 * Gibt id der Steine des aktuellen Spielers zurück.
+	 */
+	public int eigenerStein() {
+		return eigenerStein;
+	}
+	
+	/**
+	 * Gibt id der Damen des aktuellen Spielers zurück.
+	 */
+	public int eigeneDame() {
+		return eigeneDame;
+	}
+	
+	/**
+	 * Gibt id der Steine des aktuellen Gegenspielers zurück.
+	 */
+	public int gegnerStein() {
+		return gegnerStein;
+	}
+	
+	/**
+	 * Gibt id der Damen des aktuellen Gegenspielers zurück.
+	 */
+	public int gegnerDame() {
+		return gegnerDame();
+	}
+	
+	/**
 	 * Konsolenausgabe des aktuellen Spielbretts
 	 */
 	private void gibAus(boolean zurueckgedreht) {
