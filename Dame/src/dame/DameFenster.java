@@ -24,7 +24,6 @@ public class DameFenster extends JFrame {
 		
 		DameFenster main = new DameFenster();
 		main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
 		main.setVisible(true);
     }
 
@@ -54,6 +53,7 @@ public class DameFenster extends JFrame {
 		mnFile.setText("Datei");
 		mnFile.add(foa);
 		mnFile.add(fsa);
+		mnFile.add(network_a);
 		mnFile.add(new JSeparator());
 		mnFile.add(cla);
 		mnMain.add(mnFile);
@@ -165,6 +165,20 @@ public class DameFenster extends JFrame {
 					JOptionPane.showMessageDialog(DameFenster.this, "Schreibfehler: " + ioe.toString(), "Fehler", JOptionPane.ERROR_MESSAGE);
 				}
 		    }
+		}
+	}
+
+	NetworkAction network_a = new NetworkAction();
+	private class NetworkAction extends AbstractAction {
+		private NetworkAction() {
+			super.putValue(NAME, "Netzwerk...");			
+			super.putValue(SHORT_DESCRIPTION, "Startet ein Netzwerkspiel");			
+			//super.putValue(SMALL_ICON, new ImageIcon(ClassLoader.getSystemResource("dame/images/save.gif")));
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			NetzwerkDialog frm = new NetzwerkDialog(DameFenster.this);
+			frm.setVisible(true);
 		}
 	}
 
