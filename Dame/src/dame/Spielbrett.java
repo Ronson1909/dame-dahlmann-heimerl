@@ -148,6 +148,8 @@ public class Spielbrett implements Cloneable, Serializable {
 		return temp;
 	}
 	
+	//############################################################
+	
 	/**
 	 * Gibt die aktuelle Belegung des gewünschten Feldes zurück.
 	 */
@@ -207,6 +209,7 @@ public class Spielbrett implements Cloneable, Serializable {
 		}
 	}
 	
+	//############################################################
 	
 	/**
 	 * Prüft ob für den aktuellen Spieler, ausgehend von Feld x,y ein Sprung in Richtung der anderen Parameter möglich ist.
@@ -352,6 +355,89 @@ public class Spielbrett implements Cloneable, Serializable {
 		return false;
 	}
 	
+	//############################################################
+	
+	/**
+	 * Prüft ob der Zug z ein korrekter (erster) Zug und kein Sprung ist.
+	 */
+	public boolean istZug(Zug z) {
+		int x1 = z.gibStartX();
+		int y1 = z.gibStartY();
+		int x2 = z.gibEndeX();
+		int y2 = z.gibEndeY();
+		boolean zugMitDame = (spielbrett[x1][y1] == eigeneDame);
+
+		//Teste alles mögliche
+		if (!kgV_checkObZugOderSprung(z, x1, y1, x2, y2, zugMitDame))
+			return false;
+		
+        //wenn keine Dame
+		if (!zugMitDame) {
+	        //prüfe: Felder liegen nebeneinander
+			if (!zugVonStein(x1, y1, x2, y2))
+				return false;
+			
+			if (sprungIstMoeglich())
+				return false;
+		} //end-if keine Dame
+		
+		else { //wenn Dame
+			//x- und ySchritt von Ursprungsposition aus gesehen!
+			int xSchritt = (int) Math.signum(x2-x1); //(x2 > x1) ? +1 : -1;
+			int ySchritt = (int) Math.signum(y2-y1); //(y2 > y1) ? +1 : -1;
+			int testX = x2-xSchritt;
+			int testY = y2-ySchritt;
+			
+			//prüfe: Feld vor Zielfeld muss Frei sein, da kein Sprung
+			if (!istLeer(testX, testY))
+				return false;
+				
+			if (sprungIstMoeglich())
+				return false;
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Prüft ob Zug z ein korrekter (erster) Sprung ist.
+	 */
+	public boolean istSprung(Zug z) {
+		//return zugIstGueltig(z, true, false, false);
+		int x1 = z.gibStartX();
+		int y1 = z.gibStartY();
+		int x2 = z.gibEndeX();
+		int y2 = z.gibEndeY();
+		boolean zugMitDame = (spielbrett[x1][y1] == eigeneDame);
+		
+		//Teste alles mögliche
+		if (!kgV_checkObZugOderSprung(z, x1, y1, x2, y2, zugMitDame))
+			return false;
+		
+        //wenn keine Dame
+		if (!zugMitDame) {			
+	        //prüfe: erlaubter Sprung über Gegner
+			if (!sprungVonStein(x1, y1, x2, y2))
+				return false;
+		} //end-if keine Dame
+		
+		else { //wenn Dame
+			//x- und ySchritt von Ursprungsposition aus gesehen!
+			int xSchritt = (int) Math.signum(x2-x1); //(x2 > x1) ? +1 : -1;
+			int ySchritt = (int) Math.signum(y2-y1); //(y2 > y1) ? +1 : -1;
+			int testX = x2-xSchritt;
+			int testY = y2-ySchritt;
+							
+			//prüfe: Ein Feld vor Zielfeld mit gegnerischem Stein belegt
+			if (!istGegner(testX, testY))
+				return false;
+		}
+		
+		return true;
+	}
+	
+	//############################################################
+	
 	/**
 	 * Prüft ob eine Zugfolge gültig ist, vorausgesetzt sie ist schon komplett.
 	 */
@@ -428,34 +514,26 @@ public class Spielbrett implements Cloneable, Serializable {
 			return false;
 		
         //prüfe: Ziel ist freies Feld
-		if (spielbrett[x2][y2] != LEER)
+		if (!istLeer(x2, y2))
 			return false;
 		
 		//prüfe: ist eigener Stein falls erster Zug
 		if (ersterZug) { //alt.: if(!zugFolge) {
 			zugMitDame = (spielbrett[x1][y1] == eigeneDame); //Beim ersten Zug wird bei einem einzelnen Zug nicht übergeben, ob mit einer Dame gezogen wurde.
-			if (spielbrett[x1][y1] != eigenerStein && spielbrett[x1][y1] != eigeneDame)
+			if (!istEigener(x1, y1))
 				return false;
 		}
-		//
-        //wenn keine Dame
-		if (!zugMitDame) {
+		
+		if (!zugMitDame) { //wenn keine Dame
 			//prüfe: richtige Richtung (nach oben)
 			if (y2 <= y1)
 				return false;
 
 	        //prüfe: Felder liegen nebeneinander
-			boolean angrenzendeFelder = false;
-			if ((y2 == y1+1) && (x2 == x1+1 || x2 == x1-1))
-				angrenzendeFelder = true;
+			boolean angrenzendeFelder = zugVonStein(x1, y1, x2, y2);
 			
 	        //prüfe: oder erlaubter Sprung über Gegner
-			boolean erlaubterSprung = false;
-			if ((y2 == y1+2) && (x2 == x1+2 || x2 == x1-2)) {
-				int uebersprungen = spielbrett[(x1+x2)/2][y1+1];
-				if (uebersprungen == gegnerStein || uebersprungen == gegnerDame)
-					erlaubterSprung = true;
-			}
+			boolean erlaubterSprung = sprungVonStein(x1, y1, x2, y2);
 			
 			//prüfe: Felder liegen nicht nebeneinander und gesprungen wurde auch nicht
 			if (!angrenzendeFelder && !erlaubterSprung)
@@ -466,63 +544,46 @@ public class Spielbrett implements Cloneable, Serializable {
 				return false;
 			
 			//prüfe: Es wurde gesprungen, aber nicht alle möglichen Sprünge wurden ausgeführt.
-			if (letzterZug && erlaubterSprung) {
-				if (weitererSprungIstMoeglich(x2, y2, false))
-					return false;
-			}
+			if (letzterZug && erlaubterSprung && weitererSprungIstMoeglich(x2, y2, false))
+				return false;
 			
 			//prüfe: kein Sprung aber Sprung ist möglich (Zugfolge ist schon ausgeschlossen)
-			if (!erlaubterSprung) { //identisch mit if (angrenzendeFelder) {
-				if (sprungIstMoeglich())
-					return false;
-			}
+			if (angrenzendeFelder && sprungIstMoeglich())
+				return false;
 			
 			return true;
 		} //end-if keine Dame
 		
-		//wenn Dame
-		else if (zugMitDame) {
-			//prüfe: erlaubter Sprung über Gegner
-			//...
-			
+		else { //wenn Dame
 			//prüfe: Zielfeld auf einer der Diagonalen vom Startfeld aus
-			if (Math.abs(x2-x1) != Math.abs(y2-y1))
+			if (!vonDameAusfuehrbar(x1, y1, x2, y2))
 				return false;
 			
 			//prüfe: Alle Felder zwischen Startfeld und einem Feld vor Zielfeld leer
+			if (!zwischenraumFrei(x1, y1, x2, y2))
+				return false;
 			//x- und ySchritt von Ursprungsposition aus gesehen!
 			int xSchritt = (int) Math.signum(x2-x1); //(x2 > x1) ? +1 : -1;
 			int ySchritt = (int) Math.signum(y2-y1); //(y2 > y1) ? +1 : -1;
-			int testX=x1+xSchritt, testY=y1+ySchritt;
-			while (xSchritt*testX < x2-xSchritt && ySchritt*testY < y2-ySchritt) {
-				if (spielbrett[testX][testY] != LEER)
-					return false;
-				testX += xSchritt;
-				testY += ySchritt;
-			}
-			if (testX != x2-xSchritt || testY != y2-ySchritt)
-				System.out.println("ProgrammierFEHLER!!!");
+			int testX = x2-xSchritt;
+			int testY = y2-ySchritt;
 			
-			boolean sprung = (spielbrett[testX][testY] == LEER) ? false : true;
+			boolean normalerZug = istLeer(testX, testY);
 				
 			//prüfe: oder erlaubter Sprung über Gegner => Nur ein Feld vor Zielfeld mit gegnerischem Stein belegt, sonst alle leer
-			boolean erlaubterSprung = false;
-			if (spielbrett[testX][testY] == gegnerStein || spielbrett[testX][testY] == gegnerDame)
-				erlaubterSprung = true;
+			boolean erlaubterSprung = istGegner(testX, testY);
 
 			//prüfe: Sprung, aber inkorrekt
-			if (sprung && !erlaubterSprung)
+			if (!normalerZug && !erlaubterSprung)
 				return false;
 			
 			//prüfe: Zugfolge darf nur aus Sprüngen bestehen
-			if (zugFolge && !sprung)
+			if (zugFolge && !erlaubterSprung)
 				return false;
 			
 			//prüfe: kein Sprung aber Sprung ist möglich (Zugfolge ist schon ausgeschlossen)
-			if (!sprung) {
-				if (sprungIstMoeglich())
-					return false;
-			}
+			if (normalerZug && sprungIstMoeglich())
+				return false;
 			
 			 //auf dem temporären Brett den übersprungenen Stein entfernen
 			if (zugFolge) {
@@ -547,12 +608,10 @@ public class Spielbrett implements Cloneable, Serializable {
 			
 			return true;
 		}
-		
-		else { //Sollte nie erreicht werden!
-			System.out.println("Irgendwo in zugIstGueltig() muss ein FEHLER sein!");
-			return false;
-		}
 	}
+	
+	//############################################################
+	
 	
 	/**
 	 * Führt Zug aus.
@@ -607,6 +666,9 @@ public class Spielbrett implements Cloneable, Serializable {
 		}
 	}
 	
+	//############################################################
+	
+	
 	/**
 	 * Prüft ob die Koordinaten gültig sind
 	 */
@@ -626,12 +688,14 @@ public class Spielbrett implements Cloneable, Serializable {
         return true;
     }
 	
+	
 	/**
 	 * Gibt id der Steine des aktuellen Spielers zurück.
 	 */
 	public int eigenerStein() {
 		return eigenerStein;
 	}
+	
 	
 	/**
 	 * Gibt id der Damen des aktuellen Spielers zurück.
@@ -640,6 +704,7 @@ public class Spielbrett implements Cloneable, Serializable {
 		return eigeneDame;
 	}
 	
+	
 	/**
 	 * Gibt id der Steine des aktuellen Gegenspielers zurück.
 	 */
@@ -647,12 +712,113 @@ public class Spielbrett implements Cloneable, Serializable {
 		return gegnerStein;
 	}
 	
+	
 	/**
 	 * Gibt id der Damen des aktuellen Gegenspielers zurück.
 	 */
 	public int gegnerDame() {
 		return gegnerDame();
 	}
+	
+	/**
+	 * Prüft ob Feld leer ist
+	 */
+	public boolean istLeer(int x, int y) {
+		return (spielbrett[x][y] == LEER);
+	}
+	
+	/**
+	 * Prüft ob Feld mit Stein des aktuellen Spielers besetzt ist.
+	 */
+	public boolean istEigener(int x, int y) {
+		return (spielbrett[x][y] == eigenerStein || spielbrett[x][y] == eigeneDame);
+	}
+	
+	/**
+	 * Prüft ob Feld mit Stein des aktuellen Gegenspielers besetzt ist.
+	 */
+	public boolean istGegner(int x, int y) {
+		return (spielbrett[x][y] == gegnerStein || spielbrett[x][y] == gegnerDame);
+	}
+	
+	/**
+	 * Prüft ob der durch die Koordinaten angegebene Zug (kein Sprung!) durch nicht-Dame ausführbar ist.
+	 */
+	private boolean zugVonStein(int x1, int y1, int x2, int y2) {
+		return ((y2 == y1+1) && (x2 == x1+1 || x2 == x1-1)) ? true : false;
+	}
+	
+	/**
+	 * Prüft ob der durch die Koordinaten angegebene Sprung durch nicht-Dame korrekt ist.
+	 */
+	private boolean sprungVonStein(int x1, int y1, int x2, int y2) {
+		if ((y2 == y1+2) && (x2 == x1+2 || x2 == x1-2)) {
+			int uebersprungen = spielbrett[(x1+x2)/2][y1+1];
+			if (uebersprungen == gegnerStein || uebersprungen == gegnerDame)
+				return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Prüft ob der durch die Koordinaten angegebene Zug (auch Sprung) durch Dame ausführbar ist.
+	 */
+	private boolean vonDameAusfuehrbar(int x1, int y1, int x2, int y2) {
+		return (Math.abs(x2-x1) == Math.abs(y2-y1));
+	}
+	
+	/**
+	 * Prüft ob alle Felder zwischen Startfeld und einem Feld vor Zielfeld leer
+	 */
+	private boolean zwischenraumFrei(int x1, int y1, int x2, int y2) {
+		//x- und ySchritt von Ursprungsposition aus gesehen!
+		int xSchritt = (int) Math.signum(x2-x1); //(x2 > x1) ? +1 : -1;
+		int ySchritt = (int) Math.signum(y2-y1); //(y2 > y1) ? +1 : -1;
+		int testX=x1+xSchritt, testY=y1+ySchritt;
+		while (xSchritt*testX < x2-xSchritt && ySchritt*testY < y2-ySchritt) {
+			if (spielbrett[testX][testY] != LEER)
+				return false;
+			testX += xSchritt;
+			testY += ySchritt;
+		}
+		if (testX != x2-xSchritt || testY != y2-ySchritt)
+			System.out.println("ProgrammierFEHLER!!!");
+		return true;
+	}
+	
+	private boolean kgV_checkObZugOderSprung(Zug z, int x1, int y1, int x2, int y2, boolean zugMitDame) {
+		//prüfe: Hat Zug gültige Koordinaten?
+		if (!z.hatGueltigeKoordinaten())
+			return false;
+		
+        //prüfe: Ziel ist freies Feld
+		if (!istLeer(x2, y2))
+			return false;
+		
+		//prüfe: ist eigener Stein
+		if (!istEigener(x1, y1))
+			return false;
+		
+		//wenn keine Dame
+		if (!zugMitDame) {
+			//prüfe: richtige Richtung (nach oben)
+			if (y2 <= y1)
+				return false;
+		}
+		else { //wenn Dame
+			//prüfe: Zielfeld auf einer der Diagonalen vom Startfeld aus
+			if (!vonDameAusfuehrbar(x1, y1, x2, y2))
+				return false;
+			
+			//prüfe: Alle Felder zwischen Startfeld und einem Feld vor Zielfeld leer
+			if (!zwischenraumFrei(x1, y1, x2, y2))
+				return false;
+		}
+		return true;
+	}
+	
+	//############################################################
+	
 	
 	/**
 	 * Konsolenausgabe des aktuellen Spielbretts
