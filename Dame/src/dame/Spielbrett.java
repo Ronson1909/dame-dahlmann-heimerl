@@ -153,7 +153,7 @@ public class Spielbrett implements Cloneable, Serializable {
 	/**
 	 * Gibt die aktuelle Belegung des gewünschten Feldes zurück.
 	 */
-	public int gibFeld(int x, int y) {
+	public int getFeld(int x, int y) {
 		return spielbrett[x][y];
 	}
 	
@@ -360,7 +360,7 @@ public class Spielbrett implements Cloneable, Serializable {
 	/**
 	 * Prüft ob der Zug z ein korrekter (erster) Zug und kein Sprung ist.
 	 */
-	public boolean istZug(Zug z) {
+	public boolean isZug(Zug z) {
 		int x1 = z.gibStartX();
 		int y1 = z.gibStartY();
 		int x2 = z.gibEndeX();
@@ -402,7 +402,7 @@ public class Spielbrett implements Cloneable, Serializable {
 	/**
 	 * Prüft ob Zug z ein korrekter (erster) Sprung ist.
 	 */
-	public boolean istSprung(Zug z) {
+	public boolean isSprung(Zug z) {
 		//return zugIstGueltig(z, true, false, false);
 		int x1 = z.gibStartX();
 		int y1 = z.gibStartY();
