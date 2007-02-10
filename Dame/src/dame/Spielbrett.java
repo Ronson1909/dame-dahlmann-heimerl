@@ -483,7 +483,7 @@ public class Spielbrett implements Cloneable, Serializable {
 			int xSchritt = (int) Math.signum(x2-x1); //(x2 > x1) ? +1 : -1;
 			int ySchritt = (int) Math.signum(y2-y1); //(y2 > y1) ? +1 : -1;
 			int testX=x1+xSchritt, testY=y1+ySchritt;
-			while (testX < x2-xSchritt && testY < y2-ySchritt) {
+			while (xSchritt*testX < x2-xSchritt && ySchritt*testY < y2-ySchritt) {
 				if (spielbrett[testX][testY] != LEER)
 					return false;
 				testX += xSchritt;
