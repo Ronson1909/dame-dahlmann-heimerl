@@ -118,7 +118,9 @@ public class DameFenster extends JFrame {
 
 			int returnVal = od.showSaveDialog(DameFenster.this);
 		    if (returnVal == JFileChooser.APPROVE_OPTION) {
-				String filename = od.getSelectedFile().getAbsolutePath();
+		    	String filename = od.getSelectedFile().getAbsolutePath();
+				if (od.getSelectedFile().getName().indexOf(".")==-1)
+					filename += ".dsa";
 
 				try {
 			        java.io.FileOutputStream fos = new java.io.FileOutputStream(filename, false);
