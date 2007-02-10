@@ -36,21 +36,38 @@ public class DameFenster extends JFrame {
 	
 	private JToolBar tbMain = new JToolBar();
 
+	private JLabel statusText;
+	
 	public DameFenster() throws HeadlessException {
 		// TODO Auto-generated constructor stub
 		super("Dame");
 		this.setSize(400, 400);
 		this.add(dc);
 
+		JPanel status = new JPanel();
+		statusText = new JLabel(" ");
+		status.setLayout(new java.awt.BorderLayout());
+		status.add(statusText, java.awt.BorderLayout.CENTER);
+		status.setBorder(new javax.swing.border.BevelBorder(javax.swing.border.BevelBorder.LOWERED));
+		this.add(status, java.awt.BorderLayout.SOUTH);		
+
 		setzeSpielablauf(new Spielablauf());
 		
 		dc.addZugBeendetListener(dc.new ZugBeendetAdapter() {
 			public void zugBeendet(ZugBeendetEvent zbe) {
 				sa.macheZug(zbe.getZugfolge());
+				
+				if (sa.getAktuelleFarbe()==1) {
+					statusText.setText("Schwarz am Zug");
+				}
+				else {
+					statusText.setText("Weiﬂ am Zug");
+				}
 			}
 		});
 		
 		mnFile.setText("Datei");
+		mnFile.add(fna);
 		mnFile.add(foa);
 		mnFile.add(fsa);
 		mnFile.add(network_a);
@@ -74,13 +91,31 @@ public class DameFenster extends JFrame {
 		tbMain.add(uma);
 		tbMain.add(rma);
 		this.add(tbMain, java.awt.BorderLayout.NORTH);
+		
 	}
 	
 	public void setzeSpielablauf(Spielablauf wert) {
 		sa = wert;
 		dc.setSpielbrett(sa.getSpielbrett());
+		statusText.setText("Neues Spiel - Schwarz am Zug");
+	}
+
+	FileNewAction fna = new FileNewAction();
+	private class FileNewAction extends AbstractAction {
+		private FileNewAction() {
+			super.putValue(NAME, "Neu");			
+			super.putValue(SHORT_DESCRIPTION, "Startet ein neues Spiel");			
+			//super.putValue(SMALL_ICON, new ImageIcon(ClassLoader.getSystemResource("dame/images/open.gif")));
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			JFileChooser od = new JFileChooser();
+
+			setzeSpielablauf(new Spielablauf());
+		}
 	}
 	
+
 	FileOpenAction foa = new FileOpenAction();
 	private class FileOpenAction extends AbstractAction {
 		private FileOpenAction() {

@@ -2,6 +2,8 @@ package dame;
 
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 /**
  * <p>‹berschrift: </p>
  *
@@ -75,6 +77,10 @@ public class Spielablauf implements java.io.Serializable {
 
     private int aktuelleFarbe = 1;
 
+    public int getAktuelleFarbe() {
+    	return aktuelleFarbe;
+    }
+    
    /**
     * Startet ein Spiel.
     *
@@ -115,6 +121,14 @@ public class Spielablauf implements java.io.Serializable {
            	}
            	else {
            		sb.weissAmZug();
+           	}
+           	
+           	switch (sb.isSpielBeendet()) {
+           	case Spielbrett.WEISS:
+           		JOptionPane.showMessageDialog(null, "Weiﬂ hat gewonnen!", "Spiel beendet", JOptionPane.INFORMATION_MESSAGE);
+           	case Spielbrett.SCHWARZ:
+               	JOptionPane.showMessageDialog(null, "Schwarz hat gewonnen!", "Spiel beendet", JOptionPane.INFORMATION_MESSAGE);
+           	default:
            	}
 		}
 		catch (Exception ex) {
