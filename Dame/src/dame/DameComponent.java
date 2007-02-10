@@ -71,27 +71,52 @@ public class DameComponent extends javax.swing.JList {
 		
 		final int Feldbreite = getFeldbreite(); 
 		
+		//Felder mit passender Farbe zeichnen
 		for (int x=0;x<8;x++) {
 			for (int y=0;y<8;y++) {
-				//Felder mit passender Farbe zeichnen
 				if ((x+y) % 2 ==0)
 					g.setColor(java.awt.Color.white);
 				else
 					g.setColor(java.awt.Color.black);
 					
 				g.fillRect(leftBorder + Feldbreite*x, topBorder + y*Feldbreite, Feldbreite, Feldbreite);
+			}
+		}
 
-				//Steine zeichnen
+		//Steine zeichnen
+		for (int x=0;x<8;x++) {
+			for (int y=0;y<8;y++) {
 				int kreisX=(int)(leftBorder + Feldbreite*x + Feldbreite * (100-SteinPercentage) / 200);
 				int kreisY=(int)(topBorder + Feldbreite*y + Feldbreite * (100-SteinPercentage) / 200);
 
-				if (clickedCoord.x==x && clickedCoord.y==y) {
-					//Wenn das Stein gerade gezogen (Drag'n'Drop)
-					//wird, dann diesen Stein nicht normal zeichnen,
-					//sondern unten grau.
+				if (tempZugfolge != null && 
+				    tempZugfolge.size()>0 && 
+					tempZugfolge.get(0).gibStartX()==x && 
+					tempZugfolge.get(0).gibStartY()==7-y) {
+
+					int tmpX=tempZugfolge.get(tempZugfolge.size()-1).gibEndeX();
+					int tmpY=7-tempZugfolge.get(tempZugfolge.size()-1).gibEndeY();
+
+					if (clickedCoord.x==tmpX && clickedCoord.y==tmpY) {
+						//Wenn das Stein gerade gezogen (Drag'n'Drop)
+						//wird, dann diesen Stein nicht normal zeichnen,
+						//sondern unten grau.
+					}
+					else {
+						kreisX=(int)(leftBorder + Feldbreite*tmpX + Feldbreite * (100-SteinPercentage) / 200);
+						kreisY=(int)(topBorder + Feldbreite*tmpY + Feldbreite * (100-SteinPercentage) / 200);
+						
+						zeichneFigur(g, sb.getFeld(x,7-y), kreisX, kreisY, java.awt.Color.white, java.awt.Color.gray );
+					}
 				}
 				else {
-					zeichneFigur(g, sb.gibFeld(x,7-y), kreisX, kreisY);
+					if (clickedCoord.x==x && clickedCoord.y==y) {
+						//Wenn das Stein gerade gezogen (Drag'n'Drop)
+						//wird, dann diesen Stein nicht normal zeichnen,
+						//sondern unten grau.
+					}
+					else
+						zeichneFigur(g, sb.getFeld(x,7-y), kreisX, kreisY);
 				}
 			}
 		}
@@ -99,14 +124,24 @@ public class DameComponent extends javax.swing.JList {
 		//Wenn das Stein gerade gezogen (Drag'n'Drop)
 		//wird, dann diesen Stein grau zeichnen.
 		if (clickedCoord.x!=-1 && clickedCoord.y!=-1) {
+			int feld=0;
+			if (tempZugfolge != null && 
+				tempZugfolge.size()>0) {
+
+				feld=sb.getFeld(tempZugfolge.get(0).gibStartX(), tempZugfolge.get(0).gibStartY());				
+			}
+			else {
+				feld=sb.getFeld(clickedCoord.x, 7-clickedCoord.y);				
+			}
+			
 			int ZweiterKreisOffset = (int)(Feldbreite * ZweiterKreisOffsetPercentage / 100);
-			if (sb.gibFeld(clickedCoord.x,7-clickedCoord.y)==Spielbrett.SCHWARZ_D || sb.gibFeld(clickedCoord.x,7-clickedCoord.y)==Spielbrett.WEISS_D) {
+			if (feld==sb.getEigeneDame()) {
 				ZweiterKreisOffset*=2;
 			}
 
 			int paintX = (int) (mouseCoord.x-Feldbreite*SteinPercentage/200+ZweiterKreisOffset);
 			int paintY = (int) (mouseCoord.y-Feldbreite*SteinPercentage/200+ZweiterKreisOffset);
-			zeichneFigur(g, sb.gibFeld(clickedCoord.x,7-clickedCoord.y), paintX, paintY, java.awt.Color.white, java.awt.Color.gray);
+			zeichneFigur(g, feld, paintX, paintY, java.awt.Color.white, java.awt.Color.gray);
 		}
 		
 	
@@ -195,7 +230,17 @@ public class DameComponent extends javax.swing.JList {
 				clickedCoord = convertControlCoordsToFieldCoords(e.getX(), e.getY());
 				
 				if (clickedCoord.x!=-1 && clickedCoord.y!=-1) {
-					if (sb.gibFeld(clickedCoord.x, 7-clickedCoord.y) != Spielbrett.LEER) {
+					if (sb.getFeld(clickedCoord.x, 7-clickedCoord.y) != Spielbrett.LEER) {
+						System.out.println("Clicked " + clickedCoord.x + "," + clickedCoord.y);
+
+						mouseCoord = new java.awt.Point(e.getX(), e.getY());
+						this.repaint();
+					}
+					else if (tempZugfolge != null && 
+							 tempZugfolge.size()>0 && 
+							 tempZugfolge.get(tempZugfolge.size()-1).gibEndeX()==clickedCoord.x && 
+							 tempZugfolge.get(tempZugfolge.size()-1).gibEndeY()==7-clickedCoord.y) {
+
 						System.out.println("Clicked " + clickedCoord.x + "," + clickedCoord.y);
 
 						mouseCoord = new java.awt.Point(e.getX(), e.getY());
@@ -219,50 +264,43 @@ public class DameComponent extends javax.swing.JList {
 					java.awt.Point dest = convertControlCoordsToFieldCoords(e.getX(), e.getY());
 
 					Zug z = new Zug(clickedCoord.x, 7-clickedCoord.y, dest.x, 7-dest.y);
-					boolean istDame = sb.gibFeld(clickedCoord.x, 7-clickedCoord.y) == Spielbrett.SCHWARZ_D || sb.gibFeld(clickedCoord.x, 7-clickedCoord.y) == Spielbrett.WEISS_D;
 
-					//*****************************************
-
-					if (true) {//sb.zugIstGueltig(z, true, false, istDame)) {
-						//jetzt ist es definitiv ein Sprung mit dem eigenen Stein
-						//(und sicher kein Zug)
-						//es wird auch nicht geprüft, ob weitere Sprünge möglich sind
-
-						//Folgendes ist nur wahr, wenn kein weiterer Sprung möglich ist.
-						if (true) {//sb.zugIstGueltig(z, true, true, istDame)) {
-							// --> Zug gleich ganz committen
-							ArrayList<Zug> zugfolge = new ArrayList<Zug>();
-							zugfolge.add(z);
-							tempZugfolge.clear();
-							
-							beendeZug(zugfolge);
-						}
-						else {
-							// --->
-							//Zug temporär committen und zwischenspeichern in einer
-							//Zugfolge (fürs endgültige committen bei Doppelklick)
-							tempZugfolge.add(z);
-
-							//flag setzen, dass es einen Sprung gab
-							//(das flag ist die size von tempZugfolge)
-						}
-					}
-
-					//prüfe die size von tempZugfolge
-					//nicht dass gesprungen wurde und jetzt auf einmal noch gezogen wird
-					else if (tempZugfolge.size()==0 && true) {//sb.zugIstGueltig(z, true, true, istDame)) {
-						//jetzt ist es ein Zug (weil Sprünge oben schon dran waren)
-						
-						// --> Zug gleich ganz committen
+					if (tempZugfolge.size()==0) {
 						ArrayList<Zug> zugfolge = new ArrayList<Zug>();
 						zugfolge.add(z);
-						
-						beendeZug(zugfolge);
+
+						if (sb.isSprung(z)) {
+							if (sb.zugIstGueltig(zugfolge, true)) {
+								beendeZug(zugfolge);
+							}
+							else if (sb.zugIstGueltig(zugfolge, false)) {
+								tempZugfolge.add(z);
+							}
+						}
+						else if (sb.isZug(z)) {
+							if (sb.zugIstGueltig(zugfolge, true)) {
+								beendeZug(zugfolge);
+							}
+						}
 					}
 					else {
-						System.out.println("Zug ist ungültig");
+						tempZugfolge.add(z);
+						
+						if (sb.zugIstGueltig(tempZugfolge, true)) {
+							//committen
+							beendeZug(tempZugfolge);
+							tempZugfolge.clear();
+						}
+						else if (sb.zugIstGueltig(tempZugfolge, false)) {
+							
+						}
+						else {
+							//ungültiger Teilsprung, diesen Teilsprung doch nicht committen
+							tempZugfolge.remove(tempZugfolge.size()-1);
+						}
 					}
 				}
+					
 	
 				clickedCoord.x=-1;
 				clickedCoord.y=-1;
