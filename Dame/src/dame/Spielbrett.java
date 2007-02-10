@@ -389,7 +389,7 @@ public class Spielbrett implements Cloneable, Serializable {
 			int testY = y2-ySchritt;
 			
 			//prüfe: Feld vor Zielfeld muss Frei sein, da kein Sprung
-			if (!istLeer(testX, testY))
+			if (!isLeer(testX, testY))
 				return false;
 				
 			if (sprungIstMoeglich())
@@ -429,7 +429,7 @@ public class Spielbrett implements Cloneable, Serializable {
 			int testY = y2-ySchritt;
 							
 			//prüfe: Ein Feld vor Zielfeld mit gegnerischem Stein belegt
-			if (!istGegner(testX, testY))
+			if (!isGegner(testX, testY))
 				return false;
 		}
 		
@@ -441,14 +441,14 @@ public class Spielbrett implements Cloneable, Serializable {
 	/**
 	 * Prüft ob eine Zugfolge gültig ist, vorausgesetzt sie ist schon komplett.
 	 */
-	private boolean zugIstGueltig(ArrayList<Zug> z) {
+	public boolean zugIstGueltig(ArrayList<Zug> z) {
 		return zugIstGueltig(z, true);
 	}
 	
 	/**
 	 * Prüft ob eine Zugfolge gültig ist, in Abhängigkeit davon ob sie schon komplett ist.
 	 */
-	private boolean zugIstGueltig(ArrayList<Zug> z, boolean zugfolgeKomplett) {
+	public boolean zugIstGueltig(ArrayList<Zug> z, boolean zugfolgeKomplett) {
 		if (z.size() == 0) return false;
 		if (z.size() == 1) {
 			if (zugfolgeKomplett)
@@ -514,13 +514,13 @@ public class Spielbrett implements Cloneable, Serializable {
 			return false;
 		
         //prüfe: Ziel ist freies Feld
-		if (!istLeer(x2, y2))
+		if (!isLeer(x2, y2))
 			return false;
 		
 		//prüfe: ist eigener Stein falls erster Zug
 		if (ersterZug) { //alt.: if(!zugFolge) {
 			zugMitDame = (spielbrett[x1][y1] == eigeneDame); //Beim ersten Zug wird bei einem einzelnen Zug nicht übergeben, ob mit einer Dame gezogen wurde.
-			if (!istEigener(x1, y1))
+			if (!isEigener(x1, y1))
 				return false;
 		}
 		
@@ -568,10 +568,10 @@ public class Spielbrett implements Cloneable, Serializable {
 			int testX = x2-xSchritt;
 			int testY = y2-ySchritt;
 			
-			boolean normalerZug = istLeer(testX, testY);
+			boolean normalerZug = isLeer(testX, testY);
 				
 			//prüfe: oder erlaubter Sprung über Gegner => Nur ein Feld vor Zielfeld mit gegnerischem Stein belegt, sonst alle leer
-			boolean erlaubterSprung = istGegner(testX, testY);
+			boolean erlaubterSprung = isGegner(testX, testY);
 
 			//prüfe: Sprung, aber inkorrekt
 			if (!normalerZug && !erlaubterSprung)
@@ -692,7 +692,7 @@ public class Spielbrett implements Cloneable, Serializable {
 	/**
 	 * Gibt id der Steine des aktuellen Spielers zurück.
 	 */
-	public int eigenerStein() {
+	public int getEigenerStein() {
 		return eigenerStein;
 	}
 	
@@ -700,7 +700,7 @@ public class Spielbrett implements Cloneable, Serializable {
 	/**
 	 * Gibt id der Damen des aktuellen Spielers zurück.
 	 */
-	public int eigeneDame() {
+	public int getEigeneDame() {
 		return eigeneDame;
 	}
 	
@@ -708,7 +708,7 @@ public class Spielbrett implements Cloneable, Serializable {
 	/**
 	 * Gibt id der Steine des aktuellen Gegenspielers zurück.
 	 */
-	public int gegnerStein() {
+	public int getGegnerStein() {
 		return gegnerStein;
 	}
 	
@@ -716,28 +716,28 @@ public class Spielbrett implements Cloneable, Serializable {
 	/**
 	 * Gibt id der Damen des aktuellen Gegenspielers zurück.
 	 */
-	public int gegnerDame() {
-		return gegnerDame();
+	public int getGegnerDame() {
+		return gegnerDame;
 	}
 	
 	/**
 	 * Prüft ob Feld leer ist
 	 */
-	public boolean istLeer(int x, int y) {
+	public boolean isLeer(int x, int y) {
 		return (spielbrett[x][y] == LEER);
 	}
 	
 	/**
 	 * Prüft ob Feld mit Stein des aktuellen Spielers besetzt ist.
 	 */
-	public boolean istEigener(int x, int y) {
+	public boolean isEigener(int x, int y) {
 		return (spielbrett[x][y] == eigenerStein || spielbrett[x][y] == eigeneDame);
 	}
 	
 	/**
 	 * Prüft ob Feld mit Stein des aktuellen Gegenspielers besetzt ist.
 	 */
-	public boolean istGegner(int x, int y) {
+	public boolean isGegner(int x, int y) {
 		return (spielbrett[x][y] == gegnerStein || spielbrett[x][y] == gegnerDame);
 	}
 	
@@ -792,11 +792,11 @@ public class Spielbrett implements Cloneable, Serializable {
 			return false;
 		
         //prüfe: Ziel ist freies Feld
-		if (!istLeer(x2, y2))
+		if (!isLeer(x2, y2))
 			return false;
 		
 		//prüfe: ist eigener Stein
-		if (!istEigener(x1, y1))
+		if (!isEigener(x1, y1))
 			return false;
 		
 		//wenn keine Dame
