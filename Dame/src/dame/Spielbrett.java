@@ -353,25 +353,29 @@ public class Spielbrett implements Cloneable, Serializable {
 	}
 	
 	/**
-	 * Prüft ob der Zug gültig ist.
+	 * Prüft ob eine Zugfolge gültig ist, vorausgesetzt sie ist schon komplett.
 	 */
-	private boolean zugIstGueltig(Zug z) {
-		return zugIstGueltig(z, true, true, false);
+	private boolean zugIstGueltig(ArrayList<Zug> z) {
+		return zugIstGueltig(z, true);
 	}
 	
 	/**
-	 * Prüft ob eine Zugfolge gültig ist.
+	 * Prüft ob eine Zugfolge gültig ist, in Abhängigkeit davon ob sie schon komplett ist.
 	 */
-	private boolean zugIstGueltig(ArrayList<Zug> z) {
+	private boolean zugIstGueltig(ArrayList<Zug> z, boolean zugfolgeKomplett) {
 		if (z.size() == 0) return false;
-		if (z.size() == 1)
-			return zugIstGueltig(z.get(0));
-		
+		if (z.size() == 1) {
+			if (zugfolgeKomplett)
+				return zugIstGueltig(z.get(0));
+			else
+				return zugIstGueltig(z.get(0), true, false, false);
+		}
+
 		//Pruefe ob Zusammenhaengend
 		Zug temp = z.get(0);
 		boolean zugMitDame = (spielbrett[temp.gibStartX()][temp.gibStartY()] == eigeneDame);
 		
-		if (zugMitDame)
+		if (zugMitDame)// && zugfolgeKomplett) //
 			TEMP_spielbrett = spielbrettKopie(); //Um die übersprungenen Steine für die Tests entfernen zu können
 		
 		int ende_x1 = temp.gibEndeX();
@@ -387,7 +391,7 @@ public class Spielbrett implements Cloneable, Serializable {
 			ende_x1 = temp.gibEndeX();
 			ende_y1 = temp.gibEndeY();
 		}
-		
+			
 		//Prüfe ob alle einzelnen Züge gültig
 		if (!zugIstGueltig(z.get(0), true, false, zugMitDame)) //Beim ersten Zug auch prüfen ob Ausgangspunkt eigener Stein
 			return false;
@@ -395,17 +399,24 @@ public class Spielbrett implements Cloneable, Serializable {
 			if (!zugIstGueltig(z.get(i), false, false, zugMitDame)) //Bei den mittleren Zügen Korrektheit ohne Sonderfälle prüfen
 				return false;
 		}
-		if (!zugIstGueltig(z.get(z.size()-1), false, true, zugMitDame)) //Beim letzten Sprung prüfen, ob weiterer Sprung möglich wäre
+		if (!zugIstGueltig(z.get(z.size()-1), false, zugfolgeKomplett, zugMitDame)) //Beim letzten Sprung prüfen, ob weiterer Sprung möglich wäre
 			return false;
 		
-		//Dann ist wohl die Zugfolge gueltig.
+		//Dann ist die Zugfolge wohl gueltig.
 		return true;
 	}
 	
 	/**
 	 * Prüft ob der Zug gültig ist.
 	 */
-	public boolean zugIstGueltig(Zug z, boolean ersterZug, boolean letzterZug, boolean zugMitDame) {
+	private boolean zugIstGueltig(Zug z) {
+		return zugIstGueltig(z, true, true, false);
+	}
+	
+	/**
+	 * Prüft ob der Zug gültig ist.
+	 */
+	private boolean zugIstGueltig(Zug z, boolean ersterZug, boolean letzterZug, boolean zugMitDame) {
 		boolean zugFolge = !(ersterZug && letzterZug); //Wenn zugleich erster und letzter Zug, dann keine Zugfolge
 		int x1 = z.gibStartX();
 		int y1 = z.gibStartY();
@@ -571,7 +582,7 @@ public class Spielbrett implements Cloneable, Serializable {
 	 * Führt Zugfolge aus.
 	 */
 	public void macheZug(ArrayList<Zug> z) {
-		if (!zugIstGueltig(z)) {
+		if (!zugIstGueltig(z, true)) {
 			throw new IllegalArgumentException("Dieser Zug ist nicht gültig!");
 		}
 		int x1, y1, x2, y2, startStein = 0;
