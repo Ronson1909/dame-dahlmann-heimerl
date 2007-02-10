@@ -190,7 +190,7 @@ public class Spielbrett implements Cloneable, Serializable {
 	}
 	
 	//############################################################
-	
+
 	/**
 	 * Gibt die aktuelle Belegung des gewünschten Feldes zurück.
 	 */
@@ -732,6 +732,31 @@ public class Spielbrett implements Cloneable, Serializable {
         return true;
     }
 	
+	//#####
+	
+	/**
+	 * Prüft ob das Spiel beendet ist.
+	 */
+	public int isSpielBeendet() {
+		int schwarz = 0;
+		int weiss = 0;
+		int akt;
+		for (int x=0; x<8; x++) {
+			for (int y=0; y<8; y++) {
+				akt = spielbrett[x][y];
+				if (akt == SCHWARZ || akt == SCHWARZ_D)
+					schwarz++;
+				if (akt == WEISS || akt == WEISS_D)
+					weiss++;
+			}
+		}
+		if (schwarz == 0)
+			return WEISS;
+		if (weiss == 0)
+			return SCHWARZ;
+		else
+			return -1;
+	}
 	
 	/**
 	 * Gibt id der Steine des aktuellen Spielers zurück.
