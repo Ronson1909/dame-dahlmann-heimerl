@@ -51,7 +51,7 @@ public class DameFenster extends JFrame {
 		status.setBorder(new javax.swing.border.BevelBorder(javax.swing.border.BevelBorder.LOWERED));
 		this.add(status, java.awt.BorderLayout.SOUTH);		
 
-		setzeSpielablauf(new Spielablauf());
+		//setzeSpielablauf(new Spielablauf());
 		
 		dc.addZugBeendetListener(dc.new ZugBeendetAdapter() {
 			public void zugBeendet(ZugBeendetEvent zbe) {
@@ -96,6 +96,7 @@ public class DameFenster extends JFrame {
 
 		this.setJMenuBar(mnMain);
 		
+		tbMain.add(fna);
 		tbMain.add(foa);
 		tbMain.add(fsa);
 		tbMain.add(uma);
@@ -115,7 +116,7 @@ public class DameFenster extends JFrame {
 		private FileNewAction() {
 			super.putValue(NAME, "Neu");			
 			super.putValue(SHORT_DESCRIPTION, "Startet ein neues Spiel");			
-			//super.putValue(SMALL_ICON, new ImageIcon(ClassLoader.getSystemResource("dame/images/open.gif")));
+			super.putValue(SMALL_ICON, new ImageIcon(ClassLoader.getSystemResource("dame/images/new.gif")));
 		}
 		
 		public void actionPerformed(ActionEvent e) {

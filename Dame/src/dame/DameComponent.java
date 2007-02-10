@@ -224,13 +224,16 @@ public class DameComponent extends javax.swing.JList {
 	private ArrayList<Zug> tempZugfolge = new ArrayList<Zug>();
 	
 	protected void processMouseEvent(MouseEvent e) {
+		if (sb == null)
+			return;
+		
 		if (e.getID()==MouseEvent.MOUSE_PRESSED) {
 			if (e.getButton()==MouseEvent.BUTTON1) {
 				//MouseDown
 				clickedCoord = convertControlCoordsToFieldCoords(e.getX(), e.getY());
 				
 				if (clickedCoord.x!=-1 && clickedCoord.y!=-1) {
-					if (sb.getFeld(clickedCoord.x, 7-clickedCoord.y) != Spielbrett.LEER) {
+					if (sb.isEigener(clickedCoord.x, 7-clickedCoord.y)) {
 						System.out.println("Clicked " + clickedCoord.x + "," + clickedCoord.y);
 
 						mouseCoord = new java.awt.Point(e.getX(), e.getY());

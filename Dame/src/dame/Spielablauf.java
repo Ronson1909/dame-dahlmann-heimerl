@@ -86,6 +86,8 @@ public class Spielablauf implements java.io.Serializable {
     *
     */
     public void starten() {
+        aktuelleFarbe = 1;
+
         while (kis[aktuelleFarbe] != null) {
            	if (aktuelleFarbe == 1) {
            		sb.schwarzAmZug();
@@ -97,6 +99,13 @@ public class Spielablauf implements java.io.Serializable {
            	Spielbrett tmpSB = sb.clone();
            	ArrayList<Zug> zugfolge = kis[aktuelleFarbe].gibNaechstenZug(tmpSB, aktuelleFarbe+1);
            	macheZugInt(zugfolge);
+
+           	switch (sb.isSpielBeendet()) {
+           	case Spielbrett.WEISS:
+           	case Spielbrett.SCHWARZ:
+           		return;
+           	default:
+           	}
         };
     }
 
