@@ -123,13 +123,6 @@ public class Spielablauf implements java.io.Serializable {
            		sb.weissAmZug();
            	}
            	
-           	switch (sb.isSpielBeendet()) {
-           	case Spielbrett.WEISS:
-           		JOptionPane.showMessageDialog(null, "Weiß hat gewonnen!", "Spiel beendet", JOptionPane.INFORMATION_MESSAGE);
-           	case Spielbrett.SCHWARZ:
-               	JOptionPane.showMessageDialog(null, "Schwarz hat gewonnen!", "Spiel beendet", JOptionPane.INFORMATION_MESSAGE);
-           	default:
-           	}
 		}
 		catch (Exception ex) {
 			System.out.println("Konnte Zug im Spielablauf nicht ausführen: " + ex.toString());
@@ -144,6 +137,13 @@ public class Spielablauf implements java.io.Serializable {
     public void macheZug(ArrayList<Zug> z) {
     	macheZugInt(z);
 
+       	switch (sb.isSpielBeendet()) {
+       	case Spielbrett.WEISS:
+       	case Spielbrett.SCHWARZ:
+       		return;
+       	default:
+       	}
+    	
 		if (kis[aktuelleFarbe] != null) {
         	Spielbrett tmpSB = sb.clone();
         	ArrayList<Zug> zugfolge = kis[aktuelleFarbe].gibNaechstenZug(tmpSB, aktuelleFarbe+1);

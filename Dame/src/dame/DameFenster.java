@@ -56,7 +56,17 @@ public class DameFenster extends JFrame {
 		dc.addZugBeendetListener(dc.new ZugBeendetAdapter() {
 			public void zugBeendet(ZugBeendetEvent zbe) {
 				sa.macheZug(zbe.getZugfolge());
-				
+
+	           	switch (sa.getSpielbrett().isSpielBeendet()) {
+	           	case Spielbrett.WEISS:
+	           		JOptionPane.showMessageDialog(null, "Weiﬂ hat gewonnen!", "Spiel beendet", JOptionPane.INFORMATION_MESSAGE);
+	           		return;
+	           	case Spielbrett.SCHWARZ:
+	               	JOptionPane.showMessageDialog(null, "Schwarz hat gewonnen!", "Spiel beendet", JOptionPane.INFORMATION_MESSAGE);
+	               	return;
+	           	default:
+	           	}
+
 				if (sa.getAktuelleFarbe()==1) {
 					statusText.setText("Schwarz am Zug");
 				}
