@@ -630,7 +630,7 @@ public class Spielbrett implements Cloneable, Serializable {
 				return false;
 			
 			 //auf dem temporären Brett den übersprungenen Stein entfernen
-			if (zugFolge) {
+			if (erlaubterSprung) {
 				//x- und yKorrektur vom Zielfeld aus gesehen um übersprungen Stein zu erreichen
 				int xKorrektur = (int) Math.signum(x1-x2); //(x2 > x1) ? -1 : +1;
 				int yKorrektur = (int) Math.signum(y1-y2); //(y2 > y1) ? -1 : +1;
