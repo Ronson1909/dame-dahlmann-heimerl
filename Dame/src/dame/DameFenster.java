@@ -32,11 +32,15 @@ public class DameFenster extends JFrame {
 	private DameComponent dc = new DameComponent();
 	private JMenuBar mnMain = new JMenuBar();
 	private JMenu mnFile = new JMenu();
+	private JMenu mnEdit = new JMenu();
+	private JMenu mnHelp = new JMenu();
 	
+	private JToolBar tbMain = new JToolBar();
+
 	public DameFenster() throws HeadlessException {
 		// TODO Auto-generated constructor stub
 		super("Dame");
-		this.setSize(200, 200);
+		this.setSize(400, 400);
 		this.add(dc);
 
 		setzeSpielablauf(new Spielablauf());
@@ -48,12 +52,28 @@ public class DameFenster extends JFrame {
 		});
 		
 		mnFile.setText("Datei");
-		mnMain.add(mnFile);
-		
 		mnFile.add(foa);
 		mnFile.add(fsa);
-		
+		mnFile.add(new JSeparator());
+		mnFile.add(cla);
+		mnMain.add(mnFile);
+
+		mnEdit.setText("Bearbeiten");
+		mnEdit.add(uma);
+		mnEdit.add(rma);
+		mnMain.add(mnEdit);
+
+		mnHelp.setText("?");
+		mnHelp.add(about_a);
+		mnMain.add(mnHelp);
+
 		this.setJMenuBar(mnMain);
+		
+		tbMain.add(foa);
+		tbMain.add(fsa);
+		tbMain.add(uma);
+		tbMain.add(rma);
+		this.add(tbMain, java.awt.BorderLayout.NORTH);
 	}
 	
 	public void setzeSpielablauf(Spielablauf wert) {
@@ -65,6 +85,8 @@ public class DameFenster extends JFrame {
 	private class FileOpenAction extends AbstractAction {
 		private FileOpenAction() {
 			super.putValue(NAME, "Öffnen...");			
+			super.putValue(SHORT_DESCRIPTION, "Öffnet einen Spielstand");			
+			super.putValue(SMALL_ICON, new ImageIcon(ClassLoader.getSystemResource("dame/images/open.gif")));
 		}
 		
 		public void actionPerformed(ActionEvent e) {
@@ -107,6 +129,8 @@ public class DameFenster extends JFrame {
 	private class FileSaveAction extends AbstractAction {
 		private FileSaveAction() {
 			super.putValue(NAME, "Speichern unter...");			
+			super.putValue(SHORT_DESCRIPTION, "Speichert den aktuellen Spielstand");			
+			super.putValue(SMALL_ICON, new ImageIcon(ClassLoader.getSystemResource("dame/images/save.gif")));
 		}
 		
 		public void actionPerformed(ActionEvent e) {
@@ -141,6 +165,69 @@ public class DameFenster extends JFrame {
 					JOptionPane.showMessageDialog(DameFenster.this, "Schreibfehler: " + ioe.toString(), "Fehler", JOptionPane.ERROR_MESSAGE);
 				}
 		    }
+		}
+	}
+
+	UndoMoveAction uma = new UndoMoveAction();
+	private class UndoMoveAction extends AbstractAction {
+		private UndoMoveAction() {
+			super.putValue(NAME, "Zug rückgängig");			
+			super.putValue(SHORT_DESCRIPTION, "Macht den letzten Zug rückgängig");			
+
+			KeyStroke accKey = KeyStroke.getKeyStroke("ctrl Z");
+			super.putValue(ACCELERATOR_KEY, accKey);		
+			super.putValue(SMALL_ICON, new ImageIcon(ClassLoader.getSystemResource("dame/images/undo.gif")));
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			JOptionPane.showMessageDialog(DameFenster.this, "Noch nicht implementiert!", "Fehlt noch", JOptionPane.INFORMATION_MESSAGE);
+		}
+	}
+
+	RedoMoveAction rma = new RedoMoveAction();
+	private class RedoMoveAction extends AbstractAction {
+		private RedoMoveAction() {
+			super.putValue(NAME, "Zug wiederherstellen");			
+			super.putValue(SHORT_DESCRIPTION, "Stellt den letzten rückgängig gemachten Zug wieder her");			
+
+			KeyStroke accKey = KeyStroke.getKeyStroke("ctrl Y");
+			super.putValue(ACCELERATOR_KEY, accKey);		
+			super.putValue(SMALL_ICON, new ImageIcon(ClassLoader.getSystemResource("dame/images/redo.gif")));
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			JOptionPane.showMessageDialog(DameFenster.this, "Noch nicht implementiert!", "Fehlt noch", JOptionPane.INFORMATION_MESSAGE);
+		}
+	}
+
+	CloseAction cla = new CloseAction();
+	private class CloseAction extends AbstractAction {
+		private CloseAction() {
+			super.putValue(NAME, "Beenden");			
+			super.putValue(SHORT_DESCRIPTION, "Beendet das Programm");			
+
+			KeyStroke accKey = KeyStroke.getKeyStroke("alt F4");
+			super.putValue(ACCELERATOR_KEY, accKey);		
+			//super.putValue(SMALL_ICON, new ImageIcon(ClassLoader.getSystemResource("dame/images/redo.gif")));
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			DameFenster.this.setVisible(false);
+		}
+	}
+
+	AboutAction about_a = new AboutAction();
+	private class AboutAction extends AbstractAction {
+		private AboutAction() {
+			super.putValue(NAME, "Über...");			
+			super.putValue(SHORT_DESCRIPTION, "Informationen zu diesem Programm");			
+
+			//super.putValue(SMALL_ICON, new ImageIcon(ClassLoader.getSystemResource("dame/images/redo.gif")));
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			UeberDialog frm = new UeberDialog(DameFenster.this);
+			frm.setVisible(true);
 		}
 	}
 }

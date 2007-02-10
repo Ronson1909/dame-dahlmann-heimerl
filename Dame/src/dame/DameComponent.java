@@ -223,13 +223,13 @@ public class DameComponent extends javax.swing.JList {
 
 					//*****************************************
 
-					if (sb.zugIstGueltig(z, true, false, istDame)) {
+					if (true) {//sb.zugIstGueltig(z, true, false, istDame)) {
 						//jetzt ist es definitiv ein Sprung mit dem eigenen Stein
 						//(und sicher kein Zug)
 						//es wird auch nicht geprüft, ob weitere Sprünge möglich sind
 
 						//Folgendes ist nur wahr, wenn kein weiterer Sprung möglich ist.
-						if (sb.zugIstGueltig(z, true, true, istDame)) {
+						if (true) {//sb.zugIstGueltig(z, true, true, istDame)) {
 							// --> Zug gleich ganz committen
 							ArrayList<Zug> zugfolge = new ArrayList<Zug>();
 							zugfolge.add(z);
@@ -250,7 +250,7 @@ public class DameComponent extends javax.swing.JList {
 
 					//prüfe die size von tempZugfolge
 					//nicht dass gesprungen wurde und jetzt auf einmal noch gezogen wird
-					else if (tempZugfolge.size()==0 && sb.zugIstGueltig(z, true, true, istDame)) {
+					else if (tempZugfolge.size()==0 && true) {//sb.zugIstGueltig(z, true, true, istDame)) {
 						//jetzt ist es ein Zug (weil Sprünge oben schon dran waren)
 						
 						// --> Zug gleich ganz committen
