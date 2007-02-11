@@ -5,7 +5,7 @@ import java.io.ObjectOutputStream;
 
 import dame.SocketHandler.*;
 
-public class NetworkSpieler implements ISpieler, ObjectEmpfangenListener {
+public class NetzwerkSpieler implements ISpieler, ObjectEmpfangenListener {
     private ObjectOutputStream out;
     private SocketHandler sh;
     

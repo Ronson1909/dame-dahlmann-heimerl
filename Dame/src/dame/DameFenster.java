@@ -2,8 +2,6 @@ package dame;
 
 import javax.swing.*;
 
-import dame.DameComponent.ZugBeendetEvent;
-
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 
@@ -28,7 +26,7 @@ public class DameFenster extends JFrame {
     }
 
 	private Spielablauf sa;
-	private DameComponent dc = new DameComponent();
+	private SpielbrettComponent sc = new SpielbrettComponent();
 	private JMenuBar mnMain = new JMenuBar();
 	private JMenu mnFile = new JMenu();
 	private JMenu mnEdit = new JMenu();
@@ -42,7 +40,7 @@ public class DameFenster extends JFrame {
 		// TODO Auto-generated constructor stub
 		super("Dame");
 		this.setSize(400, 400);
-		this.add(dc);
+		this.add(sc);
 
 		JPanel status = new JPanel();
 		statusText = new JLabel(" ");
@@ -53,7 +51,7 @@ public class DameFenster extends JFrame {
 
 		//setzeSpielablauf(new Spielablauf());
 		
-		dc.addZugBeendetListener(dc.new ZugBeendetAdapter() {
+		sc.addZugBeendetListener(new ZugBeendetAdapter() {
 			public void zugBeendet(ZugBeendetEvent zbe) {
 				sa.macheZug(zbe.getZugfolge());
 				
@@ -114,7 +112,7 @@ public class DameFenster extends JFrame {
 	
 	public void setzeSpielablauf(Spielablauf wert) {
 		sa = wert;
-		dc.setSpielbrett(sa.getSpielbrett());
+		sc.setSpielbrett(sa.getSpielbrett());
 		statusText.setText("Neues Spiel - Schwarz am Zug");
 	}
 
@@ -256,7 +254,7 @@ public class DameFenster extends JFrame {
 		
 		public void actionPerformed(ActionEvent e) {
 			sa.undoZug();
-			dc.repaint();
+			sc.repaint();
 			updateStatusBar();
 			
 			this.setEnabled(sa.getUndoCount()>0);
@@ -280,7 +278,7 @@ public class DameFenster extends JFrame {
 		
 		public void actionPerformed(ActionEvent e) {
 			sa.redoZug();
-			dc.repaint();
+			sc.repaint();
 			updateStatusBar();
 			
 			uma.setEnabled(sa.getUndoCount()>0);
