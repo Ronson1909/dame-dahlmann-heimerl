@@ -740,15 +740,18 @@ public class Spielbrett implements Cloneable, Serializable {
 			//Übersprungenen Stein wieder hinstellen.
 			int xUebersprungen = transform(teilZug.gibUebersprungenerSteinX());
 			int yUebersprungen = transform(teilZug.gibUebersprungenerSteinY());
-			if (spielbrett_intern[xUebersprungen][yUebersprungen] != LEER)
-				System.out.println("Fehler beim zurückstellen des übersprungenen Steins!");
-			if (teilZug.getUebersprungenerSteinTyp() != gegnerStein && teilZug.getUebersprungenerSteinTyp() != gegnerDame)
-				System.out.println("FEHLER! Übersprungener und zurückgestellter Stein ist nicht vom Gegner!");
-			
-			sb_set(xUebersprungen, yUebersprungen, teilZug.getUebersprungenerSteinTyp());
-			teilZug.setzeUebersprungenerSteinX(-1);
-			teilZug.setzeUebersprungenerSteinY(-1);
-			teilZug.setUebersprungenerSteinTyp(-1);
+			int uebersprungenTyp = teilZug.getUebersprungenerSteinTyp();
+			if (xUebersprungen != -1 && yUebersprungen != -1 && uebersprungenTyp != -1) {
+				if (spielbrett_intern[xUebersprungen][yUebersprungen] != LEER)
+					System.out.println("Fehler beim zurückstellen des übersprungenen Steins!");
+				if (teilZug.getUebersprungenerSteinTyp() != gegnerStein && teilZug.getUebersprungenerSteinTyp() != gegnerDame)
+					System.out.println("FEHLER! Übersprungener und zurückgestellter Stein ist nicht vom Gegner!");
+				
+				sb_set(xUebersprungen, yUebersprungen, teilZug.getUebersprungenerSteinTyp());
+				teilZug.setzeUebersprungenerSteinX(-1);
+				teilZug.setzeUebersprungenerSteinY(-1);
+				teilZug.setUebersprungenerSteinTyp(-1);
+			}
 			
 			sb_set(x2, y2, LEER);
 		}
