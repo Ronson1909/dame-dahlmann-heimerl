@@ -70,12 +70,7 @@ public class DameFenster extends JFrame {
 	           	default:
 	           	}
 
-				if (sa.getFarbeAmZug() == Spielbrett.SCHWARZ) {
-					statusText.setText("Schwarz am Zug");
-				}
-				else {
-					statusText.setText("Weiß am Zug");
-				}
+	           	updateStatusBar();
 			}
 		});
 		
@@ -106,6 +101,15 @@ public class DameFenster extends JFrame {
 		tbMain.add(rma);
 		this.add(tbMain, java.awt.BorderLayout.NORTH);
 		
+	}
+	
+	private void updateStatusBar() {
+		if (sa.getFarbeAmZug() == Spielbrett.SCHWARZ) {
+			statusText.setText("Schwarz am Zug");
+		}
+		else {
+			statusText.setText("Weiß am Zug");
+		}
 	}
 	
 	public void setzeSpielablauf(Spielablauf wert) {
@@ -253,6 +257,7 @@ public class DameFenster extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			sa.undoZug();
 			dc.repaint();
+			updateStatusBar();
 			
 			this.setEnabled(sa.getUndoCount()>0);
 			rma.setEnabled(sa.getRedoCount()>0);
@@ -276,6 +281,7 @@ public class DameFenster extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			sa.redoZug();
 			dc.repaint();
+			updateStatusBar();
 			
 			uma.setEnabled(sa.getUndoCount()>0);
 			this.setEnabled(sa.getRedoCount()>0);
