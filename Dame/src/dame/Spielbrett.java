@@ -737,6 +737,8 @@ public class Spielbrett implements Cloneable, Serializable {
 			else
 				sb_set(x1, y1, endStein);
 			
+			sb_set(x2, y2, LEER);
+			
 			//Übersprungenen Stein wieder hinstellen.
 			int xUebersprungen = transform(teilZug.gibUebersprungenerSteinX());
 			int yUebersprungen = transform(teilZug.gibUebersprungenerSteinY());
@@ -752,8 +754,6 @@ public class Spielbrett implements Cloneable, Serializable {
 				teilZug.setzeUebersprungenerSteinY(-1);
 				teilZug.setUebersprungenerSteinTyp(-1);
 			}
-			
-			sb_set(x2, y2, LEER);
 		}
 	}
 	
