@@ -121,21 +121,4 @@ public class Zug implements java.io.Serializable {
 
         return true;
     }
-
-    public boolean istGueltigerZug(Spielbrett sb) {
-        //prüfe: ist eigener Stein
-
-        //prüfe: Ziel ist freies Feld
-
-        //wenn keine Dame
-        //prüfe: richtige Richtung (nach oben)
-
-        //prüfe: Felder liegen nebeneinander
-
-        //prüfe: oder erlaubter Sprung über Gegner
-
-        //wenn Dame
-        //prüfe: erlaubter Sprung über Gegner
-    	return true;
-    }
 }
