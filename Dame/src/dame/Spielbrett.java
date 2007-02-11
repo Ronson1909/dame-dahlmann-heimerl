@@ -55,6 +55,7 @@ public class Spielbrett implements Cloneable, Serializable {
 		}
 		
 		
+/*
 		boolean konsolenspiel = false;
 		if (konsolenspiel) {
 			gibAus();
@@ -77,15 +78,6 @@ public class Spielbrett implements Cloneable, Serializable {
 						y2 = Integer.parseInt(String.valueOf(koord[1].charAt(1))) -1;
 						
 						System.out.println(x1 +" "+ y1 +" "+ x2 +" "+ y2);
-						/*if (!schwarzAmZug) { //Rücktransformation
-							x1 = 7-x1;
-							y1 = 7-y1;
-							x2 = 7-x2;
-							y2 = 7-y2;
-							System.out.println(x1 +" "+ y1 +" "+ x2 +" "+ y2);
-						}*/
-						
-						//System.out.println(x1 +" "+ y1 +" "+ x2 +" "+ y2);
 						Zug z = new Zug(x1, y1, x2, y2);
 						try {
 							macheZug(z);
@@ -101,15 +93,6 @@ public class Spielbrett implements Cloneable, Serializable {
 							y2 = Integer.parseInt(String.valueOf(koord[1].charAt(1))) -1;
 							
 							System.out.println(x1 +" "+ y1 +" "+ x2 +" "+ y2);
-							/*if (!schwarzAmZug) { //Rücktransformation
-								x1 = 7-x1;
-								y1 = 7-y1;
-								x2 = 7-x2;
-								y2 = 7-y2;
-								System.out.println(x1 +" "+ y1 +" "+ x2 +" "+ y2);
-							}*/
-							
-							//System.out.println(x1 +" "+ y1 +" "+ x2 +" "+ y2);
 							z.add(new Zug(x1, y1, x2, y2));
 						}
 						try {
@@ -124,7 +107,7 @@ public class Spielbrett implements Cloneable, Serializable {
 				e.printStackTrace();
 			}
 		}//end-if Konsolenspiel
-		
+*/		
 	}
 	
 	/**
@@ -201,7 +184,7 @@ public class Spielbrett implements Cloneable, Serializable {
 	/**
 	 * Ändert die Ausrichtung des Brettes auf die Sichtweise des anderen Spielers
 	 */
-	public void andererSpielerAmZug() {
+	private void andererSpielerAmZug() {
 		if (schwarzAmZug)
 			weissAmZug();
 		else
@@ -211,16 +194,8 @@ public class Spielbrett implements Cloneable, Serializable {
 	/**
 	 * Ändert die Ausrichtung des Brettes auf die Sichtweise von Spieler Schwarz
 	 */
-	public void schwarzAmZug() {
+	private void schwarzAmZug() {
 		if (!schwarzAmZug) {
-			/*int temp;
-			for (int y=0; y<=3; y++) {
-				for (int x=0; x<8; x++) {
-					temp = spielbrett[x][y];
-					spielbrett[x][y] = spielbrett[7-x][7-y];
-					spielbrett[7-x][7-y] = temp;
-				}
-			}*/
 			schwarzAmZug = true;
 			eigenerStein = SCHWARZ;
 			eigeneDame = SCHWARZ_D;
@@ -233,16 +208,8 @@ public class Spielbrett implements Cloneable, Serializable {
 	/**
 	 * Ändert die Ausrichtung des Brettes auf die Sichtweise von Spieler Weiss
 	 */
-	public void weissAmZug() {
+	private void weissAmZug() {
 		if (schwarzAmZug) {
-			/*int temp;
-			for (int y=0; y<=3; y++) {
-				for (int x=0; x<8; x++) {
-					temp = spielbrett[x][y];
-					spielbrett[x][y] = spielbrett[7-x][7-y];
-					spielbrett[7-x][7-y] = temp;
-				}
-			}*/
 			schwarzAmZug = false;
 			eigenerStein = WEISS;
 			eigeneDame = WEISS_D;
@@ -452,7 +419,6 @@ public class Spielbrett implements Cloneable, Serializable {
 	 * Prüft ob Zug z ein korrekter (erster) Sprung ist.
 	 */
 	public boolean isSprung(Zug z) {
-		//return zugIstGueltig(z, true, false, false);
 		int x1 = transform(z.gibStartX());
 		int y1 = transform(z.gibStartY());
 		int x2 = transform(z.gibEndeX());
@@ -648,11 +614,6 @@ public class Spielbrett implements Cloneable, Serializable {
 				//x- und yKorrektur vom Zielfeld aus gesehen um übersprungen Stein zu erreichen
 				int xKorrektur = (int) Math.signum(x1-x2); //(x2 > x1) ? -1 : +1;
 				int yKorrektur = (int) Math.signum(y1-y2); //(y2 > y1) ? -1 : +1;
-				
-				//if (xKorrektur != -1*xSchritt || yKorrektur != -1*ySchritt)
-				//	System.out.println("PROGRAMMIERFEHLER!");
-					//falls das nie auftritt können die zwei int-Werte hier drüber weg.
-				
 				TEMP_spielbrett[x2+xKorrektur][y2+yKorrektur] = LEER;
 				//TEMP_spielbrett[x2-xSchritt][y2-ySchritt] = LEER;
 				//TEMP_spielbrett[testX][testY] = LEER;
@@ -674,7 +635,7 @@ public class Spielbrett implements Cloneable, Serializable {
 	/**
 	 * Führt Zug aus.
 	 */
-	public void macheZug(Zug z) {
+	/*public void macheZug(Zug z) {
 		if (!zugIstGueltig(z)) {
 			throw new IllegalArgumentException("Dieser Zug ist nicht gültig!");
 		}
@@ -683,8 +644,10 @@ public class Spielbrett implements Cloneable, Serializable {
 		int x2 = transform(z.gibEndeX());
 		int y2 = transform(z.gibEndeY());
 		
-		if (y2 == 7) //Oberste Zeile -> Umwandelung zur Dame
+		if ((y2 == 7) && (spielbrett_intern[x1][y1] != eigeneDame)) { //Oberste Zeile und noch keine Dame -> Umwandelung zur Dame
 			sb_set(x2, y2, eigeneDame);
+			z.setZurDameGeworden(true);
+		}
 		else
 			sb_set(x2, y2, spielbrett_intern[x1][y1]);
 		
@@ -692,8 +655,15 @@ public class Spielbrett implements Cloneable, Serializable {
 		//x- und yKorrektur vom Zielfeld aus gesehen um übersprungen Stein zu erreichen
 		int xKorrektur = (int) Math.signum(x1-x2); //(x2 > x1) ? -1 : +1;
 		int yKorrektur = (int) Math.signum(y1-y2); //(y2 > y1) ? -1 : +1;
-		sb_set(x2+xKorrektur, y2+yKorrektur, LEER);
-	}
+		int xUebersprungen = x2+xKorrektur;
+		int yUebersprungen = y2+yKorrektur;
+		if (isGegner_intern(xUebersprungen, yUebersprungen)) {
+			z.setzeUebersprungenerSteinX(xUebersprungen);
+			z.setzeUebersprungenerSteinY(yUebersprungen);
+			z.setUebersprungenerSteinTyp(spielbrett_intern[xUebersprungen][yUebersprungen]);
+			sb_set(xUebersprungen, yUebersprungen, LEER);
+		}
+	}*/
 	
 	/**
 	 * Führt Zugfolge aus.
@@ -703,16 +673,20 @@ public class Spielbrett implements Cloneable, Serializable {
 			throw new IllegalArgumentException("Dieser Zug ist nicht gültig!");
 		}
 		int x1, y1, x2, y2, startStein = 0;
+		Zug teilZug;
 		for (int i=0; i<z.size(); i++) {
-			x1 = transform(z.get(i).gibStartX());
-			y1 = transform(z.get(i).gibStartY());
-			x2 = transform(z.get(i).gibEndeX());
-			y2 = transform(z.get(i).gibEndeY());
-			if (i==0) //Nur im ersten Durchlauf wird festgehalten, mit welchem Stein gesprungen wird.
+			teilZug = z.get(i);
+			x1 = transform(teilZug.gibStartX());
+			y1 = transform(teilZug.gibStartY());
+			x2 = transform(teilZug.gibEndeX());
+			y2 = transform(teilZug.gibEndeY());
+			if (i==0) //Nur im ersten Durchlauf wird festgehalten, mit welchem Stein gezogen wird.
 				startStein = spielbrett_intern[x1][y1];
 			
-			if (y2 == 7) //Oberste Zeile -> Umwandelung zur Dame
+			if ((y2 == 7) && (spielbrett_intern[x1][y1] != eigeneDame)) { //Oberste Zeile und noch keine Dame -> Umwandelung zur Dame
 				sb_set(x2, y2, eigeneDame);
+				teilZug.setZurDameGeworden(true);
+			}
 			else
 				sb_set(x2, y2, startStein);
 			
@@ -720,7 +694,63 @@ public class Spielbrett implements Cloneable, Serializable {
 			//x- und yKorrektur vom Zielfeld aus gesehen um übersprungen Stein zu erreichen
 			int xKorrektur = (int) Math.signum(x1-x2); //(x2 > x1) ? -1 : +1;
 			int yKorrektur = (int) Math.signum(y1-y2); //(y2 > y1) ? -1 : +1;
-			sb_set(x2+xKorrektur, y2+yKorrektur, LEER);	
+			int xUebersprungen = x2+xKorrektur;
+			int yUebersprungen = y2+yKorrektur;
+			if (isGegner_intern(xUebersprungen, yUebersprungen)) {
+				teilZug.setzeUebersprungenerSteinX(transform(xUebersprungen));
+				teilZug.setzeUebersprungenerSteinY(transform(yUebersprungen));
+				teilZug.setUebersprungenerSteinTyp(spielbrett_intern[xUebersprungen][yUebersprungen]);
+				sb_set(xUebersprungen, yUebersprungen, LEER);
+			}
+		}
+		andererSpielerAmZug();
+	}
+	
+	/**
+	 * Macht Zugfolge rückgängig.
+	 */
+	public void undoZug(ArrayList<Zug> z) {
+		if (z.size() == 0)
+			throw new IllegalArgumentException("Zug der Länge 0!");
+		
+		andererSpielerAmZug();
+		
+		int x1, y1, x2, y2, endStein = 0;
+		Zug teilZug;
+				
+		for (int i=z.size()-1; i>=0; i--) {
+			teilZug = z.get(i);
+			x1 = transform(teilZug.gibStartX());
+			y1 = transform(teilZug.gibStartY());
+			x2 = transform(teilZug.gibEndeX());
+			y2 = transform(teilZug.gibEndeY());
+			if (i==z.size()-1) //Nur im letzten Durchlauf wird festgehalten, mit welchem Stein gezogen wurde.
+				endStein = spielbrett_intern[x2][y2];
+			
+			if ((teilZug.getZurDameGeworden() && endStein != eigeneDame) || (teilZug.getZurDameGeworden() && y2!=7))
+				System.out.println("PrOgRaMmIeRfEhLeR in undoZug()");
+				
+			if (y2 == 7 && teilZug.getZurDameGeworden() && endStein == eigeneDame) { //Ziel war oberste Zeile, es ist in dem Zug eine Dame geworden und Endstein ist eine Dame -> Rückumwandlung zum normalen Stein
+				sb_set(x1, y1, eigenerStein);
+				teilZug.setZurDameGeworden(false);
+			}
+			else
+				sb_set(x1, y1, endStein);
+			
+			//Übersprungenen Stein wieder hinstellen.
+			int xUebersprungen = transform(teilZug.gibUebersprungenerSteinX());
+			int yUebersprungen = transform(teilZug.gibUebersprungenerSteinY());
+			if (spielbrett_intern[xUebersprungen][yUebersprungen] != LEER)
+				System.out.println("Fehler beim zurückstellen des übersprungenen Steins!");
+			if (teilZug.getUebersprungenerSteinTyp() != gegnerStein && teilZug.getUebersprungenerSteinTyp() != gegnerDame)
+				System.out.println("FEHLER! Übersprungener und zurückgestellter Stein ist nicht vom Gegner!");
+			
+			sb_set(xUebersprungen, yUebersprungen, teilZug.getUebersprungenerSteinTyp());
+			teilZug.setzeUebersprungenerSteinX(-1);
+			teilZug.setzeUebersprungenerSteinY(-1);
+			teilZug.setUebersprungenerSteinTyp(-1);
+			
+			sb_set(x2, y2, LEER);
 		}
 	}
 	
@@ -749,7 +779,21 @@ public class Spielbrett implements Cloneable, Serializable {
 	//#####
 	
 	/**
-	 * Prüft ob das Spiel beendet ist.
+	 *  Gibt die Farbe des Spielers zurück, der gerade am Zug ist.
+	 */
+	public int getFarbeAmZug() {
+		return (schwarzAmZug) ? SCHWARZ : WEISS;
+	}
+	
+	/**
+	 * Gibt zurück, ob Schwarz am Zug ist.
+	 */
+	public boolean getSchwarzAmZug() {
+		return schwarzAmZug;
+	}
+	
+	/**
+	 * Prüft ob das Spiel beendet ist. Gibt falls ja die Gewinnerfarbe zurück
 	 */
 	public int isSpielBeendet() {
 		int schwarz = 0;
@@ -927,17 +971,17 @@ public class Spielbrett implements Cloneable, Serializable {
 	
 	//############################################################
 	
-	
+
 	/**
 	 * Konsolenausgabe des aktuellen Spielbretts
 	 */
-	private void gibAus() { //boolean zurueckgedreht) {
+	/*private void gibAus() { //boolean zurueckgedreht) {
 		//ACHTUNG: spielbrett.clone() funktioniert NICHT, 
 		//da nur Referenzen zu den Arrays in der zweiten Dimension kopiert werden. 
 		//clone funktioniert nur bei eindimensionalen Arrays mit Standard-Datentypen.
-		/*int[][] tempsb = spielbrettKopie();
+		//int[][] tempsb = spielbrettKopie();
 		
-		if (zurueckgedreht) {
+		if (false) {
 			if (!schwarzAmZug) {
 				int temp;
 				for (int y=0; y<=3; y++) {
@@ -947,7 +991,7 @@ public class Spielbrett implements Cloneable, Serializable {
 						tempsb[7-x][7-y] = temp;
 					}
 				}
-			}*/
+			}
 			System.out.println("     A   B   C   D   E   F   G   H  ");
 			System.out.println("   - - - - - - - - - - - - - - - - -");
 			String linie;
@@ -974,7 +1018,7 @@ public class Spielbrett implements Cloneable, Serializable {
 			System.out.println();
 		//}
 	}
-	
+	*/
 	
 	/**
 	 * Methode um die Geschwindigkeit der zwei Transformierverfahren zu vergleichen.
