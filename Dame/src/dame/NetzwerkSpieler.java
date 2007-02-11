@@ -61,4 +61,8 @@ public class NetzwerkSpieler implements ISpieler, ObjectEmpfangenListener {
 	public void objectEmpfangen(ObjectEmpfangenEvent oee) {
 				
 	}
+
+	public int getEigeneFarbe() {
+		return 0;
+	}
 }

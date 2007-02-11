@@ -103,7 +103,7 @@ public class SpielbrettComponent extends SpielbrettReadOnlyComponent {
 		
 		if (e.getID()==MouseEvent.MOUSE_PRESSED) {
 			if (e.getButton()==MouseEvent.BUTTON1) {
-				//MouseDown
+				//Left Button Down
 				clickedCoord = convertControlCoordsToFieldCoords(e.getX(), e.getY());
 				
 				if (clickedCoord.x!=-1 && clickedCoord.y!=-1) {
@@ -136,37 +136,38 @@ public class SpielbrettComponent extends SpielbrettReadOnlyComponent {
 		}
 		else if (e.getID() == MouseEvent.MOUSE_RELEASED) {
 			if (e.getButton()==MouseEvent.BUTTON1) {
-				//MouseUp
+				//Left Button Up
+				
+				//wurde vorher richtig geklickt?
 				if (clickedCoord.x != -1 && clickedCoord.y != -1) {
 					java.awt.Point dest = convertControlCoordsToFieldCoords(e.getX(), e.getY());
 
 					Zug z = new Zug(clickedCoord.x, 7-clickedCoord.y, dest.x, 7-dest.y);
 
+					//ist das ein Fortsetzungszug?
 					if (tempZugfolge.size()==0) {
+						//-->kein Fortsetzungszug
 						ArrayList<Zug> zugfolge = new ArrayList<Zug>();
 						zugfolge.add(z);
 
-						if (sb.isSprung(z)) {
-							if (sb.zugIstGueltig(zugfolge, true)) {
-								beendeZug(zugfolge);
-							}
-							else if (sb.zugIstGueltig(zugfolge, false)) {
-								tempZugfolge.add(z);
-							}
+						//ist das ein vollständiger Zug?
+						if (sb.zugIstGueltig(zugfolge, true)) {
+							beendeZug(zugfolge);
 						}
-						else if (sb.isZug(z)) {
-							if (sb.zugIstGueltig(zugfolge, true)) {
-								beendeZug(zugfolge);
-							}
+						//oder zumindest ein erlaubter Beginn eines komplexeren Sprungs
+						else if (sb.isSprung(z) && sb.zugIstGueltig(zugfolge, false)) {
+							tempZugfolge.add(z);
 						}
 					}
 					else {
+						//-->Fortsetzungszug
 						tempZugfolge.add(z);
 						
+						//ist das ein vollständiger Zug?
 						if (sb.zugIstGueltig(tempZugfolge, true)) {
 							//committen
 							beendeZug(tempZugfolge);
-							tempZugfolge.clear();
+							tempZugfolge = new ArrayList<Zug>();
 						}
 						else if (sb.zugIstGueltig(tempZugfolge, false)) {
 							

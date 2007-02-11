@@ -26,7 +26,7 @@ public interface ISpieler extends Serializable {
 	//public void init(int eigeneFarbe);
 	
 	//public void setEigeneFarbe(int eigeneFarbe);
-	//public int getEigeneFarbe();
+	public int getEigeneFarbe();
 }
 
 class ZugBeendetEvent extends java.util.EventObject {
