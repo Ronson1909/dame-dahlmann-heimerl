@@ -107,7 +107,7 @@ public class SpielbrettComponent extends SpielbrettReadOnlyComponent {
 				clickedCoord = convertControlCoordsToFieldCoords(e.getX(), e.getY());
 				
 				if (clickedCoord.x!=-1 && clickedCoord.y!=-1) {
-					if (sb.isEigener(clickedCoord.x, 7-clickedCoord.y)) {
+					if (sb.getFeld(clickedCoord.x, 7-clickedCoord.y) == lokalerSpieler.getEigeneFarbe() || sb.getFeld(clickedCoord.x, 7-clickedCoord.y) == lokalerSpieler.getEigeneFarbe() + 2) { //(sb.isEigener(clickedCoord.x, 7-clickedCoord.y)) {
 						System.out.println("Clicked " + clickedCoord.x + "," + clickedCoord.y);
 
 						mouseCoord = new java.awt.Point(e.getX(), e.getY());
@@ -169,22 +169,21 @@ public class SpielbrettComponent extends SpielbrettReadOnlyComponent {
 							beendeZug(tempZugfolge);
 							tempZugfolge = new ArrayList<Zug>();
 						}
+						//oder zumindest die erlaubte Fortsetzung eines komplexeren Sprungs
 						else if (sb.zugIstGueltig(tempZugfolge, false)) {
 							
 						}
 						else {
-							//ungültiger Teilsprung, diesen Teilsprung doch nicht committen
+							//ungültiger Teilsprung, diesen wieder zurücknehmen
 							tempZugfolge.remove(tempZugfolge.size()-1);
 						}
 					}
 				}
-					
-	
+				
 				clickedCoord.x=-1;
 				clickedCoord.y=-1;
 				
-				//final int Feldbreite = getFeldbreite();
-				this.repaint();//mouseCoord.x-Feldbreite, mouseCoord.y-Feldbreite, Feldbreite*2, Feldbreite*2);
+				this.repaint();
 			}
 		}
 
@@ -201,11 +200,15 @@ public class SpielbrettComponent extends SpielbrettReadOnlyComponent {
 		if (zbl!=null)
 			zbls.remove(zbl);
 	}
-	
+
+	public void clearZugBeendetListeners() {
+		zbls.clear();
+	}
+
 	protected void beendeZug(ArrayList<Zug> zugfolge) {
-		ZugBeendetEvent zbe = new ZugBeendetEvent(this, zugfolge);
+		ZugBeendetEvent zbe = new ZugBeendetEvent(this, lokalerSpieler, zugfolge);
 		
-		for (ZugBeendetListener zbl : zbls) {
+		for (ZugBeendetListener zbl : (Iterable<ZugBeendetListener>)zbls.clone()) {
 			zbl.zugBeendet(zbe);
 		}
 	}

@@ -5,7 +5,7 @@ import javax.swing.*;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 
-public class DameFenster extends JFrame {
+public class DameFenster extends JFrame implements ZugBeendetListener {
 	public static void main(String[] args) {
         try {
             javax.swing.UIManager.setLookAndFeel(
@@ -49,29 +49,6 @@ public class DameFenster extends JFrame {
 		status.setBorder(new javax.swing.border.BevelBorder(javax.swing.border.BevelBorder.LOWERED));
 		this.add(status, java.awt.BorderLayout.SOUTH);		
 
-		//setzeSpielablauf(new Spielablauf());
-		
-		sc.addZugBeendetListener(new ZugBeendetAdapter() {
-			public void zugBeendet(ZugBeendetEvent zbe) {
-				sa.macheZug(zbe.getZugfolge());
-				
-				uma.setEnabled(true);
-				rma.setEnabled(false);
-
-	           	switch (sa.getSpielbrett().isSpielBeendet()) {
-	           	case Spielbrett.WEISS:
-	           		JOptionPane.showMessageDialog(null, "Weiß hat gewonnen!", "Spiel beendet", JOptionPane.INFORMATION_MESSAGE);
-	           		return;
-	           	case Spielbrett.SCHWARZ:
-	               	JOptionPane.showMessageDialog(null, "Schwarz hat gewonnen!", "Spiel beendet", JOptionPane.INFORMATION_MESSAGE);
-	               	return;
-	           	default:
-	           	}
-
-	           	updateStatusBar();
-			}
-		});
-		
 		mnFile.setText("Datei");
 		mnFile.add(fna);
 		mnFile.add(foa);
@@ -101,7 +78,10 @@ public class DameFenster extends JFrame {
 		
 	}
 	
-	private void updateStatusBar() {
+	private void updateGUI() {
+		uma.setEnabled(sa.getUndoCount()>0);
+		rma.setEnabled(sa.getRedoCount()>0);
+
 		if (sa.getFarbeAmZug() == Spielbrett.SCHWARZ) {
 			statusText.setText("Schwarz am Zug");
 		}
@@ -110,10 +90,30 @@ public class DameFenster extends JFrame {
 		}
 	}
 	
-	public void setzeSpielablauf(Spielablauf wert) {
+	public SpielbrettComponent getSpielbrettComponent() {
+		return sc;
+	}
+	
+	public void setSpielablauf(Spielablauf wert) {
 		sa = wert;
 		sc.setSpielbrett(sa.getSpielbrett());
-		statusText.setText("Neues Spiel - Schwarz am Zug");
+		updateGUI();
+	}
+
+	public void zugBeendet(ZugBeendetEvent zbe) {
+		sa.zugBeendet(zbe);
+		
+       	updateGUI();
+
+       	switch (sa.getSpielbrett().isSpielBeendet()) {
+       	case Spielbrett.WEISS:
+       		JOptionPane.showMessageDialog(null, "Weiß hat gewonnen!", "Spiel beendet", JOptionPane.INFORMATION_MESSAGE);
+       		return;
+       	case Spielbrett.SCHWARZ:
+           	JOptionPane.showMessageDialog(null, "Schwarz hat gewonnen!", "Spiel beendet", JOptionPane.INFORMATION_MESSAGE);
+           	return;
+       	default:
+       	}
 	}
 
 	FileNewAction fna = new FileNewAction();
@@ -125,10 +125,17 @@ public class DameFenster extends JFrame {
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-			JFileChooser od = new JFileChooser();
+			Spielablauf newSa = new Spielablauf();
+			LokalerSpieler sw = new LokalerSpieler(DameFenster.this, Spielbrett.SCHWARZ, DameFenster.this);
+			LokalerSpieler we = new LokalerSpieler(DameFenster.this, Spielbrett.WEISS, DameFenster.this);
+			sc.setLokalerSpieler(sw);
+			sc.addZugBeendetListener(sw);
+			sc.addZugBeendetListener(we);
 
-			setzeSpielablauf(new Spielablauf());
-
+			newSa.starten(sw, we);
+			setSpielablauf(newSa);
+			
+			statusText.setText("Neues Spiel - Schwarz am Zug");
 			uma.setEnabled(false);
 			rma.setEnabled(false);
 			fsa.setEnabled(true);
@@ -160,7 +167,16 @@ public class DameFenster extends JFrame {
 			        java.io.ObjectInputStream ois = new java.io.ObjectInputStream(fis);
 	
 			        try {
-				        DameFenster.this.setzeSpielablauf((Spielablauf)ois.readObject());
+			        	Spielablauf newSa = (Spielablauf)ois.readObject();
+			        	newSa.getSpielerWeiss().addZugBeendetListener(DameFenster.this);
+			        	newSa.getSpielerSchwarz().addZugBeendetListener(DameFenster.this);
+
+			        	if (newSa.getSpielerWeiss().getClass() == LokalerSpieler.class)
+			        		((LokalerSpieler)newSa.getSpielerWeiss()).setDameFenster(DameFenster.this);
+			        	if (newSa.getSpielerSchwarz().getClass() == LokalerSpieler.class)
+			        		((LokalerSpieler)newSa.getSpielerSchwarz()).setDameFenster(DameFenster.this);
+			        	
+				        DameFenster.this.setSpielablauf(newSa);
 			        }
 			        finally {
 			        	ois.close();
@@ -191,26 +207,48 @@ public class DameFenster extends JFrame {
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-			JFileChooser od = new JFileChooser();
+			JFileChooser sd = new JFileChooser();
 
-			od.setDialogTitle("Spielablauf speichern...");
-	        od.addChoosableFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
+			sd.setDialogTitle("Spielablauf speichern...");
+	        sd.addChoosableFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
 		            "Dame-Spielablauf (*.dsa)", "dsa"));
 
-			int returnVal = od.showSaveDialog(DameFenster.this);
+			int returnVal = sd.showSaveDialog(DameFenster.this);
 		    if (returnVal == JFileChooser.APPROVE_OPTION) {
-		    	String filename = od.getSelectedFile().getAbsolutePath();
-				if (od.getSelectedFile().getName().indexOf(".")==-1)
+		    	if (sd.getSelectedFile().exists()) {
+		    		int response = JOptionPane.showConfirmDialog (null,
+		    				"Wollen Sie die vorhandene Datei wirklich überschreiben?","Überschreiben",
+		    				JOptionPane.YES_NO_OPTION,
+		    				JOptionPane.QUESTION_MESSAGE);
+		    		
+		             if (response == JOptionPane.NO_OPTION)
+		            	 return;
+		    		
+		    	}
+		    	
+		    	String filename = sd.getSelectedFile().getAbsolutePath();
+				if (sd.getSelectedFile().getName().indexOf(".")==-1)
 					filename += ".dsa";
 
 				try {
 			        java.io.FileOutputStream fos = new java.io.FileOutputStream(filename, false);
 			        java.io.ObjectOutputStream oos = new java.io.ObjectOutputStream(fos);
 	
+			        Spielablauf newSa = DameFenster.this.sa;
 			        try {
-				        oos.writeObject(DameFenster.this.sa);
+			        	if (newSa.getSpielerWeiss().getClass() == LokalerSpieler.class)
+			        		((LokalerSpieler)newSa.getSpielerWeiss()).setDameFenster(null);
+			        	if (newSa.getSpielerSchwarz().getClass() == LokalerSpieler.class)
+			        		((LokalerSpieler)newSa.getSpielerSchwarz()).setDameFenster(null);
+
+			        	oos.writeObject(newSa);
 			        }
 			        finally {
+			        	if (newSa.getSpielerWeiss().getClass() == LokalerSpieler.class)
+			        		((LokalerSpieler)newSa.getSpielerWeiss()).setDameFenster(DameFenster.this);
+			        	if (newSa.getSpielerSchwarz().getClass() == LokalerSpieler.class)
+			        		((LokalerSpieler)newSa.getSpielerSchwarz()).setDameFenster(DameFenster.this);
+			        	
 			        	oos.close();
 			        	fos.close();
 			        }
@@ -255,10 +293,7 @@ public class DameFenster extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			sa.undoZug();
 			sc.repaint();
-			updateStatusBar();
-			
-			this.setEnabled(sa.getUndoCount()>0);
-			rma.setEnabled(sa.getRedoCount()>0);
+			updateGUI();
 			//JOptionPane.showMessageDialog(DameFenster.this, "Noch nicht implementiert!", "Fehlt noch", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
@@ -279,10 +314,7 @@ public class DameFenster extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			sa.redoZug();
 			sc.repaint();
-			updateStatusBar();
-			
-			uma.setEnabled(sa.getUndoCount()>0);
-			this.setEnabled(sa.getRedoCount()>0);
+			updateGUI();
 			//JOptionPane.showMessageDialog(DameFenster.this, "Noch nicht implementiert!", "Fehlt noch", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
@@ -316,5 +348,33 @@ public class DameFenster extends JFrame {
 			UeberDialog frm = new UeberDialog(DameFenster.this);
 			frm.setVisible(true);
 		}
+	}
+}
+
+class LokalerSpieler extends AbstractSpieler implements ZugBeendetListener {
+	private DameFenster df;
+	
+	public LokalerSpieler(DameFenster df, int eigeneFarbe, ZugBeendetListener zbl) {
+		super(eigeneFarbe, zbl);
+		
+		this.df=df;
+	}
+	
+	public void startGettingNaechstenZug(Spielbrett sb) {
+		df.getSpielbrettComponent().setLokalerSpieler(this);
+	}
+
+	public void zugBeendet(ZugBeendetEvent zbe) {
+		if (zbe.getSpieler()==this) {
+			beendeZug(zbe.getZugfolge());
+		}
+	}
+
+	public DameFenster getDameFenster() {
+		return df;
+	}
+
+	public void setDameFenster(DameFenster df) {
+		this.df = df;
 	}
 }

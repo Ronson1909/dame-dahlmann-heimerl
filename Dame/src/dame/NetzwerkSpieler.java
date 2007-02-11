@@ -5,8 +5,12 @@ import java.io.ObjectOutputStream;
 
 import dame.SocketHandler.*;
 
-public class NetzwerkSpieler implements ISpieler, ObjectEmpfangenListener {
-    private ObjectOutputStream out;
+public class NetzwerkSpieler extends AbstractSpieler implements ObjectEmpfangenListener {
+    public NetzwerkSpieler(int eigeneFarbe, ZugBeendetListener zbl) {
+		super(eigeneFarbe, zbl);
+	}
+
+	private ObjectOutputStream out;
     private SocketHandler sh;
     
     /**
@@ -62,7 +66,9 @@ public class NetzwerkSpieler implements ISpieler, ObjectEmpfangenListener {
 				
 	}
 
-	public int getEigeneFarbe() {
-		return 0;
+	@Override
+	public void startGettingNaechstenZug(Spielbrett sb) {
+		// TODO Auto-generated method stub
+		
 	}
 }

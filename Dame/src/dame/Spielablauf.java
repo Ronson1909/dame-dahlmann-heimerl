@@ -16,26 +16,38 @@ import javax.swing.JOptionPane;
  * @author unbekannt
  * @version 1.0
  */
-public class Spielablauf implements java.io.Serializable {
-    private IKI kis[] = new IKI[2];
+public class Spielablauf implements java.io.Serializable, ZugBeendetListener {
+	private ISpieler spieler[] = new ISpieler[2];
     private Spielbrett sb;
     private Stack<ArrayList<Zug>> bisherigeZuege = new Stack<ArrayList<Zug>>();
     private Stack<ArrayList<Zug>> undoneZuege = new Stack<ArrayList<Zug>>();
 
 	public Spielablauf() {
-    	//Die KI's laden.
-        kis[0]=null;
-        kis[1]=null;
+        sb=new Spielbrett();
+		//this(null, null);
+	}
 
-        zuruecksetzen();
-    }
+	//ist ein Listener
+	public void zugBeendet(ZugBeendetEvent zbe) {
+    	macheZugInt(zbe.getZugfolge());
+    	
+    	undoneZuege.clear();
+
+       	switch (sb.isSpielBeendet()) {
+       	case Spielbrett.WEISS:
+       	case Spielbrett.SCHWARZ:
+       		return;
+       	default:
+       	}
+    	
+       	getSpielerAmZug().startGettingNaechstenZug(sb);
+	}
 
     /**
      * Generiert ein leeres Brett etc.
      */
-    public void zuruecksetzen() {
-        sb=new Spielbrett();
-    }
+//    public void zuruecksetzen() {
+//    }
 
     /**
      * Gibt das Spielbrett zurück.
@@ -60,24 +72,55 @@ public class Spielablauf implements java.io.Serializable {
     public int getFarbeAmZug() {
     	return sb.getFarbeAmZug();
     }
-    
+
+    /**
+     * Gibt den aktuellen Spieler zurück.
+     * @return Der aktuelle Spieler.
+     */
+    public ISpieler getSpielerAmZug() {
+    	return spieler[sb.getFarbeAmZug()-1];
+    }
+
+    /**
+     * Gibt den schwarzen Spieler zurück.
+     * @return Der schwarze Spieler.
+     */
+    public ISpieler getSpielerSchwarz() {
+    	return spieler[0];
+    }
+
+    /**
+     * Gibt den weißen Spieler zurück.
+     * @return Der weiße Spieler.
+     */
+    public ISpieler getSpielerWeiss() {
+    	return spieler[1];
+    }
+
    /**
     * Startet ein Spiel.
     *
     */
-    public void starten() {
-        while (kis[getFarbeAmZug()-1] != null) {
-           	Spielbrett tmpSB = sb.clone();
-           	ArrayList<Zug> zugfolge = kis[getFarbeAmZug()-1].gibNaechstenZug(tmpSB, getFarbeAmZug());
-           	macheZugInt(zugfolge);
+    public void starten(ISpieler schwarz, ISpieler weiss) {
+//        while (kis[getFarbeAmZug()-1] != null) {
+//           	Spielbrett tmpSB = sb.clone();
+//           	ArrayList<Zug> zugfolge = kis[getFarbeAmZug()-1].gibNaechstenZug(tmpSB, getFarbeAmZug());
+//           	macheZugInt(zugfolge);
+//
+//           	switch (sb.isSpielBeendet()) {
+//           	case Spielbrett.WEISS:
+//           	case Spielbrett.SCHWARZ:
+//           		return;
+//           	default:
+//           	}
+//        };
+    	if (schwarz == null || weiss == null)
+    		throw new IllegalArgumentException("Der weiße und schwarze Spieler dürfen nicht null sein!");
+    	
+		spieler[0]=schwarz;
+		spieler[1]=weiss;
 
-           	switch (sb.isSpielBeendet()) {
-           	case Spielbrett.WEISS:
-           	case Spielbrett.SCHWARZ:
-           		return;
-           	default:
-           	}
-        };
+		spieler[0].startGettingNaechstenZug(sb);
     }
 
     /**
@@ -101,24 +144,8 @@ public class Spielablauf implements java.io.Serializable {
      * Archiviert die Zugfolge außerdem zum Rückgängigmachen.
 	 * @param z Die durchzuführende Zugfolge.
 	 */
-    public void macheZug(ArrayList<Zug> z) {
-    	macheZugInt(z);
-    	
-    	undoneZuege.clear();
-
-       	switch (sb.isSpielBeendet()) {
-       	case Spielbrett.WEISS:
-       	case Spielbrett.SCHWARZ:
-       		return;
-       	default:
-       	}
-    	
-		if (kis[getFarbeAmZug()-1] != null) {
-        	Spielbrett tmpSB = sb.clone();
-        	ArrayList<Zug> zugfolge = kis[getFarbeAmZug()-1].gibNaechstenZug(tmpSB, getFarbeAmZug());
-           	macheZug(zugfolge);
-		}
-	}
+//    public void macheZug(ArrayList<Zug> z) {
+//	}
 
     /**
      * Gibt die bisherige Zugfolge auf der Konsole aus.
@@ -166,10 +193,10 @@ public class Spielablauf implements java.io.Serializable {
     public void undoZug() {
     	if (bisherigeZuege.size()>0) {
     		ArrayList<Zug> zf = bisherigeZuege.pop();
-    		
     		sb.undoZug(zf);
-    		
     		undoneZuege.add(zf);
+    		
+    		getSpielerAmZug().startGettingNaechstenZug(sb);
     	}
     }
 
@@ -184,6 +211,15 @@ public class Spielablauf implements java.io.Serializable {
     		ArrayList<Zug> zf = undoneZuege.pop();
     		
     		macheZugInt(zf);
+
+           	switch (sb.isSpielBeendet()) {
+           	case Spielbrett.WEISS:
+           	case Spielbrett.SCHWARZ:
+           		return;
+           	default:
+           	}
+
+    		getSpielerAmZug().startGettingNaechstenZug(sb);
     	}
     }
 
