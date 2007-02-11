@@ -425,16 +425,22 @@ public class Spielbrett implements Cloneable, Serializable {
 		} //end-if keine Dame
 		
 		else { //wenn Dame
-			//x- und ySchritt von Ursprungsposition aus gesehen!
-			int xSchritt = (int) Math.signum(x2-x1); //(x2 > x1) ? +1 : -1;
-			int ySchritt = (int) Math.signum(y2-y1); //(y2 > y1) ? +1 : -1;
-			int testX = x2-xSchritt;
-			int testY = y2-ySchritt;
-			
-			//prüfe: Feld vor Zielfeld muss Frei sein, da kein Sprung
-			if (!isLeer_intern(testX, testY))
-				return false;
+			if (!((Math.abs(x2-x1) == 1) && (Math.abs(y2-y1) == 1))) { //wenn mehr als nur ein Feld weit gezogen
+
+				//prüfe: Alle Felder zwischen Startfeld und einem Feld vor Zielfeld leer
+				if (!zwischenraumFrei(x1, y1, x2, y2))
+					return false;
 				
+				//x- und ySchritt von Ursprungsposition aus gesehen!
+				int xSchritt = (int) Math.signum(x2-x1); //(x2 > x1) ? +1 : -1;
+				int ySchritt = (int) Math.signum(y2-y1); //(y2 > y1) ? +1 : -1;
+				int testX = x2-xSchritt;
+				int testY = y2-ySchritt;
+
+				//prüfe: Feld vor Zielfeld muss Frei sein, da kein Sprung
+				if (!isLeer_intern(testX, testY))
+					return false;
+			}
 			if (sprungIstMoeglich())
 				return false;
 		}
@@ -603,20 +609,28 @@ public class Spielbrett implements Cloneable, Serializable {
 			if (!vonDameAusfuehrbar(x1, y1, x2, y2))
 				return false;
 			
-			//prüfe: Alle Felder zwischen Startfeld und einem Feld vor Zielfeld leer
-			if (!zwischenraumFrei(x1, y1, x2, y2))
-				return false;
-			//x- und ySchritt von Ursprungsposition aus gesehen!
-			int xSchritt = (int) Math.signum(x2-x1); //(x2 > x1) ? +1 : -1;
-			int ySchritt = (int) Math.signum(y2-y1); //(y2 > y1) ? +1 : -1;
-			int testX = x2-xSchritt;
-			int testY = y2-ySchritt;
-			
-			boolean normalerZug = isLeer_intern(testX, testY);
+			boolean normalerZug, erlaubterSprung;
+			if ((Math.abs(x2-x1) == 1) && (Math.abs(y2-y1) == 1)) { //nur ein Feld weit gezogen
+				normalerZug = true;
+				erlaubterSprung = false;
+			}
+			else { //mehrere Felder weit gezogen
+				//prüfe: Alle Felder zwischen Startfeld und einem Feld vor Zielfeld leer
+				if (!zwischenraumFrei(x1, y1, x2, y2))
+					return false;
 				
-			//prüfe: oder erlaubter Sprung über Gegner => Nur ein Feld vor Zielfeld mit gegnerischem Stein belegt, sonst alle leer
-			boolean erlaubterSprung = isGegner_intern(testX, testY);
+				//x- und ySchritt von Ursprungsposition aus gesehen!
+				int xSchritt = (int) Math.signum(x2-x1); //(x2 > x1) ? +1 : -1;
+				int ySchritt = (int) Math.signum(y2-y1); //(y2 > y1) ? +1 : -1;
+				int testX = x2-xSchritt;
+				int testY = y2-ySchritt;
 
+				normalerZug = isLeer_intern(testX, testY);
+					
+				//prüfe: oder erlaubter Sprung über Gegner => Nur ein Feld vor Zielfeld mit gegnerischem Stein belegt, sonst alle leer
+				erlaubterSprung = isGegner_intern(testX, testY);
+			}
+			
 			//prüfe: Sprung, aber inkorrekt
 			if (!normalerZug && !erlaubterSprung)
 				return false;
@@ -635,13 +649,13 @@ public class Spielbrett implements Cloneable, Serializable {
 				int xKorrektur = (int) Math.signum(x1-x2); //(x2 > x1) ? -1 : +1;
 				int yKorrektur = (int) Math.signum(y1-y2); //(y2 > y1) ? -1 : +1;
 				
-				if (xKorrektur != -1*xSchritt || yKorrektur != -1*ySchritt)
-					System.out.println("PROGRAMMIERFEHLER!");
+				//if (xKorrektur != -1*xSchritt || yKorrektur != -1*ySchritt)
+				//	System.out.println("PROGRAMMIERFEHLER!");
 					//falls das nie auftritt können die zwei int-Werte hier drüber weg.
 				
-				//TEMP_spielbrett[x2+xKorrektur][y2+yKorrektur] = LEER;
+				TEMP_spielbrett[x2+xKorrektur][y2+yKorrektur] = LEER;
 				//TEMP_spielbrett[x2-xSchritt][y2-ySchritt] = LEER;
-				TEMP_spielbrett[testX][testY] = LEER;
+				//TEMP_spielbrett[testX][testY] = LEER;
 			}
 			
 			//prüfe: Es wurde gesprungen, aber nicht alle möglichen Sprünge wurden ausgeführt. (Wird anhand TEMP_spielbrett geprüft).
@@ -866,6 +880,8 @@ public class Spielbrett implements Cloneable, Serializable {
 		//x- und ySchritt von Ursprungsposition aus gesehen!
 		int xSchritt = (int) Math.signum(x2-x1); //(x2 > x1) ? +1 : -1;
 		int ySchritt = (int) Math.signum(y2-y1); //(y2 > y1) ? +1 : -1;
+		if ((x1+xSchritt == x2) && (y1+ySchritt == y2)) //angrenzende Felder
+			return true;
 		int testX=x1+xSchritt, testY=y1+ySchritt;
 		while (xSchritt*testX < xSchritt*(x2-xSchritt) && ySchritt*testY < ySchritt*(y2-ySchritt)) {
 			if (spielbrett_intern[testX][testY] != LEER)
