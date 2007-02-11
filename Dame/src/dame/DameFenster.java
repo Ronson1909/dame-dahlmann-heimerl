@@ -56,6 +56,9 @@ public class DameFenster extends JFrame {
 		dc.addZugBeendetListener(dc.new ZugBeendetAdapter() {
 			public void zugBeendet(ZugBeendetEvent zbe) {
 				sa.macheZug(zbe.getZugfolge());
+				
+				uma.setEnabled(true);
+				rma.setEnabled(false);
 
 	           	switch (sa.getSpielbrett().isSpielBeendet()) {
 	           	case Spielbrett.WEISS:
@@ -67,7 +70,7 @@ public class DameFenster extends JFrame {
 	           	default:
 	           	}
 
-				if (sa.getAktuelleFarbe()==1) {
+				if (sa.getFarbeAmZug() == Spielbrett.SCHWARZ) {
 					statusText.setText("Schwarz am Zug");
 				}
 				else {
@@ -123,6 +126,10 @@ public class DameFenster extends JFrame {
 			JFileChooser od = new JFileChooser();
 
 			setzeSpielablauf(new Spielablauf());
+
+			uma.setEnabled(false);
+			rma.setEnabled(false);
+			fsa.setEnabled(true);
 		}
 	}
 	
@@ -174,6 +181,8 @@ public class DameFenster extends JFrame {
 	FileSaveAction fsa = new FileSaveAction();
 	private class FileSaveAction extends AbstractAction {
 		private FileSaveAction() {
+			this.setEnabled(false);
+
 			super.putValue(NAME, "Speichern unter...");			
 			super.putValue(SHORT_DESCRIPTION, "Speichert den aktuellen Spielstand");			
 			super.putValue(SMALL_ICON, new ImageIcon(ClassLoader.getSystemResource("dame/images/save.gif")));
@@ -182,7 +191,7 @@ public class DameFenster extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			JFileChooser od = new JFileChooser();
 
-			od.setDialogTitle("Spielablauf öffnen...");
+			od.setDialogTitle("Spielablauf speichern...");
 	        od.addChoosableFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
 		            "Dame-Spielablauf (*.dsa)", "dsa"));
 
@@ -231,6 +240,8 @@ public class DameFenster extends JFrame {
 	UndoMoveAction uma = new UndoMoveAction();
 	private class UndoMoveAction extends AbstractAction {
 		private UndoMoveAction() {
+			this.setEnabled(false);
+
 			super.putValue(NAME, "Zug rückgängig");			
 			super.putValue(SHORT_DESCRIPTION, "Macht den letzten Zug rückgängig");			
 
@@ -240,13 +251,19 @@ public class DameFenster extends JFrame {
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-			JOptionPane.showMessageDialog(DameFenster.this, "Noch nicht implementiert!", "Fehlt noch", JOptionPane.INFORMATION_MESSAGE);
+			sa.undoZug();
+			
+			this.setEnabled(sa.getUndoCount()>0);
+			rma.setEnabled(sa.getRedoCount()>0);
+			//JOptionPane.showMessageDialog(DameFenster.this, "Noch nicht implementiert!", "Fehlt noch", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 
 	RedoMoveAction rma = new RedoMoveAction();
 	private class RedoMoveAction extends AbstractAction {
 		private RedoMoveAction() {
+			this.setEnabled(false);
+
 			super.putValue(NAME, "Zug wiederherstellen");			
 			super.putValue(SHORT_DESCRIPTION, "Stellt den letzten rückgängig gemachten Zug wieder her");			
 
@@ -256,7 +273,11 @@ public class DameFenster extends JFrame {
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-			JOptionPane.showMessageDialog(DameFenster.this, "Noch nicht implementiert!", "Fehlt noch", JOptionPane.INFORMATION_MESSAGE);
+			sa.redoZug();
+			
+			uma.setEnabled(sa.getUndoCount()>0);
+			this.setEnabled(sa.getRedoCount()>0);
+			//JOptionPane.showMessageDialog(DameFenster.this, "Noch nicht implementiert!", "Fehlt noch", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 

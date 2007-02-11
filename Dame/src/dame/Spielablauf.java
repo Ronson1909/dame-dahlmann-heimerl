@@ -1,7 +1,7 @@
 package dame;
 
 import java.util.ArrayList;
-
+import java.util.Stack;
 import javax.swing.JOptionPane;
 
 /**
@@ -19,30 +19,9 @@ import javax.swing.JOptionPane;
 public class Spielablauf implements java.io.Serializable {
     private IKI kis[] = new IKI[2];
     private Spielbrett sb;
-    private ArrayList<ArrayList<Zug>> bisherigeZuege = new ArrayList<ArrayList<Zug>>();
+    private Stack<ArrayList<Zug>> bisherigeZuege = new Stack<ArrayList<Zug>>();
+    private Stack<ArrayList<Zug>> undoneZuege = new Stack<ArrayList<Zug>>();
 
-	/*
-	public static void main(String[] args) {
-		DameFenster df = new DameFenster();
-		df.setSize(200, 100);
-		df.setVisible(true);
-		return;
-
-    	Spielablauf sa = new Spielablauf();
-    	ArrayList<Zug> za = new ArrayList<Zug>();
-    	za.add(new Zug(0,0,1,1));
-    	za.add(new Zug(1,1,2,2));
-    	sa.bisherigeZuege.add(za);
-
-    	ArrayList<Zug> za2 = new ArrayList<Zug>();
-    	za2.add(new Zug(0,0,1,1));
-    	za2.add(new Zug(1,1,2,2));
-    	
-    	sa.bisherigeZuege.add(za2);
-    	sa.gibAus();
-    }
-   	*/
-    
 	public Spielablauf() {
     	//Die KI's laden.
         kis[0]=null;
@@ -56,7 +35,6 @@ public class Spielablauf implements java.io.Serializable {
      */
     public void zuruecksetzen() {
         sb=new Spielbrett();
-        aktuelleFarbe = 1;
     }
 
     /**
@@ -75,10 +53,12 @@ public class Spielablauf implements java.io.Serializable {
     //	return sb;
     //}
 
-    private int aktuelleFarbe = 1;
-
-    public int getAktuelleFarbe() {
-    	return aktuelleFarbe;
+    /**
+     * Gibt die aktuelle Farbe zurück.
+     * @return Die aktuelle Farbe.
+     */
+    public int getFarbeAmZug() {
+    	return sb.getFarbeAmZug();
     }
     
    /**
@@ -86,18 +66,9 @@ public class Spielablauf implements java.io.Serializable {
     *
     */
     public void starten() {
-        aktuelleFarbe = 1;
-
-        while (kis[aktuelleFarbe] != null) {
-           	if (aktuelleFarbe == 1) {
-           		sb.schwarzAmZug();
-           	}
-           	else {
-           		sb.weissAmZug();
-           	}
-           	
+        while (kis[getFarbeAmZug()-1] != null) {
            	Spielbrett tmpSB = sb.clone();
-           	ArrayList<Zug> zugfolge = kis[aktuelleFarbe].gibNaechstenZug(tmpSB, aktuelleFarbe+1);
+           	ArrayList<Zug> zugfolge = kis[getFarbeAmZug()-1].gibNaechstenZug(tmpSB, getFarbeAmZug());
            	macheZugInt(zugfolge);
 
            	switch (sb.isSpielBeendet()) {
@@ -119,19 +90,6 @@ public class Spielablauf implements java.io.Serializable {
 			sb.macheZug(z);
 
 			bisherigeZuege.add(z);
-
-            if (aktuelleFarbe==1)
-                aktuelleFarbe=0;
-            else
-                aktuelleFarbe=1;
-
-           	if (aktuelleFarbe == 1) {
-           		sb.schwarzAmZug();
-           	}
-           	else {
-           		sb.weissAmZug();
-           	}
-           	
 		}
 		catch (Exception ex) {
 			System.out.println("Konnte Zug im Spielablauf nicht ausführen: " + ex.toString());
@@ -145,6 +103,8 @@ public class Spielablauf implements java.io.Serializable {
 	 */
     public void macheZug(ArrayList<Zug> z) {
     	macheZugInt(z);
+    	
+    	undoneZuege.clear();
 
        	switch (sb.isSpielBeendet()) {
        	case Spielbrett.WEISS:
@@ -153,13 +113,17 @@ public class Spielablauf implements java.io.Serializable {
        	default:
        	}
     	
-		if (kis[aktuelleFarbe] != null) {
+		if (kis[getFarbeAmZug()-1] != null) {
         	Spielbrett tmpSB = sb.clone();
-        	ArrayList<Zug> zugfolge = kis[aktuelleFarbe].gibNaechstenZug(tmpSB, aktuelleFarbe+1);
+        	ArrayList<Zug> zugfolge = kis[getFarbeAmZug()-1].gibNaechstenZug(tmpSB, getFarbeAmZug());
            	macheZug(zugfolge);
 		}
 	}
 
+    /**
+     * Gibt die bisherige Zugfolge auf der Konsole aus.
+     *
+     */
     public void gibAus() {
         int aktuelleFarbe = 1;
         
@@ -191,5 +155,51 @@ public class Spielablauf implements java.io.Serializable {
             else
                 aktuelleFarbe=1;
 }
+    }
+    
+    /**
+     * Macht einen rückgängig Zug rückgängig. Wenn
+     * kein Zug rückgängig gemacht werden kann, wird keine
+     * Exception geworfen.
+     *
+     */
+    public void undoZug() {
+    	if (bisherigeZuege.size()>0) {
+    		ArrayList<Zug> zf = bisherigeZuege.pop();
+    		
+    		sb.undoZug(zf);
+    		
+    		undoneZuege.add(zf);
+    	}
+    }
+
+    /**
+     * Stellt einen rückgängig gemachten Zug wieder her. Wenn
+     * kein Zug wiederhergestellt werden kann, wird keine
+     * Exception geworfen.
+     *
+     */
+    public void redoZug() {
+    	if (undoneZuege.size()>0) {
+    		ArrayList<Zug> zf = undoneZuege.pop();
+    		
+    		macheZugInt(zf);
+    	}
+    }
+
+    /**
+     * Gibt die Anzahl der Züge im Undo-Puffer zurück.
+     * @return Die Anzahl der Züge im Undo-Puffer.
+     */
+    public int getUndoCount() {
+    	return bisherigeZuege.size();
+    }
+
+    /**
+     * Gibt die Anzahl der Züge im Redo-Puffer zurück.
+     * @return Die Anzahl der Züge im Redo-Puffer.
+     */
+    public int getRedoCount() {
+    	return undoneZuege.size();
     }
 }
