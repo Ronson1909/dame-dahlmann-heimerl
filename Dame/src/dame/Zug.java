@@ -35,6 +35,8 @@ public class Zug implements java.io.Serializable {
     //so ist man flexibler.
     private int uebersprungenerSteinX = -1;
     private int uebersprungenerSteinY = -1;
+    private int uebersprungenerSteinTyp = -1;
+    private boolean zurDameGeworden = false;
 
     public int gibStartX() {
         return startX;
@@ -82,6 +84,22 @@ public class Zug implements java.io.Serializable {
 
     public void setzeUebersprungenerSteinY(int wert) {
     	uebersprungenerSteinY=wert;
+    }
+    
+    public int getUebersprungenerSteinTyp() {
+    	return uebersprungenerSteinTyp;
+    }
+    
+    public void setUebersprungenerSteinTyp(int wert) {
+    	uebersprungenerSteinTyp = wert;
+    }
+    
+    public boolean getZurDameGeworden() {
+    	return zurDameGeworden;
+    }
+    
+    public void setZurDameGeworden(boolean wert) {
+    	zurDameGeworden = wert;
     }
 
     public Zug gibUmgekehrtenZug() {
