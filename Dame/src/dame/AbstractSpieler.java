@@ -23,6 +23,15 @@ public abstract class AbstractSpieler implements ISpieler {
 	}
 
 	
+	/**
+	 * Damit können die Spieler untereinander vernetzt werden. Wenn der andere
+	 * Spieler seinen Zug beendet, dann bekommt dieser hier eine Nachricht in
+	 * Form dieses Methodenaufrufs.
+	 */
+	public void zugBeendet(ZugBeendetEvent zbe) {
+
+	}
+	
 	//For Serialization
 	private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
 		out.writeInt(eigeneFarbe);
@@ -51,14 +60,14 @@ public abstract class AbstractSpieler implements ISpieler {
 
 	public abstract void startGettingNaechstenZug(Spielbrett sb);
 	public void cancelGettingNaechstenZug() {
-
+		beendeZug(null);
 	}
 
 	/**
 	 * Führt den Zug aus, d.h. es leitet die Zugfolge an den Listener weiter.
 	 * @param zf
 	 */
-	public final void beendeZug(ArrayList<Zug> zf) {
+	protected final void beendeZug(ArrayList<Zug> zf) {
 		for (ZugBeendetListener zbl : (Iterable<ZugBeendetListener>)zbls.clone()) {
 			zbl.zugBeendet(new ZugBeendetEvent(this, this, zf));
 		}

@@ -3,7 +3,12 @@ package dame;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public interface ISpieler extends Serializable {
+/**
+ * Spielerinterface
+ * @author Christian
+ *
+ */
+public interface ISpieler extends Serializable, ZugBeendetListener {
 	/**
 	 * Gibt die Farbe des Spielers zurück.
 	 * @return Die Farbe des Spielers.
@@ -41,6 +46,11 @@ public interface ISpieler extends Serializable {
 	public void clearZugBeendetListener();
 }
 
+/**
+ * Enthält die Parameter eines ausgeführten Zuges, also wer, was gemacht hat.
+ * @author Christian
+ *
+ */
 class ZugBeendetEvent extends java.util.EventObject {
 	private ArrayList<Zug> zugfolge;
 	private ISpieler spieler;
@@ -51,20 +61,37 @@ class ZugBeendetEvent extends java.util.EventObject {
 		this.zugfolge=zugfolge;
 	}
 	
+	/**
+	 * Gibt die durchgeführte Zugfolge zurück.
+	 * @return Die durchgeführte Zugfolge.
+	 */
 	public ArrayList<Zug> getZugfolge() {
 		return zugfolge;
 	}
 
+	/**
+	 * Gibt den ausführenden Spieler zurück.
+	 * @return Der ausführende Spieler.
+	 */
 	public ISpieler getSpieler() {
 		return spieler;
 	}
 }
 
+/**
+ * Interface, um auf ZugBeendet-Events reagieren zu können.
+ * @author Christian
+ *
+ */
 interface ZugBeendetListener extends java.util.EventListener {
 	public void zugBeendet(ZugBeendetEvent zbe);
 }
 
-
+/**
+ * Standardklasse, um auf ZugBeendet-Events reagieren zu können.
+ * @author Christian
+ *
+ */
 class ZugBeendetAdapter implements ZugBeendetListener {
 	public void zugBeendet(ZugBeendetEvent zbe) {
 		

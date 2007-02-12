@@ -95,13 +95,17 @@ public class DameFenster extends JFrame implements ZugBeendetListener {
 	}
 	
 	public void setSpielablauf(Spielablauf wert) {
-		sa = wert;
-		sc.setSpielbrett(sa.getSpielbrett());
-		updateGUI();
+		if (wert != sa) {
+			sa = wert;
+			sc.setSpielbrett(sa.getSpielbrett());
+			updateGUI();
+		}
 	}
 
 	public void zugBeendet(ZugBeendetEvent zbe) {
 		sa.zugBeendet(zbe);
+		
+		sc.repaint();
 		
        	updateGUI();
 
@@ -128,10 +132,17 @@ public class DameFenster extends JFrame implements ZugBeendetListener {
 			Spielablauf newSa = new Spielablauf();
 			LokalerSpieler sw = new LokalerSpieler(DameFenster.this, Spielbrett.SCHWARZ, DameFenster.this);
 			LokalerSpieler we = new LokalerSpieler(DameFenster.this, Spielbrett.WEISS, DameFenster.this);
+			
+			//Spieler gegenseitig verlinken
+			sw.addZugBeendetListener(we);
+			we.addZugBeendetListener(sw);
+			
+			//SpielbrettComponent mit den Spielern verknüpfen
 			sc.setLokalerSpieler(sw);
 			sc.addZugBeendetListener(sw);
 			sc.addZugBeendetListener(we);
 
+			//Spiel starten
 			newSa.starten(sw, we);
 			setSpielablauf(newSa);
 			
@@ -274,6 +285,44 @@ public class DameFenster extends JFrame implements ZugBeendetListener {
 		public void actionPerformed(ActionEvent e) {
 			NetzwerkDialog frm = new NetzwerkDialog(DameFenster.this);
 			frm.setVisible(true);
+			
+			if (frm.getSocketHandler() != null && frm.getObjectOutputStream() != null) {
+				Spielablauf newSa = new Spielablauf();
+				
+				AbstractSpieler sw, we;
+				NetzwerkSpieler ns;
+				LokalerSpieler ls;
+				if (frm.isServer()) {
+					ls = new LokalerSpieler(DameFenster.this, Spielbrett.SCHWARZ, DameFenster.this);
+					ns = new NetzwerkSpieler(Spielbrett.WEISS, DameFenster.this);
+					we = ns;
+					sw = ls;
+				}
+				else {
+					ns = new NetzwerkSpieler(Spielbrett.SCHWARZ, DameFenster.this);
+					ls = new LokalerSpieler(DameFenster.this, Spielbrett.WEISS, DameFenster.this);
+					sw = ns;
+					we = ls;
+				}
+				ns.setNetwork(frm.getObjectOutputStream(), frm.getSocketHandler());
+				
+				//Spieler gegenseitig verlinken
+				sw.addZugBeendetListener(we);
+				we.addZugBeendetListener(sw);
+				
+				//SpielbrettComponent mit den Spielern verknüpfen
+				sc.setLokalerSpieler(ls);
+				sc.addZugBeendetListener(ls);
+
+				//Spiel starten
+				newSa.starten(sw, we);
+				setSpielablauf(newSa);
+				
+				statusText.setText("Neues Spiel - Schwarz am Zug");
+				uma.setEnabled(false);
+				rma.setEnabled(false);
+				fsa.setEnabled(true);
+			}
 		}
 	}
 

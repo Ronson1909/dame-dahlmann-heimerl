@@ -19,6 +19,8 @@ public class NetzwerkDialog extends JDialog {
 	
 	private Socket sock;
 	private ObjectOutputStream out;
+	private SocketHandler sh;
+	private boolean server=false;
 	
 	public NetzwerkDialog(java.awt.Window owner) throws HeadlessException {
 		super(owner, "Netzwerkspiel", java.awt.Dialog.ModalityType.APPLICATION_MODAL);
@@ -40,15 +42,12 @@ public class NetzwerkDialog extends JDialog {
 					sock = new Socket(ip.getText(), Integer.parseInt(port.getText()));
 					out=new ObjectOutputStream(sock.getOutputStream());
 					
-					SocketHandler sh = new SocketHandler(sock);
-					sh.addObjectEmpfangenListener(sh.new ObjectEmpfangenAdapter () {
-						public void objectEmpfangen(ObjectEmpfangenEvent oee) {
-							JOptionPane.showMessageDialog(NetzwerkDialog.this, oee.getEmpfangenesObject().toString(), "Empfangen", JOptionPane.INFORMATION_MESSAGE);
-
-							super.objectEmpfangen(oee);
-						}
-					});
+					sh = new SocketHandler(sock);
 					sh.start();
+
+					server=false;
+
+					NetzwerkDialog.this.setVisible(false);
 				} catch (NumberFormatException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -79,17 +78,14 @@ public class NetzwerkDialog extends JDialog {
 					ss = new ServerSocket(Integer.parseInt(port.getText()));
 					ss.setSoTimeout(10000);
 					sock = ss.accept();
+					
 					out=new ObjectOutputStream(sock.getOutputStream());
 
-					SocketHandler sh = new SocketHandler(sock);
-					sh.addObjectEmpfangenListener(sh.new ObjectEmpfangenAdapter () {
-						public void objectEmpfangen(ObjectEmpfangenEvent oee) {
-							JOptionPane.showMessageDialog(NetzwerkDialog.this, oee.getEmpfangenesObject().toString(), "Empfangen", JOptionPane.INFORMATION_MESSAGE);
-
-							super.objectEmpfangen(oee);
-						}
-					});
+					sh = new SocketHandler(sock);
 					sh.start();
+					
+					server=true;
+					NetzwerkDialog.this.setVisible(false);
 				} catch (SocketException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -106,29 +102,45 @@ public class NetzwerkDialog extends JDialog {
 		btn = new JButton("Schlieﬂen");
 		btn.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				server=false;
+				out=null;
+				sh=null;
+
 				NetzwerkDialog.this.setVisible(false);
 			}
 		});
 		this.add(btn);//, java.awt.BorderLayout.SOUTH);
 		
-		btn = new JButton("Senden");
-		btn.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				//Serialize to Net
-				if (NetzwerkDialog.this.out == null)
-					return;
-				
-				try {
-					NetzwerkDialog.this.out.writeObject(new Zug());
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		});
-		this.add(btn);
+//		btn = new JButton("Senden");
+//		btn.addActionListener(new java.awt.event.ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				//Serialize to Net
+//				if (NetzwerkDialog.this.out == null)
+//					return;
+//				
+//				try {
+//					NetzwerkDialog.this.out.writeObject(new Zug());
+//				} catch (IOException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}
+//			}
+//		});
+//		this.add(btn);
 		
 		this.pack();
 		super.setLocationRelativeTo(owner);
+	}
+
+	public ObjectOutputStream getObjectOutputStream() {
+		return out;
+	}
+
+	public SocketHandler getSocketHandler() {
+		return sh;
+	}
+
+	public boolean isServer() {
+		return server;
 	}
 }

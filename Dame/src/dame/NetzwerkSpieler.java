@@ -63,12 +63,33 @@ public class NetzwerkSpieler extends AbstractSpieler implements ObjectEmpfangenL
     }
 
 	public void objectEmpfangen(ObjectEmpfangenEvent oee) {
+		//Zug beenden, wenn eine Zugfolge kommt
+		Object obj = oee.getEmpfangenesObject();
+		
+		if (obj.getClass() == java.util.ArrayList.class) {
+			java.util.ArrayList al = (java.util.ArrayList)obj;
+			
+			if (al.size()>0 && al.get(0).getClass() == Zug.class) {
+				java.util.ArrayList<Zug> zf = (java.util.ArrayList<Zug>)obj;
 				
+				beendeZug(zf);
+			}
+		}
 	}
 
 	@Override
 	public void startGettingNaechstenZug(Spielbrett sb) {
-		// TODO Auto-generated method stub
-		
+		//kann leer bleiben
+	}
+	
+	@Override
+	public void zugBeendet(ZugBeendetEvent zbe) {
+		//eine Message absenden mit dem vom anderen Spieler durchgeführten Zug
+		try {
+			out.writeObject(zbe.getZugfolge());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
