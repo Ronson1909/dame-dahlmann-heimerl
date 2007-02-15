@@ -313,7 +313,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	 */
 	private boolean weitererSprungIstMoeglich(int x, int y, boolean sprungMitDame) {
 				
-		//falls mit normelem Stein gesprungen
+		//falls mit normalem Stein gesprungen
 		if (!sprungMitDame) {
 			if (pruefeSprung(x, y, -1, +1, false))
 				return true;
@@ -997,12 +997,85 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	}
 
 	public static <T extends ZugFolge> ArrayList<T> getErlaubteZugFolgen(Spielbrett sb, int x, int y, Class<? extends T> cl) throws InstantiationException, IllegalAccessException {
-		ArrayList<T> erlaubteZüge = new ArrayList<T>(); 
+		ArrayList<T> erlaubteZugFolgen = new ArrayList<T>();
+		getErlaubteZugFolgen(sb, x, y, erlaubteZugFolgen, null, cl);
+//
+//			zf = cl.newInstance();
+//			zf.add(new Zug(x, y, x-1, y-1));
+//			if (sb.zugIstGueltig(zf, true))
+//				erlaubteZüge.add(zf);
+//		}
+//		
+//		if (stein == SCHWARZ || stein == SCHWARZ_D || stein == WEISS_D) {
+//			zf = cl.newInstance();
+//			zf.add(new Zug(x, y, x+1, y+1));
+//			if (sb.zugIstGueltig(zf, true))
+//				erlaubteZüge.add(zf);
+//
+//			zf = cl.newInstance();
+//			zf.add(new Zug(x, y, x-1, y+1));
+//			if (sb.zugIstGueltig(zf, true))
+//				erlaubteZüge.add(zf);
+//		}
+
+		return erlaubteZugFolgen;
+	}
+	
+	private static <T extends ZugFolge> void getErlaubteZugFolgen(Spielbrett sb, int x, int y, ArrayList<T> erlaubteZugfolgen, T bisherigeTeilZugfolge, Class<? extends T> cl) throws InstantiationException, IllegalAccessException {
+		T zf;
+
+		int stein = -1;
+		if (bisherigeTeilZugfolge==null || bisherigeTeilZugfolge.size()==0) 
+			stein=sb.getFeld(x, y);
+		else {
+			Zug z = bisherigeTeilZugfolge.get(0);
+			stein=sb.getFeld(z.gibStartX(), z.gibStartY());
+		}
 		
-		//hier die erlaubten Züge ermitteln
-		erlaubteZüge.add(cl.newInstance());
+		int maxTeilZuglänge = 7;
+		int richsY[] = null;
 		
-		return erlaubteZüge;
+		switch (stein) {
+		case WEISS:
+			maxTeilZuglänge=2;
+			richsY = new int[]{-1};
+			break;
+		case SCHWARZ:
+			maxTeilZuglänge=2;
+			richsY = new int[]{1};
+			break;
+		case WEISS_D:
+			maxTeilZuglänge=7;
+			richsY = new int[]{-1,1};
+			break;
+		case SCHWARZ_D:
+			maxTeilZuglänge=7;
+			richsY = new int[]{-1,1};
+			break;
+		}
+		
+		//Züge und einfache Sprünge testen
+		for (int richY : richsY) {
+			for (int richX=-1;richX<=1;richX+=2) {
+				for (int i=1;i<=maxTeilZuglänge;i++) {
+					if (!koordinatenGueltig(x+richX*i, y+richY*i))
+						break;
+
+					zf = cl.newInstance();
+					
+					if (bisherigeTeilZugfolge != null)
+						zf.addAll(bisherigeTeilZugfolge);
+
+					Zug zug = new Zug(x, y, x+richX*i, y+richY*i);
+					zf.add(zug);
+					if (sb.zugIstGueltig(zf, true))
+						erlaubteZugfolgen.add(zf);
+					else if (i>1 && sb.zugIstGueltig(zf, false)) {
+						getErlaubteZugFolgen(sb, x+richX*i, y+richY*i, erlaubteZugfolgen, zf, cl);
+					}
+				}
+			}
+		}
 	}
 
 	public <T extends ZugFolge> ArrayList<T> getErlaubteZugFolgen(Point stein, Class<? extends T> cl) throws InstantiationException, IllegalAccessException {

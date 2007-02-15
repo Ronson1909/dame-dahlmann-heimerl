@@ -98,7 +98,10 @@ public class DameFenster extends JFrame implements ZugBeendetListener {
 		if (wert != sa) {
 			sa = wert;
 			sc.setSpielbrett(sa.getSpielsituation());
+
 			updateGUI();
+			
+			sa.getSpielerAmZug().startGettingNaechstenZug(sa.getSpielsituation());
 		}
 	}
 
@@ -133,10 +136,19 @@ public class DameFenster extends JFrame implements ZugBeendetListener {
 		}
 		
 		public void actionPerformed(ActionEvent e) {
+			int res = JOptionPane.showOptionDialog(DameFenster.this, "Wollen Sie gegen eine KI spielen?", "KI", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+			
 			Spielablauf newSa = new Spielablauf();
 			LokalerSpieler sw = new LokalerSpieler(DameFenster.this, Spielbrett.SCHWARZ, DameFenster.this);
-			LokalerSpieler we = new LokalerSpieler(DameFenster.this, Spielbrett.WEISS, DameFenster.this);
-			
+
+			ISpieler we;
+			if (res==JOptionPane.YES_OPTION)  
+				we = new brettspiele.dame.heimerlKI.HeimerlKI(Spielbrett.WEISS, DameFenster.this);
+			else {
+				we = new LokalerSpieler(DameFenster.this, Spielbrett.WEISS, DameFenster.this);
+				sc.addZugBeendetListener(we);
+			}
+				
 			//Spieler gegenseitig verlinken
 			sw.addZugBeendetListener(we);
 			we.addZugBeendetListener(sw);
@@ -144,7 +156,6 @@ public class DameFenster extends JFrame implements ZugBeendetListener {
 			//SpielbrettComponent mit den Spielern verknüpfen
 			sc.setLokalerSpieler(sw);
 			sc.addZugBeendetListener(sw);
-			sc.addZugBeendetListener(we);
 
 			//Spiel starten
 			newSa.starten(sw, we);
@@ -186,10 +197,14 @@ public class DameFenster extends JFrame implements ZugBeendetListener {
 			        	newSa.getSpielerWeiss().addZugBeendetListener(DameFenster.this);
 			        	newSa.getSpielerSchwarz().addZugBeendetListener(DameFenster.this);
 
-			        	if (newSa.getSpielerWeiss().getClass() == LokalerSpieler.class)
+			        	if (newSa.getSpielerWeiss().getClass() == LokalerSpieler.class) {
 			        		((LokalerSpieler)newSa.getSpielerWeiss()).setDameFenster(DameFenster.this);
-			        	if (newSa.getSpielerSchwarz().getClass() == LokalerSpieler.class)
+			    			sc.addZugBeendetListener(newSa.getSpielerWeiss());
+			        	}
+			        	if (newSa.getSpielerSchwarz().getClass() == LokalerSpieler.class) {
 			        		((LokalerSpieler)newSa.getSpielerSchwarz()).setDameFenster(DameFenster.this);
+			    			sc.addZugBeendetListener(newSa.getSpielerSchwarz());
+			        	}
 			        	
 				        DameFenster.this.setSpielablauf(newSa);
 			        }
