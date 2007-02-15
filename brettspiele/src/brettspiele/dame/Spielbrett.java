@@ -2,6 +2,7 @@ package brettspiele.dame;
 
 import brettspiele.ISpielsituation;
 import java.util.ArrayList;
+import java.awt.Point;
 import java.io.*;
 import java.util.HashMap;
 
@@ -972,7 +973,46 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 		}
 		return true;
 	}
-	
+
+	public ArrayList<Point> getEigeneSteine() {
+		return getEigeneSteine(this);
+	}
+
+	public static ArrayList<Point> getEigeneSteine(Spielbrett sb) {
+		ArrayList<Point> steine = new ArrayList<Point>(); 
+		
+		for (int x=0;x<=7;x++) {
+			for (int y=x%2;y<=7;y+=2) {
+				if (sb.getFeld(x, y)==sb.getEigenerStein()) {
+					steine.add(new Point(x,y));
+				}
+			}
+		}
+		
+		return steine;
+	}
+
+	public static <T extends ZugFolge> ArrayList<T> getErlaubteZugFolgen(Spielbrett sb, Point stein, Class<? extends T> cl) throws InstantiationException, IllegalAccessException {
+		return getErlaubteZugFolgen(sb, stein.x, stein.y, cl);
+	}
+
+	public static <T extends ZugFolge> ArrayList<T> getErlaubteZugFolgen(Spielbrett sb, int x, int y, Class<? extends T> cl) throws InstantiationException, IllegalAccessException {
+		ArrayList<T> erlaubteZüge = new ArrayList<T>(); 
+		
+		//hier die erlaubten Züge ermitteln
+		erlaubteZüge.add(cl.newInstance());
+		
+		return erlaubteZüge;
+	}
+
+	public <T extends ZugFolge> ArrayList<T> getErlaubteZugFolgen(Point stein, Class<? extends T> cl) throws InstantiationException, IllegalAccessException {
+		return getErlaubteZugFolgen(this, stein, cl);
+	}
+
+	public <T extends ZugFolge> ArrayList<T> getErlaubteZugFolgen(int x, int y, Class<? extends T> cl) throws InstantiationException, IllegalAccessException {
+		return getErlaubteZugFolgen(this, x, y, cl);
+	}
+
 	//############################################################
 	
 
