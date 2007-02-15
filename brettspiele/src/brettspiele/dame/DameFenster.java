@@ -413,7 +413,8 @@ class LokalerSpieler extends AbstractSpieler implements ZugBeendetListener {
 		this.df=df;
 	}
 	
-	public void startGettingNaechstenZug(ISpielsituation ss) {
+	@Override
+	public void startGettingNaechstenZug(Spielbrett sb) {
 		df.getSpielbrettComponent().setLokalerSpieler(this);
 	}
 

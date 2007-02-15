@@ -69,7 +69,10 @@ public abstract class AbstractSpieler implements ISpieler {
 		zbls.clear();
 	}
 
-	public abstract void startGettingNaechstenZug(ISpielsituation ss);
+	final public void startGettingNaechstenZug(ISpielsituation ss) {
+		startGettingNaechstenZug((Spielbrett)ss);
+	}
+	public abstract void startGettingNaechstenZug(Spielbrett sb);
 	public void cancelGettingNaechstenZug() {
 		beendeZug(null);
 	}

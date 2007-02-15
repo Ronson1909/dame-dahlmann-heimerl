@@ -81,7 +81,7 @@ public class NetzwerkSpieler extends AbstractSpieler implements ObjectEmpfangenL
 	}
 
 	@Override
-	public void startGettingNaechstenZug(ISpielsituation ss) {
+	public void startGettingNaechstenZug(Spielbrett sb) {
 		//kann leer bleiben
 	}
 	
