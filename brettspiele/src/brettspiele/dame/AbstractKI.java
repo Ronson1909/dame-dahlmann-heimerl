@@ -12,7 +12,7 @@ public abstract class AbstractKI extends AbstractSpieler implements java.lang.Ru
 	@Override
 	public final void startGettingNaechstenZug(Spielbrett sb) {
 		this.sb = sb;
-		Thread th = new Thread(this);
+		Thread th = new Thread(this, "Dame_KI");
 		th.start();
 	}
 	

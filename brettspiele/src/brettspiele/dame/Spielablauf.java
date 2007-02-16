@@ -190,19 +190,32 @@ public class Spielablauf implements ISpielablauf, ZugBeendetListener {
     }
     
     /**
-     * Macht einen rückgängig Zug rückgängig. Wenn
+     * Macht einen Zug rückgängig. Wenn
      * kein Zug rückgängig gemacht werden kann, wird keine
      * Exception geworfen.
      *
      */
     public void undoZug() {
-    	if (bisherigeZuege.size()>0) {
+    	undoZug(1);
+    }
+
+    /**
+     * Macht mehrere Züge rückgängig. Wenn
+     * kein Zug rückgängig gemacht werden kann, wird keine
+     * Exception geworfen.
+     * @param anzahlZuege Die Anzahl der rückgängig zu machenden Züge. 
+     */
+    public void undoZug(int anzahlZuege) {
+    	if (bisherigeZuege.size()==0)
+    		return;
+    	
+    	for (int i=1;i<=anzahlZuege && bisherigeZuege.size()>0;i++) {
     		ZugFolge zf = bisherigeZuege.pop();
     		sb.undoZug(zf);
     		undoneZuege.add(zf);
-    		
-    		getSpielerAmZug().startGettingNaechstenZug(sb);
     	}
+    	
+		getSpielerAmZug().startGettingNaechstenZug(sb);
     }
 
     /**
@@ -212,7 +225,19 @@ public class Spielablauf implements ISpielablauf, ZugBeendetListener {
      *
      */
     public void redoZug() {
-    	if (undoneZuege.size()>0) {
+    }
+
+    /**
+     * Stellt mehrere rückgängig gemachte Züge wieder her. Wenn
+     * kein Zug wiederhergestellt werden kann, wird keine
+     * Exception geworfen.
+     *
+     */
+    public void redoZug(int anzahlZuege) {
+    	if (undoneZuege.size()==0)
+    		return;
+
+    	for (int i=1;i<=anzahlZuege && undoneZuege.size()>0;i++) {
     		ZugFolge zf = undoneZuege.pop();
     		
     		macheZugInt(zf);
@@ -223,10 +248,10 @@ public class Spielablauf implements ISpielablauf, ZugBeendetListener {
            		return;
            	default:
            	}
-
-    		getSpielerAmZug().startGettingNaechstenZug(sb);
     	}
-    }
+
+		getSpielerAmZug().startGettingNaechstenZug(sb);
+}
 
     /**
      * Gibt die Anzahl der Züge im Undo-Puffer zurück.

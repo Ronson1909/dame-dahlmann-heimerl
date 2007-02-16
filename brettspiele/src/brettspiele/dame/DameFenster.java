@@ -359,7 +359,11 @@ public class DameFenster extends JFrame implements ZugBeendetListener {
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-			sa.undoZug();
+			if (sa.getSpielerSchwarz() instanceof LokalerSpieler && sa.getSpielerWeiss() instanceof LokalerSpieler)
+				sa.undoZug(1);
+			else if (sa.getSpielerSchwarz() instanceof AbstractKI || sa.getSpielerWeiss() instanceof AbstractKI)
+				sa.undoZug(2);
+			
 			sc.repaint();
 			updateGUI();
 			//JOptionPane.showMessageDialog(DameFenster.this, "Noch nicht implementiert!", "Fehlt noch", JOptionPane.INFORMATION_MESSAGE);
@@ -380,7 +384,11 @@ public class DameFenster extends JFrame implements ZugBeendetListener {
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-			sa.redoZug();
+			if (sa.getSpielerSchwarz() instanceof LokalerSpieler && sa.getSpielerWeiss() instanceof LokalerSpieler)
+				sa.redoZug(1);
+			else if (sa.getSpielerSchwarz() instanceof AbstractKI || sa.getSpielerWeiss() instanceof AbstractKI)
+				sa.redoZug(2);
+
 			sc.repaint();
 			updateGUI();
 			//JOptionPane.showMessageDialog(DameFenster.this, "Noch nicht implementiert!", "Fehlt noch", JOptionPane.INFORMATION_MESSAGE);

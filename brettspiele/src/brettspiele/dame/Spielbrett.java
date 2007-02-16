@@ -983,7 +983,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 		
 		for (int x=0;x<=7;x++) {
 			for (int y=x%2;y<=7;y+=2) {
-				if (sb.getFeld(x, y)==sb.getEigenerStein()) {
+				if (sb.isEigener(x, y)) {
 					steine.add(new Point(x,y));
 				}
 			}
@@ -999,35 +999,54 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	public static <T extends ZugFolge> ArrayList<T> getErlaubteZugFolgen(Spielbrett sb, int x, int y, Class<? extends T> cl) throws InstantiationException, IllegalAccessException {
 		ArrayList<T> erlaubteZugFolgen = new ArrayList<T>();
 		getErlaubteZugFolgen(sb, x, y, erlaubteZugFolgen, null, cl);
-//
-//			zf = cl.newInstance();
-//			zf.add(new Zug(x, y, x-1, y-1));
-//			if (sb.zugIstGueltig(zf, true))
-//				erlaubteZüge.add(zf);
-//		}
-//		
-//		if (stein == SCHWARZ || stein == SCHWARZ_D || stein == WEISS_D) {
-//			zf = cl.newInstance();
-//			zf.add(new Zug(x, y, x+1, y+1));
-//			if (sb.zugIstGueltig(zf, true))
-//				erlaubteZüge.add(zf);
-//
-//			zf = cl.newInstance();
-//			zf.add(new Zug(x, y, x-1, y+1));
-//			if (sb.zugIstGueltig(zf, true))
-//				erlaubteZüge.add(zf);
-//		}
 
 		return erlaubteZugFolgen;
 	}
 	
 	private static <T extends ZugFolge> void getErlaubteZugFolgen(Spielbrett sb, int x, int y, ArrayList<T> erlaubteZugfolgen, T bisherigeTeilZugfolge, Class<? extends T> cl) throws InstantiationException, IllegalAccessException {
+		Throwable ex = new Throwable();
+		if (ex.getStackTrace().length>40) {
+			System.out.println("     A   B   C   D   E   F   G   H  ");
+			System.out.println("   - - - - - - - - - - - - - - - - -");
+			String linie;
+			for (int yy=8; yy>=1; yy--) {
+				linie = yy + "  | ";
+				for (int xx=1; xx<=8; xx++) {
+					String symbol = "";
+					switch (sb.spielbrett[xx-1][yy-1]) {
+						case -1 : symbol = " "; break;
+						case 0 : symbol = " "; break;
+						case 1 : symbol = "X"; break;
+						case 2 : symbol = "O"; break;
+						case 3 : symbol = "T"; break;
+						case 4 : symbol = "D"; break;
+					}
+						
+					linie += symbol + " | ";
+				}
+				linie += " " + yy;
+				System.out.println(linie);
+				System.out.println("   - - - - - - - - - - - - - - - - -");
+			}
+			System.out.println("     A   B   C   D   E   F   G   H  ");
+			System.out.println();
+			
+			x=x;
+		}
+		
+		//vermutlich Fehler in isZwischenraum frei (weil nicht auf TEMP_Spielbrett) verursacht
+		//StackOverFlowException
+		
 		T zf;
 
 		int stein = -1;
+		int minTeilZuglänge = 1;
+
 		if (bisherigeTeilZugfolge==null || bisherigeTeilZugfolge.size()==0) 
 			stein=sb.getFeld(x, y);
 		else {
+			System.out.println(bisherigeTeilZugfolge.size());
+			minTeilZuglänge=2;
 			Zug z = bisherigeTeilZugfolge.get(0);
 			stein=sb.getFeld(z.gibStartX(), z.gibStartY());
 		}
@@ -1057,7 +1076,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 		//Züge und einfache Sprünge testen
 		for (int richY : richsY) {
 			for (int richX=-1;richX<=1;richX+=2) {
-				for (int i=1;i<=maxTeilZuglänge;i++) {
+				for (int i=minTeilZuglänge;i<=maxTeilZuglänge;i++) {
 					if (!koordinatenGueltig(x+richX*i, y+richY*i))
 						break;
 
