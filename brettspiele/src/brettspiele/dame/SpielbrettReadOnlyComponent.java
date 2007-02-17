@@ -4,28 +4,24 @@ import java.awt.Graphics;
 import java.awt.HeadlessException;
 import javax.swing.JComponent;
 
+import brettspiele.IBrettspielComponent;
+import brettspiele.ISpieler;
+import brettspiele.ISpielsituation;
+
 public class SpielbrettReadOnlyComponent extends JComponent {
 	public SpielbrettReadOnlyComponent() throws HeadlessException {
 
 	}
 
-	//Das Spielbrett das gezeichnet wird (kann temporär verändert werden)
+	//Das Spielbrett das gezeichnet wird
 	protected Spielbrett sb;
 
-	/**
-	 * Gibt das angezeigte Spielbrett zurück.
-	 * @return Das angezeigte Spielbrett.
-	 */
-	public Spielbrett getSpielbrett() {
+	public ISpielsituation getSpielsituation() {
 		return sb;
 	}
 
-	/**
-	 * Setzt das anzuzeigende Spielbrett.
-	 * @param wert Das neue Spielbrett.
-	 */
-	public void setSpielbrett(Spielbrett wert) {
-		sb=wert;
+	public void setSpielsituation(ISpielsituation wert) {
+		sb=(Spielbrett)wert;
 		this.repaint();
 	}
 

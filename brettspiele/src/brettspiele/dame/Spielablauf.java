@@ -1,6 +1,7 @@
 package brettspiele.dame;
 
 import brettspiele.*;
+
 import java.util.ArrayList;
 import java.util.Stack;
 import javax.swing.JOptionPane;
@@ -17,7 +18,7 @@ import javax.swing.JOptionPane;
  * @author unbekannt
  * @version 1.0
  */
-public class Spielablauf implements ISpielablauf, ZugBeendetListener {
+public class Spielablauf implements ISpielablauf {
 	private ISpieler spieler[] = new ISpieler[2];
     private Spielbrett sb;
     private Stack<ZugFolge> bisherigeZuege = new Stack<ZugFolge>();
@@ -48,11 +49,10 @@ public class Spielablauf implements ISpielablauf, ZugBeendetListener {
        	getSpielerAmZug().startGettingNaechstenZug(sb);
 	}
 
-    /**
-     * Generiert ein leeres Brett etc.
-     */
-//    public void zuruecksetzen() {
-//    }
+
+    public IBrettspielComponent createBrettspielComponent() {
+    	return new SpielbrettComponent();
+    }
 
     /**
      * Gibt das Spielbrett zurück.
@@ -60,6 +60,10 @@ public class Spielablauf implements ISpielablauf, ZugBeendetListener {
      */
     public Spielbrett getSpielsituation() {
     	return sb;
+    }
+    
+    public ISpieler[] getSpieler() {
+    	return spieler;
     }
     
     /**

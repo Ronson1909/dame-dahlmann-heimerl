@@ -1,4 +1,4 @@
-package brettspiele.dame;
+package brettspiele;
 
 import javax.swing.*;
 
@@ -9,11 +9,11 @@ import java.awt.event.ActionEvent;
 
 public class UeberDialog extends JDialog {
 	public UeberDialog(java.awt.Window owner) throws HeadlessException {
-		super(owner, "Über Dame", java.awt.Dialog.ModalityType.APPLICATION_MODAL);
+		super(owner, "Über Brettspiele", java.awt.Dialog.ModalityType.APPLICATION_MODAL);
 		//this.setSize(400, 100);
 		this.setLayout(new GridLayout(4,1,10,10));
 
-		JLabel lbl = new JLabel("Dame", JLabel.CENTER);
+		JLabel lbl = new JLabel("Brettspiele", JLabel.CENTER);
 		lbl.setFont(new java.awt.Font(lbl.getFont().getName(), java.awt.Font.PLAIN, 20));
 		this.add(lbl);
 		this.add(new JLabel("Programmiert von André Dahlmann und Christian Heimerl", JLabel.CENTER));//, java.awt.BorderLayout.NORTH);

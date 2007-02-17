@@ -14,7 +14,13 @@ public interface ISpieler extends Serializable, ZugBeendetListener {
 	 * @return Die Farbe des Spielers.
 	 */
 	public int getEigeneFarbe();
-	
+
+	/**
+	 * Gibt den Namen oder die Farbe des Spielers als Text zurück.
+	 * @return Den Name oder die Farbe des Spielers.
+	 */
+	public String getName();
+
 	/**
 	 * Damit wird die Zugausführung angestoßen. Das kann z.B. das Starten der KI sein.
 	 * @param sb Das aktuelle Spielbrett (vielleicht eine Kopie?).

@@ -5,7 +5,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import brettspiele.*;
 
-public class SpielbrettComponent extends SpielbrettReadOnlyComponent {
+public class SpielbrettComponent extends SpielbrettReadOnlyComponent implements IBrettspielComponent {
 	public SpielbrettComponent() throws HeadlessException {
 		super();
 		
@@ -13,8 +13,7 @@ public class SpielbrettComponent extends SpielbrettReadOnlyComponent {
 		this.enableEvents(AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK);
 	}
 
-	private ISpieler lokalerSpieler;
-	
+	protected ISpieler lokalerSpieler;
 	public void setLokalerSpieler(ISpieler lokalerSpieler) {
 		this.lokalerSpieler = lokalerSpieler;
 	}
@@ -22,7 +21,7 @@ public class SpielbrettComponent extends SpielbrettReadOnlyComponent {
 	public ISpieler getLokalerSpieler() {
 		return lokalerSpieler;
 	}
-	
+
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);

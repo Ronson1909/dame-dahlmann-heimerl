@@ -24,6 +24,16 @@ public abstract class AbstractSpieler implements ISpieler {
 		return eigeneFarbe;
 	}
 
+	public String getName() {
+		switch (eigeneFarbe) {
+		case Spielbrett.WEISS:
+			return "Weiß";
+		case Spielbrett.SCHWARZ:
+			return "Schwarz";
+		}
+		
+		return "";
+	}
 	
 	/**
 	 * Damit können die Spieler untereinander vernetzt werden. Wenn der andere
