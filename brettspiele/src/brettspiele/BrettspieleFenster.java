@@ -61,7 +61,7 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 		mnFile.setText("Datei");
 		
 		mnNeu.setText("Neues lokales Spiel");
-		mnNeu.setIcon(new ImageIcon(ClassLoader.getSystemResource("brettspiele/dame/images/new.gif")));
+		mnNeu.setIcon(new ImageIcon(ClassLoader.getSystemResource("brettspiele/images/new.gif")));
 		mnFile.add(mnNeu);
 
 		mnNeuNetzwerk.setText("Neues Netzwerkspiel");
@@ -92,7 +92,7 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 		this.setJMenuBar(mnMain);
 		
 		JButton btnNew = new JButton();
-		btnNew.setIcon(new ImageIcon(ClassLoader.getSystemResource("brettspiele/dame/images/new.gif")));
+		btnNew.setIcon(new ImageIcon(ClassLoader.getSystemResource("brettspiele/images/new.gif")));
 		btnNew.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				JButton src = (JButton)arg0.getSource();
@@ -169,7 +169,7 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 		private FileOpenAction() {
 			super.putValue(NAME, "Öffnen...");			
 			super.putValue(SHORT_DESCRIPTION, "Öffnet einen Spielstand");			
-			super.putValue(SMALL_ICON, new ImageIcon(ClassLoader.getSystemResource("brettspiele/dame/images/open.gif")));
+			super.putValue(SMALL_ICON, new ImageIcon(ClassLoader.getSystemResource("brettspiele/images/open.gif")));
 		}
 		
 		public void actionPerformed(ActionEvent e) {
@@ -230,7 +230,7 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 
 			super.putValue(NAME, "Speichern unter...");			
 			super.putValue(SHORT_DESCRIPTION, "Speichert den aktuellen Spielstand");			
-			super.putValue(SMALL_ICON, new ImageIcon(ClassLoader.getSystemResource("brettspiele/dame/images/save.gif")));
+			super.putValue(SMALL_ICON, new ImageIcon(ClassLoader.getSystemResource("brettspiele/images/save.gif")));
 		}
 		
 		public void actionPerformed(ActionEvent e) {
@@ -306,7 +306,7 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 
 			KeyStroke accKey = KeyStroke.getKeyStroke("ctrl Z");
 			super.putValue(ACCELERATOR_KEY, accKey);		
-			super.putValue(SMALL_ICON, new ImageIcon(ClassLoader.getSystemResource("brettspiele/dame/images/undo.gif")));
+			super.putValue(SMALL_ICON, new ImageIcon(ClassLoader.getSystemResource("brettspiele/images/undo.gif")));
 		}
 		
 		public void actionPerformed(ActionEvent e) {
@@ -357,7 +357,7 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 
 			KeyStroke accKey = KeyStroke.getKeyStroke("ctrl Y");
 			super.putValue(ACCELERATOR_KEY, accKey);		
-			super.putValue(SMALL_ICON, new ImageIcon(ClassLoader.getSystemResource("brettspiele/dame/images/redo.gif")));
+			super.putValue(SMALL_ICON, new ImageIcon(ClassLoader.getSystemResource("brettspiele/images/redo.gif")));
 		}
 		
 		public void actionPerformed(ActionEvent e) {
