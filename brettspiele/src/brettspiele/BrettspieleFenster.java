@@ -1,6 +1,7 @@
 package brettspiele;
 
 import brettspiele.dame.DameUI;
+import brettspiele.halma.HalmaUI;
 
 import javax.swing.*;
 
@@ -10,7 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
-	private static IBrettspielUI[] brettspiele = new IBrettspielUI[] {new DameUI()};
+	private static IBrettspielUI[] brettspiele = new IBrettspielUI[] {new DameUI(), new HalmaUI()};
 	
 	public static void main(String[] args) {
         try {
