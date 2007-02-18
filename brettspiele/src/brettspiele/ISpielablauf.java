@@ -2,7 +2,7 @@ package brettspiele;
 
 import java.util.ArrayList;
 
-public interface ISpielablauf extends java.io.Serializable, ZugBeendetListener {
+public interface ISpielablauf<Z extends IZug> extends java.io.Serializable, ZugBeendetListener<Z> {
     public ISpielsituation getSpielsituation();
     public int getFarbeAmZug();
 

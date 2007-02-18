@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import brettspiele.*;
 
-public abstract class AbstractSpieler implements ISpieler {
+public abstract class AbstractSpieler implements ISpieler<ZugFolge> {
 	protected int eigeneFarbe;
 
 	public AbstractSpieler(int eigeneFarbe) {
@@ -14,7 +14,7 @@ public abstract class AbstractSpieler implements ISpieler {
 		this.eigeneFarbe = eigeneFarbe;
 	}
 
-	public AbstractSpieler(int eigeneFarbe, ZugBeendetListener zbl) {
+	public AbstractSpieler(int eigeneFarbe, ZugBeendetListener<ZugFolge> zbl) {
 		this(eigeneFarbe);
 
 		this.addZugBeendetListener(zbl);
@@ -40,16 +40,7 @@ public abstract class AbstractSpieler implements ISpieler {
 	 * Spieler seinen Zug beendet, dann bekommt dieser hier eine Nachricht in
 	 * Form dieses Methodenaufrufs.
 	 */
-	final public void zugBeendet(ZugBeendetEvent zbe) {
-		zugBeendet((ZugFolgeBeendetEvent)zbe);
-	}
-
-	/**
-	 * Damit können die Spieler untereinander vernetzt werden. Wenn der andere
-	 * Spieler seinen Zug beendet, dann bekommt dieser hier eine Nachricht in
-	 * Form dieses Methodenaufrufs.
-	 */
-	public void zugBeendet(ZugFolgeBeendetEvent zbe) {
+	public void zugBeendet(ZugBeendetEvent<ZugFolge> zbe) {
 
 	}
 
@@ -59,19 +50,19 @@ public abstract class AbstractSpieler implements ISpieler {
 	}
 	private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
 		eigeneFarbe = in.readInt();
-		zbls = new ArrayList<ZugBeendetListener>();
+		zbls = new ArrayList<ZugBeendetListener<ZugFolge>>();
 	}
 	private void readObjectNoData() throws java.io.ObjectStreamException {
 		eigeneFarbe = Spielbrett.SCHWARZ;
-		zbls = new ArrayList<ZugBeendetListener>();
+		zbls = new ArrayList<ZugBeendetListener<ZugFolge>>();
 	}
 	
-	private ArrayList<ZugBeendetListener> zbls = new ArrayList<ZugBeendetListener>();
-	public void addZugBeendetListener(ZugBeendetListener zbl) {
+	private ArrayList<ZugBeendetListener<ZugFolge>> zbls = new ArrayList<ZugBeendetListener<ZugFolge>>();
+	public void addZugBeendetListener(ZugBeendetListener<ZugFolge> zbl) {
 		if (zbl!=null)
 			zbls.add(zbl);
 	}
-	public void removeZugBeendetListener(ZugBeendetListener zbl) {
+	public void removeZugBeendetListener(ZugBeendetListener<ZugFolge> zbl) {
 		if (zbl!=null)
 			zbls.remove(zbl);
 	}
@@ -92,8 +83,8 @@ public abstract class AbstractSpieler implements ISpieler {
 	 * @param zf
 	 */
 	protected final void beendeZug(ZugFolge zf) {
-		for (ZugBeendetListener zbl : (Iterable<ZugBeendetListener>)zbls.clone()) {
-			zbl.zugBeendet(new ZugFolgeBeendetEvent(this, this, zf));
+		for (ZugBeendetListener zbl : (Iterable<ZugBeendetListener<ZugFolge>>)zbls.clone()) {
+			zbl.zugBeendet(new ZugBeendetEvent<ZugFolge>(this, this, zf));
 		}
 	}
 }

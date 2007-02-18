@@ -44,7 +44,7 @@ public class HalmaUI implements IBrettspielUI {
 			bl.addZugBeendetListener(rt);
 			
 			//SpielbrettComponent mit den Spielern verknüpfen
-			sc.setLokalerSpieler(rt);
+			//sc.setLokalerSpieler(rt);
 			sc.addZugBeendetListener(rt);
 
 			//Spiel starten
@@ -52,8 +52,6 @@ public class HalmaUI implements IBrettspielUI {
 			newSa.setSpieler(1,bl);
 			
 			bsf.setSpielablauf(newSa);
-			rt.startGettingNaechstenZug(newSa.getSpielsituation());
-			
 			bsf.updateGUI();
 		}
 	}

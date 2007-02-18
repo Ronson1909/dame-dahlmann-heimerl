@@ -5,8 +5,8 @@ package brettspiele;
  * @author Christian
  *
  */
-public class ZugBeendetAdapter implements ZugBeendetListener {
-	public void zugBeendet(ZugBeendetEvent zbe) {
+public class ZugBeendetAdapter<Z extends IZug> implements ZugBeendetListener<Z> {
+	public void zugBeendet(ZugBeendetEvent<Z> zbe) {
 		
 	}
 }

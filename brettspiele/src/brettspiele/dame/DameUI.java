@@ -127,10 +127,10 @@ public class DameUI implements IBrettspielUI {
 	}
 }
 
-class LokalerSpieler extends AbstractSpieler implements ZugBeendetListener, ILokalerSpieler {
+class LokalerSpieler extends AbstractSpieler implements ZugBeendetListener<ZugFolge>, ILokalerSpieler<ZugFolge> {
 	private BrettspieleFenster df;
 	
-	public LokalerSpieler(BrettspieleFenster df, int eigeneFarbe, ZugBeendetListener zbl) {
+	public LokalerSpieler(BrettspieleFenster df, int eigeneFarbe, ZugBeendetListener<ZugFolge> zbl) {
 		super(eigeneFarbe, zbl);
 		
 		this.df=df;
@@ -141,7 +141,7 @@ class LokalerSpieler extends AbstractSpieler implements ZugBeendetListener, ILok
 		df.getBrettspielComponent().setLokalerSpieler(this);
 	}
 
-	public void zugBeendet(ZugFolgeBeendetEvent zbe) {
+	public void zugBeendet(brettspiele.ZugBeendetEvent<ZugFolge> zbe) {
 		if (zbe.getSpieler()==this) {
 			beendeZug(zbe.getZug());
 		}

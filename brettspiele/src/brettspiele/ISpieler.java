@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * @author Christian
  *
  */
-public interface ISpieler extends Serializable, ZugBeendetListener {
+public interface ISpieler<Z extends IZug> extends Serializable, ZugBeendetListener<Z> {
 	/**
 	 * Gibt die Farbe des Spielers zurück.
 	 * @return Die Farbe des Spielers.
@@ -37,13 +37,13 @@ public interface ISpieler extends Serializable, ZugBeendetListener {
 	 * Fügt einen ZugBeendetListener hinzu. 
 	 * @param zbl Der hinzuzufügende ZugBeendetListener.
 	 */
-	public void addZugBeendetListener(ZugBeendetListener zbl);
+	public void addZugBeendetListener(ZugBeendetListener<Z> zbl);
 	
 	/**
 	 * Entfernt einen ZugBeendetListener.
 	 * @param zbl Der zu entfernende ZugBeendetListener.
 	 */
-	public void removeZugBeendetListener(ZugBeendetListener zbl);
+	public void removeZugBeendetListener(ZugBeendetListener<Z> zbl);
 	
 	/**
 	 * Entfernt alle ZugBeendetListener.

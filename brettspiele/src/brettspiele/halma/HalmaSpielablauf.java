@@ -3,20 +3,21 @@ package brettspiele.halma;
 import java.util.Stack;
 
 import brettspiele.*;
+import brettspiele.dame.ZugFolge;
 
-public class HalmaSpielablauf implements ISpielablauf {
+public class HalmaSpielablauf implements ISpielablauf<Zug> {
 	private ISpieler spieler[] = new ISpieler[2];
     private HalmaSpielbrett sb;
-    private Stack<IZug> bisherigeZuege = new Stack<IZug>();
-    private Stack<IZug> undoneZuege = new Stack<IZug>();
+    private Stack<Zug> bisherigeZuege = new Stack<Zug>();
+    private Stack<Zug> undoneZuege = new Stack<Zug>();
 
 	public HalmaSpielablauf() {
-        sb=new HalmaSpielbrett();
+        sb=new HalmaSpielbrett(2);
 		//this(null, null);
 	}
 
-	public void zugBeendet(ZugBeendetEvent zbe) {
-    	//macheZugInt(zbe.getZug());
+	public void zugBeendet(ZugBeendetEvent<Zug> zbe) {
+    	macheZugInt(zbe.getZug());
     	
     	undoneZuege.clear();
 
@@ -31,6 +32,20 @@ public class HalmaSpielablauf implements ISpielablauf {
        	getSpielerAmZug().startGettingNaechstenZug(sb);
 	}
 
+    /**
+     * Führt den Zug durch und archiviert sie außerdem zum Rückgängigmachen. 
+     * @param z Der durchzuführende Zug.
+     */
+	private void macheZugInt(Zug z) {
+		try {
+			sb.macheZug(z);
+
+			bisherigeZuege.add(z);
+		}
+		catch (Exception ex) {
+			System.out.println("Konnte Zug im Spielablauf nicht ausführen: " + ex.toString());
+		}
+	}
 
     public IBrettspielComponent createBrettspielComponent() {
     	return new HalmaSpielbrettComponent();
@@ -54,12 +69,12 @@ public class HalmaSpielablauf implements ISpielablauf {
 
 	public int getFarbeAmZug() {
 		// TODO Auto-generated method stub
-		return HalmaSpielbrett.BLAU;
+		return sb.getFarbeAmZug();
 	}
 
 	public ISpieler getSpielerAmZug() {
 		// TODO Auto-generated method stub
-		return spieler[0];
+		return spieler[getFarbeAmZug()-1];
 	}
 
 	public void redoZug(int anzahlZuege) {

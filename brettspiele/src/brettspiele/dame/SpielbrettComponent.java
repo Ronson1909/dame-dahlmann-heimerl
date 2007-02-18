@@ -5,7 +5,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import brettspiele.*;
 
-public class SpielbrettComponent extends SpielbrettReadOnlyComponent implements IBrettspielComponent {
+public class SpielbrettComponent extends SpielbrettReadOnlyComponent implements IBrettspielComponent<ZugFolge> {
 	public SpielbrettComponent() throws HeadlessException {
 		super();
 		
@@ -190,13 +190,13 @@ public class SpielbrettComponent extends SpielbrettReadOnlyComponent implements 
 		super.processMouseEvent(e);
 	}
 	
-	private ArrayList<ZugBeendetListener> zbls = new ArrayList<ZugBeendetListener>();
-	public void addZugBeendetListener(ZugBeendetListener zbl) {
+	private ArrayList<ZugBeendetListener<ZugFolge>> zbls = new ArrayList<ZugBeendetListener<ZugFolge>>();
+	public void addZugBeendetListener(ZugBeendetListener<ZugFolge> zbl) {
 		if (zbl!=null)
 			zbls.add(zbl);
 	}
 
-	public void removeZugBeendetListener(ZugBeendetListener zbl) {
+	public void removeZugBeendetListener(ZugBeendetListener<ZugFolge> zbl) {
 		if (zbl!=null)
 			zbls.remove(zbl);
 	}
@@ -206,9 +206,9 @@ public class SpielbrettComponent extends SpielbrettReadOnlyComponent implements 
 	}
 
 	protected void beendeZug(ZugFolge zugfolge) {
-		ZugFolgeBeendetEvent zbe = new ZugFolgeBeendetEvent(this, lokalerSpieler, zugfolge);
+		ZugBeendetEvent<ZugFolge> zbe = new ZugBeendetEvent<ZugFolge>(this, lokalerSpieler, zugfolge);
 		
-		for (ZugBeendetListener zbl : (Iterable<ZugBeendetListener>)zbls.clone()) {
+		for (ZugBeendetListener<ZugFolge> zbl : (Iterable<ZugBeendetListener<ZugFolge>>)zbls.clone()) {
 			zbl.zugBeendet(zbe);
 		}
 	}

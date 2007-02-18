@@ -5,6 +5,6 @@ package brettspiele;
  * @author Christian
  *
  */
-public interface ZugBeendetListener extends java.util.EventListener {
-	public void zugBeendet(ZugBeendetEvent zbe);
+public interface ZugBeendetListener<Z extends IZug> extends java.util.EventListener {
+	public void zugBeendet(ZugBeendetEvent<Z> zbe);
 }

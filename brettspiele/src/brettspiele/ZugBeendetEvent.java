@@ -1,17 +1,15 @@
 package brettspiele;
 
-import java.util.ArrayList;
-
 /**
  * Enthält die Parameter eines ausgeführten Zuges, also wer, was gemacht hat.
  * @author Christian
  *
  */
-public class ZugBeendetEvent extends java.util.EventObject {
-	protected IZug zug;
+public class ZugBeendetEvent<Z extends IZug> extends java.util.EventObject {
+	protected Z zug;
 	protected ISpieler spieler;
 	
-	public ZugBeendetEvent(Object source, ISpieler spieler, IZug zug) {
+	public ZugBeendetEvent(Object source, ISpieler spieler, Z zug) {
 		super(source);
 		this.spieler=spieler;
 		this.zug=zug;
@@ -21,7 +19,7 @@ public class ZugBeendetEvent extends java.util.EventObject {
 	 * Gibt den durchgeführten Zug zurück.
 	 * @return Der durchgeführte Zug.
 	 */
-	public IZug getZug() {
+	public Z getZug() {
 		return zug;
 	}
 

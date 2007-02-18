@@ -18,7 +18,7 @@ import javax.swing.JOptionPane;
  * @author unbekannt
  * @version 1.0
  */
-public class Spielablauf implements ISpielablauf {
+public class Spielablauf implements ISpielablauf<ZugFolge> {
 	private ISpieler spieler[] = new ISpieler[2];
     private Spielbrett sb;
     private Stack<ZugFolge> bisherigeZuege = new Stack<ZugFolge>();
@@ -29,12 +29,7 @@ public class Spielablauf implements ISpielablauf {
 		//this(null, null);
 	}
 
-	final public void zugBeendet(ZugBeendetEvent zbe) {
-		zugBeendet((ZugFolgeBeendetEvent)zbe);
-	}
-
-	//ist ein Listener
-	public void zugBeendet(ZugFolgeBeendetEvent zbe) {
+	final public void zugBeendet(ZugBeendetEvent<ZugFolge> zbe) {
     	macheZugInt(zbe.getZug());
     	
     	undoneZuege.clear();
@@ -133,8 +128,7 @@ public class Spielablauf implements ISpielablauf {
     }
 
     /**
-     * Macht die Zugfolge ohne danach die KI (wenn überhaupt nötig) zu starten.
-     * Archiviert die Zugfolge außerdem zum Rückgängigmachen. 
+     * Führt die Zugfolge durch und archiviert sie außerdem zum Rückgängigmachen. 
      * @param z Die durchzuführende Zugfolge.
      */
 	private void macheZugInt(ZugFolge z) {

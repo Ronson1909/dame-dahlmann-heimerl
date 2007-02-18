@@ -6,7 +6,7 @@ package brettspiele;
  * @author Christian
  *
  */
-public interface IBrettspielComponent {
+public interface IBrettspielComponent<Z extends IZug> {
 	/**
 	 * Setzt den lokalen Spieler, der Züge ausführen darf.
 	 * @param lokalerSpieler Der lokale Spieler, der Züge ausführen darf.
@@ -31,8 +31,8 @@ public interface IBrettspielComponent {
 	 */
 	public void setSpielsituation(ISpielsituation wert);
 
-	public void addZugBeendetListener(ZugBeendetListener zbl);
-	public void removeZugBeendetListener(ZugBeendetListener zbl);
+	public void addZugBeendetListener(ZugBeendetListener<Z> zbl);
+	public void removeZugBeendetListener(ZugBeendetListener<Z> zbl);
 	public void clearZugBeendetListeners();
 	
 	public void repaint();

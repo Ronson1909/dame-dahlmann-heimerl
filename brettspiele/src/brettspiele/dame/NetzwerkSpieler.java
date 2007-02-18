@@ -86,7 +86,7 @@ public class NetzwerkSpieler extends AbstractSpieler implements ObjectEmpfangenL
 	}
 	
 	@Override
-	public void zugBeendet(ZugFolgeBeendetEvent zbe) {
+	public void zugBeendet(ZugBeendetEvent<ZugFolge> zbe) {
 		//eine Message absenden mit dem vom anderen Spieler durchgeführten Zug
 		try {
 			out.writeObject(zbe.getZug());
