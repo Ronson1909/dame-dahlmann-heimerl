@@ -3,7 +3,6 @@ package brettspiele.halma;
 import java.util.Stack;
 
 import brettspiele.*;
-import brettspiele.dame.ZugFolge;
 
 public class HalmaSpielablauf implements ISpielablauf<Zug> {
 	private ISpieler spieler[] = new ISpieler[2];
@@ -29,7 +28,7 @@ public class HalmaSpielablauf implements ISpielablauf<Zug> {
        	default:
        	}
     	
-       	getSpielerAmZug().startGettingNaechstenZug(sb);
+       	getSpielerAmZug().startGettingNaechstenZug(sb.clone());
 	}
 
     /**
@@ -78,13 +77,37 @@ public class HalmaSpielablauf implements ISpielablauf<Zug> {
 	}
 
 	public void redoZug(int anzahlZuege) {
-		// TODO Auto-generated method stub
-		
+    	if (undoneZuege.size()==0)
+    		return;
+
+    	for (int i=1;i<=anzahlZuege && undoneZuege.size()>0;i++) {
+    		Zug z = undoneZuege.pop();
+    		
+    		macheZugInt(z);
+
+           	switch (sb.isSpielBeendet()) {
+           	case HalmaSpielbrett.ROT:
+           	case HalmaSpielbrett.BLAU:
+           	case HalmaSpielbrett.GRUEN:
+           		return;
+           	default:
+           	}
+    	}
+
+		getSpielerAmZug().startGettingNaechstenZug(sb.clone());
 	}
 
 	public void undoZug(int anzahlZuege) {
-		// TODO Auto-generated method stub
-		
+    	if (bisherigeZuege.size()==0)
+    		return;
+    	
+    	for (int i=1;i<=anzahlZuege && bisherigeZuege.size()>0;i++) {
+    		Zug z = bisherigeZuege.pop();
+    		sb.undoZug(z);
+    		undoneZuege.add(z);
+    	}
+    	
+		getSpielerAmZug().startGettingNaechstenZug(sb.clone());
 	}
 	
     /**

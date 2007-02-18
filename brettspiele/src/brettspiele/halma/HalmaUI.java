@@ -26,18 +26,18 @@ public class HalmaUI implements IBrettspielUI {
 			IBrettspielComponent sc = new HalmaSpielbrettComponent();
 			bsf.setBrettspielComponent(sc);
 			
-			//int res = JOptionPane.showOptionDialog(bsf, "Wollen Sie gegen eine KI spielen?", "KI", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+			int res = JOptionPane.showOptionDialog(bsf, "Wollen Sie gegen eine KI spielen?", "KI", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
 			
 			HalmaSpielablauf newSa = new HalmaSpielablauf();
 			LokalerSpieler rt = new LokalerSpieler(bsf, HalmaSpielbrett.ROT, bsf);
 
 			ISpieler bl;
-			//if (res==JOptionPane.YES_OPTION)  
-				//we = new brettspiele.halma.heimerlKI.HeimerlKI(Spielbrett.WEISS, bsf);
-			//else {
+			if (res==JOptionPane.YES_OPTION)  
+				bl = new brettspiele.halma.heimerlKI.HeimerlKI(HalmaSpielbrett.BLAU, bsf);
+			else {
 				bl = new LokalerSpieler(bsf, HalmaSpielbrett.BLAU, bsf);
 				sc.addZugBeendetListener(bl);
-			//}
+			}
 				
 			//Spieler gegenseitig verlinken
 			rt.addZugBeendetListener(bl);
@@ -121,7 +121,7 @@ public class HalmaUI implements IBrettspielUI {
 	}
 }
 
-class LokalerSpieler extends AbstractSpieler implements ZugBeendetListener, ILokalerSpieler {
+class LokalerSpieler extends AbstractSpieler implements ZugBeendetListener<Zug>, ILokalerSpieler<Zug> {
 	private BrettspieleFenster df;
 	
 	public LokalerSpieler(BrettspieleFenster df, int eigeneFarbe, ZugBeendetListener zbl) {

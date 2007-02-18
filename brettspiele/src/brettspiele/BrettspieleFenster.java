@@ -114,9 +114,11 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 	}
 	
 	public void updateGUI() {
-		fsa.setEnabled(sa.getUndoCount()>0);
-		uma.setEnabled(sa.getUndoCount()>0);
-		rma.setEnabled(sa.getRedoCount()>0);
+		boolean lokSp = sa.getSpielerAmZug() instanceof ILokalerSpieler;
+		
+		fsa.setEnabled(sa.getUndoCount()>0 && lokSp);
+		uma.setEnabled(sa.getUndoCount()>0 && lokSp);
+		rma.setEnabled(sa.getRedoCount()>0 && lokSp);
 		
 		statusText.setText(sa.getSpielerAmZug().getName() + " am Zug");
 	}
@@ -142,7 +144,7 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 
 			updateGUI();
 			
-			sa.getSpielerAmZug().startGettingNaechstenZug(sa.getSpielsituation());
+			sa.getSpielerAmZug().startGettingNaechstenZug(sa.getSpielsituation().clone());
 		}
 	}
 
@@ -180,7 +182,7 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 			
 			for (IBrettspielUI bsui : brettspiele) {
 		        od.addChoosableFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
-			            bsui.getName() + "-Spiel (" + bsui.getDefaultExtension() + ")", bsui.getDefaultExtension()));
+			            bsui.getName() + "-Spiel (*." + bsui.getDefaultExtension() + ")", bsui.getDefaultExtension()));
 			}
 			
 			int returnVal = od.showOpenDialog(BrettspieleFenster.this);
@@ -241,7 +243,7 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 
 			for (IBrettspielUI bsui : brettspiele) {
 				sd.addChoosableFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
-			            bsui.getName() + "-Spiel (" + bsui.getDefaultExtension() + ")", bsui.getDefaultExtension()));
+			            bsui.getName() + "-Spiel (*." + bsui.getDefaultExtension() + ")", bsui.getDefaultExtension()));
 			}
 
 			int returnVal = sd.showSaveDialog(BrettspieleFenster.this);
@@ -259,7 +261,7 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 		    	
 		    	String filename = sd.getSelectedFile().getAbsolutePath();
 				if (sd.getSelectedFile().getName().indexOf(".")==-1) {
-					filename += ((javax.swing.filechooser.FileNameExtensionFilter)sd.getFileFilter()).getExtensions()[0];
+					filename += "." + ((javax.swing.filechooser.FileNameExtensionFilter)sd.getFileFilter()).getExtensions()[0];
 				}
 
 				try {

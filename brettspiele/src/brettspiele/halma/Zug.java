@@ -2,17 +2,25 @@ package brettspiele.halma;
 
 import brettspiele.IZug;
 
-public class Zug implements IZug {
+public class Zug implements IZug, Cloneable {
     public Zug() {
     }
 
     public Zug(int startX, int startY, int endeX, int endeY) {
+    	setCoordinates(startX, startY, endeX, endeY);
+    }
+    
+    public Zug clone() {
+    	return new Zug(startX, startY, endeX, endeY);
+    }
+
+    public void setCoordinates(int startX, int startY, int endeX, int endeY) {
     	this.startX=startX;
     	this.startY=startY;
     	this.endeX=endeX;
     	this.endeY=endeY;
     }
-
+    
     private int startX;
     private int startY;
     private int endeX;
@@ -27,6 +35,14 @@ public class Zug implements IZug {
     	}
     	else
     		return false;
+    }
+    
+    public Zug transform(int fromSpieler, int spielerzahl) {
+    	Zug z=this.clone();
+    	int[] trans1 = HalmaSpielbrett.transformKoordinate(startX, startY, fromSpieler, spielerzahl);
+    	int[] trans2 = HalmaSpielbrett.transformKoordinate(endeX, endeY, fromSpieler, spielerzahl);
+    	z.setCoordinates(trans1[0], trans1[1], trans2[0], trans2[1]);
+    	return z;
     }
 
     public int getStartX() {
