@@ -6,6 +6,8 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
 
+import com.sun.xml.internal.bind.v2.runtime.output.InPlaceDOMOutput;
+
 import brettspiele.BrettspieleFenster;
 import brettspiele.IBrettspielComponent;
 import brettspiele.IBrettspielUI;
@@ -36,41 +38,50 @@ public class DameUI implements IBrettspielUI {
 		private FileNewAction(BrettspieleFenster bsf) {
 			this.bsf=bsf;
 			
-			super.putValue(NAME, "Dame");			
+			super.putValue(NAME, "Dame...");			
 			super.putValue(SHORT_DESCRIPTION, "Startet ein neues Dame-Spiel");			
 			//super.putValue(SMALL_ICON, new ImageIcon(ClassLoader.getSystemResource("brettspiele/dame/images/new.gif")));
 		}
 		
 		public void actionPerformed(ActionEvent e) {
+			//int res = JOptionPane.showOptionDialog(bsf, "Wollen Sie gegen eine KI spielen?", "KI", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+
+			EinstellungenFenster ef = new EinstellungenFenster(bsf);
+			ef.setVisible(true);
+			
+			if (ef.getResult()!=JOptionPane.OK_OPTION) {
+				return;
+			}
+
 			IBrettspielComponent sc = new SpielbrettComponent();
 			bsf.setBrettspielComponent(sc);
-			
-			int res = JOptionPane.showOptionDialog(bsf, "Wollen Sie gegen eine KI spielen?", "KI", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-			
-			Spielablauf newSa = new Spielablauf();
-			LokalerSpieler sw = new LokalerSpieler(bsf, Spielbrett.SCHWARZ, bsf);
 
-			ISpieler we;
-			if (res==JOptionPane.YES_OPTION)  
-				we = new brettspiele.dame.heimerlKI.HeimerlKI(Spielbrett.WEISS, bsf);
-			else {
-				we = new LokalerSpieler(bsf, Spielbrett.WEISS, bsf);
-				sc.addZugBeendetListener(we);
+			Spielablauf newSa = new Spielablauf();
+			AbstractSpieler sw = ef.getPlayer1(); //new LokalerSpieler(bsf, Spielbrett.SCHWARZ, bsf);
+			if (sw instanceof LokalerSpieler) {
+				sc.addZugBeendetListener(sw);
+				sc.setLokalerSpieler(sw);
 			}
-				
+			
+			AbstractSpieler we = ef.getPlayer2();
+			if (we instanceof LokalerSpieler) {
+				sc.addZugBeendetListener(we);
+				sc.setLokalerSpieler(we);
+			}
+
 			//Spieler gegenseitig verlinken
 			sw.addZugBeendetListener(we);
 			we.addZugBeendetListener(sw);
 			
 			//SpielbrettComponent mit den Spielern verknüpfen
-			sc.setLokalerSpieler(sw);
-			sc.addZugBeendetListener(sw);
+			//sc.setLokalerSpieler(sw);
+			//sc.addZugBeendetListener(sw);
 
 			//Spiel starten
 			newSa.starten(sw, we);
 			bsf.setSpielablauf(newSa);
 			
-			bsf.updateGUI();
+			//bsf.updateGUI();
 		}
 	}
 	

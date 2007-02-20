@@ -2,7 +2,8 @@ package brettspiele.dame;
 
 import javax.swing.*;
 
-import brettspiele.dame.SocketHandler.ObjectEmpfangenEvent;
+import brettspiele.SocketHandler;
+import brettspiele.SocketHandler.ObjectEmpfangenEvent;
 
 
 import java.awt.GridLayout;

@@ -123,8 +123,6 @@ public class Spielablauf implements ISpielablauf<ZugFolge> {
     	
 		spieler[0]=schwarz;
 		spieler[1]=weiss;
-
-		spieler[0].startGettingNaechstenZug(sb.clone());
     }
 
     /**

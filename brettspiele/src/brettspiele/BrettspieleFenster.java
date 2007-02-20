@@ -117,7 +117,7 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 	public void updateGUI() {
 		boolean lokSp = sa.getSpielerAmZug() instanceof ILokalerSpieler;
 		
-		fsa.setEnabled(sa.getUndoCount()>0 && lokSp);
+		fsa.setEnabled(sa.getUndoCount()>0);// && lokSp);
 		uma.setEnabled(sa.getUndoCount()>0 && lokSp);
 		rma.setEnabled(sa.getRedoCount()>0 && lokSp);
 		

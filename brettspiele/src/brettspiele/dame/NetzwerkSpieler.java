@@ -5,7 +5,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import brettspiele.*;
-import brettspiele.dame.SocketHandler.*;
+import brettspiele.SocketHandler.*;
 
 
 public class NetzwerkSpieler extends AbstractSpieler implements ObjectEmpfangenListener {

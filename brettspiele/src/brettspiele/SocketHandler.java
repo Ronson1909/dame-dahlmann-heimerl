@@ -1,4 +1,4 @@
-package brettspiele.dame;
+package brettspiele;
 
 import java.io.ObjectInputStream;
 import java.net.Socket;
