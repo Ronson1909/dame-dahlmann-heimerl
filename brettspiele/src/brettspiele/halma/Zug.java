@@ -85,4 +85,8 @@ public class Zug implements IZug, Cloneable {
     	return (HalmaSpielbrett.isGueltigeKoordinate(startX, startY) 
     			&& HalmaSpielbrett.isGueltigeKoordinate(endeX, endeY));
     }
+
+	public String toString() {
+		return "(" + getStartX() + "," + getStartY() + ")-(" + getEndeX() + "," + getEndeY() + ")";
+	}
 }

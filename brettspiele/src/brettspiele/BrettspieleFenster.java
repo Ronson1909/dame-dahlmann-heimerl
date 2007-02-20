@@ -152,21 +152,15 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 
 	public void zugBeendet(ZugBeendetEvent zbe) {
 		sa.zugBeendet(zbe);
-		
 		sc.repaint();
-		
-       	updateGUI();
 
-       	/*
-       	switch (sa.getSpielsituation().isSpielBeendet()) {
-       	case Spielbrett.WEISS:
-       		JOptionPane.showMessageDialog(null, "Weiﬂ hat gewonnen!", "Spiel beendet", JOptionPane.INFORMATION_MESSAGE);
+       	int tmp = sa.getSpielsituation().isSpielBeendet();
+       	if (tmp!=-1) {
+       		JOptionPane.showMessageDialog(this, "Das Spiel ist beendet!", "Spiel beendet", JOptionPane.INFORMATION_MESSAGE);
        		return;
-       	case Spielbrett.SCHWARZ:
-           	JOptionPane.showMessageDialog(null, "Schwarz hat gewonnen!", "Spiel beendet", JOptionPane.INFORMATION_MESSAGE);
-           	return;
-       	default:       	}
-       	*/
+       	}
+
+       	updateGUI();
 	}
 
 	FileOpenAction foa = new FileOpenAction();

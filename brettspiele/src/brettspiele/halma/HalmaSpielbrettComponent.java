@@ -107,12 +107,13 @@ public class HalmaSpielbrettComponent extends JComponent implements	IBrettspielC
 
 	    paintArrow(g, UpDownEnum.Up, Color.red, 13, 1);
 	    paintArrow(g, UpDownEnum.Up, Color.blue, 5, 9);
-	    paintArrow(g, UpDownEnum.Up, Color.green, 21, 9);
+	    paintArrow(g, UpDownEnum.Up, new Color(0,150,0), 21, 9);
 	    paintArrow(g, UpDownEnum.Down, Color.red, 13, 17);
 	    paintArrow(g, UpDownEnum.Down, Color.green, 5, 9);
 	    paintArrow(g, UpDownEnum.Down, Color.blue, 21, 9);
 		
-	    paintFiguren(g);
+	    if (sb!=null)
+	    	paintFiguren(g);
 	}
 
 	private void paintArrow(Graphics g, UpDownEnum ud, Color col, int x, int y) {
