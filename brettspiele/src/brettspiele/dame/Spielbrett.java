@@ -445,7 +445,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 			int testY = y2-ySchritt;
 							
 			//prüfe: Ein Feld vor Zielfeld mit gegnerischem Stein belegt
-			if (!isGegner_intern(testX, testY))
+			if (!isGegner_intern(testX, testY, false))
 				return false;
 		}
 		
@@ -537,7 +537,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 		//prüfe: ist eigener Stein falls erster Zug
 		if (ersterZug) { //alt.: if(!zugFolge) {
 			zugMitDame = (spielbrett_intern[x1][y1] == eigeneDame); //Beim ersten Zug wird bei einem einzelnen Zug nicht übergeben, ob mit einer Dame gezogen wurde.
-			if (!isEigener_intern(x1, y1))
+			if (!isEigener_intern(x1, y1, false))
 				return false;
 		}
 		
@@ -595,7 +595,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 				normalerZug = isLeer_intern(testX, testY, true); //Stimmt das true???????
 					
 				//prüfe: oder erlaubter Sprung über Gegner => Nur ein Feld vor Zielfeld mit gegnerischem Stein belegt, sonst alle leer
-				erlaubterSprung = isGegner_intern(testX, testY);
+				erlaubterSprung = isGegner_intern(testX, testY, true);
 			}
 			
 			//prüfe: Sprung, aber inkorrekt
@@ -697,7 +697,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 			int yKorrektur = (int) Math.signum(y1-y2); //(y2 > y1) ? -1 : +1;
 			int xUebersprungen = x2+xKorrektur;
 			int yUebersprungen = y2+yKorrektur;
-			if (isGegner_intern(xUebersprungen, yUebersprungen)) {
+			if (isGegner_intern(xUebersprungen, yUebersprungen, false)) { //ob das false mal stimmt.....
 				teilZug.setzeUebersprungenerSteinX(transform(xUebersprungen));
 				teilZug.setzeUebersprungenerSteinY(transform(yUebersprungen));
 				teilZug.setUebersprungenerSteinTyp(spielbrett_intern[xUebersprungen][yUebersprungen]);
@@ -887,15 +887,21 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	/**
 	 * Prüft ob Feld mit Stein des aktuellen Spielers besetzt ist.
 	 */
-	private boolean isEigener_intern(int x, int y) {
-		return (spielbrett_intern[x][y] == eigenerStein || spielbrett_intern[x][y] == eigeneDame);
+	private boolean isEigener_intern(int x, int y, boolean aufTempBrett) {
+		if (aufTempBrett)
+			return (TEMP_spielbrett[x][y] == eigenerStein || TEMP_spielbrett[x][y] == eigeneDame);
+		else
+			return (spielbrett_intern[x][y] == eigenerStein || spielbrett_intern[x][y] == eigeneDame);
 	}
 	
 	/**
 	 * Prüft ob Feld mit Stein des aktuellen Gegenspielers besetzt ist.
 	 */
-	private boolean isGegner_intern(int x, int y) {
-		return (spielbrett_intern[x][y] == gegnerStein || spielbrett_intern[x][y] == gegnerDame);
+	private boolean isGegner_intern(int x, int y, boolean aufTempBrett) {
+		if (aufTempBrett)
+			return (TEMP_spielbrett[x][y] == gegnerStein || TEMP_spielbrett[x][y] == gegnerDame);
+		else
+			return (spielbrett_intern[x][y] == gegnerStein || spielbrett_intern[x][y] == gegnerDame);
 	}
 	
 	/**
@@ -958,7 +964,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 			return false;
 		
 		//prüfe: ist eigener Stein
-		if (!isEigener_intern(x1, y1))
+		if (!isEigener_intern(x1, y1, false))
 			return false;
 		
 		//wenn keine Dame
