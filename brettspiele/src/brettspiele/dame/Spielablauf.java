@@ -41,7 +41,7 @@ public class Spielablauf implements ISpielablauf<ZugFolge> {
        	default:
        	}
     	
-       	getSpielerAmZug().startGettingNaechstenZug(sb);
+       	getSpielerAmZug().startGettingNaechstenZug(sb.clone());
 	}
 
 
@@ -124,7 +124,7 @@ public class Spielablauf implements ISpielablauf<ZugFolge> {
 		spieler[0]=schwarz;
 		spieler[1]=weiss;
 
-		spieler[0].startGettingNaechstenZug(sb);
+		spieler[0].startGettingNaechstenZug(sb.clone());
     }
 
     /**
@@ -213,7 +213,7 @@ public class Spielablauf implements ISpielablauf<ZugFolge> {
     		undoneZuege.add(zf);
     	}
     	
-		getSpielerAmZug().startGettingNaechstenZug(sb);
+		getSpielerAmZug().startGettingNaechstenZug(sb.clone());
     }
 
     /**
@@ -248,7 +248,7 @@ public class Spielablauf implements ISpielablauf<ZugFolge> {
            	}
     	}
 
-		getSpielerAmZug().startGettingNaechstenZug(sb);
+		getSpielerAmZug().startGettingNaechstenZug(sb.clone());
 }
 
     /**

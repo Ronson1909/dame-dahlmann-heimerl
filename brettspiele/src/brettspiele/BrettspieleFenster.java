@@ -5,6 +5,7 @@ import brettspiele.halma.HalmaUI;
 
 import javax.swing.*;
 
+import java.awt.BorderLayout;
 import java.awt.HeadlessException;
 import java.awt.PopupMenu;
 import java.awt.event.ActionEvent;
@@ -135,6 +136,7 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 		this.sc=sc;
 
 		this.add((JComponent)this.sc);
+		this.validate();
 	}
 
 	public void setSpielablauf(ISpielablauf wert) {
