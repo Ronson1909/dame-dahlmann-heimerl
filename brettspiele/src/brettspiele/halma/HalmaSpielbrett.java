@@ -126,8 +126,41 @@ public class HalmaSpielbrett implements ISpielsituation, Cloneable {
 	}
 
 	public int isSpielBeendet() {
-		// TODO Auto-generated method stub
-		return 0;
+		if (spielerzahl==2) {
+			boolean blauFertig=true;
+			boolean rotFertig=true;
+			
+			forBlau: for (int y=0;y<=4;y++) {
+				for (int x=12-y ; x <= 12 + y ; x+=2) {
+					if (spielbrett[x][y] != BLAU) {
+						blauFertig = false;
+						break forBlau;
+					}
+				}
+			}
+
+			forRot: for (int y=0;y<=4;y++) {
+				for (int x=12-y ; x <= 12 + y ; x+=2) {
+					if (spielbrett[x][16-y] != ROT) {
+						rotFertig = false;
+						break forRot;
+					}
+				}
+			}
+			
+			if (blauFertig)
+				return BLAU;
+			else if (rotFertig)
+				return ROT;
+			else
+				return -1;
+		}
+		else if (spielerzahl==3) {
+			//TODO isSpielBeendet
+			return -1;
+		}
+		else
+			throw new IllegalArgumentException();
 	}
 
 	public int getFeld(int x, int y) {
