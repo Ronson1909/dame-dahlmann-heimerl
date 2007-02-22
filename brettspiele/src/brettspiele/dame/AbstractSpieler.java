@@ -2,6 +2,8 @@ package brettspiele.dame;
 
 import java.util.ArrayList;
 
+import javax.swing.JFrame;
+
 import brettspiele.*;
 
 public abstract class AbstractSpieler implements ISpieler<ZugFolge> {
@@ -18,6 +20,14 @@ public abstract class AbstractSpieler implements ISpieler<ZugFolge> {
 		this(eigeneFarbe);
 
 		this.addZugBeendetListener(zbl);
+	}
+	
+	public boolean isConfigurable() {
+		return false;
+	}
+	
+	public void configure(java.awt.Window owner, Object info) {
+		
 	}
 	
 	public final int getEigeneFarbe() {

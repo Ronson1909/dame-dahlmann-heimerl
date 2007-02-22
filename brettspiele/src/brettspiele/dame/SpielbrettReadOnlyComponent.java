@@ -4,8 +4,6 @@ import java.awt.Graphics;
 import java.awt.HeadlessException;
 import javax.swing.JComponent;
 
-import brettspiele.IBrettspielComponent;
-import brettspiele.ISpieler;
 import brettspiele.ISpielsituation;
 
 public class SpielbrettReadOnlyComponent extends JComponent {

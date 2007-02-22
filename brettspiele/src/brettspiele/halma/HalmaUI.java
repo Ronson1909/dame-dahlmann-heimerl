@@ -56,68 +56,12 @@ public class HalmaUI implements IBrettspielUI {
 		}
 	}
 
-	public Action createFileNewNetworkAction(BrettspieleFenster bsf) {
-		return new NetworkAction(bsf);
-	}
-
 	public String getDefaultExtension() {
 		return "hsa";
 	}
 
 	public String getName() {
 		return "Halma";
-	}
-
-	private class NetworkAction extends AbstractAction {
-		private BrettspieleFenster bsf;
-
-		private NetworkAction(BrettspieleFenster bsf) {
-			this.bsf=bsf;
-
-			super.putValue(NAME, "Halma...");			
-			super.putValue(SHORT_DESCRIPTION, "Startet ein Netzwerkspiel");			
-			//super.putValue(SMALL_ICON, new ImageIcon(ClassLoader.getSystemResource("dame/images/save.gif")));
-		}
-		
-		public void actionPerformed(ActionEvent e) {
-//			NetzwerkDialog frm = new NetzwerkDialog(bsf);
-//			frm.setVisible(true);
-//			
-//			if (frm.getSocketHandler() != null && frm.getObjectOutputStream() != null) {
-//				IBrettspielComponent sc = bsf.getBrettspielComponent();
-//				Spielablauf newSa = new Spielablauf();
-//				
-//				AbstractSpieler sw, we;
-//				NetzwerkSpieler ns;
-//				LokalerSpieler ls;
-//				if (frm.isServer()) {
-//					ls = new LokalerSpieler(bsf, Spielbrett.SCHWARZ, bsf);
-//					ns = new NetzwerkSpieler(Spielbrett.WEISS, bsf);
-//					we = ns;
-//					sw = ls;
-//				}
-//				else {
-//					ns = new NetzwerkSpieler(Spielbrett.SCHWARZ, bsf);
-//					ls = new LokalerSpieler(bsf, Spielbrett.WEISS, bsf);
-//					sw = ns;
-//					we = ls;
-//				}
-//				ns.setNetwork(frm.getObjectOutputStream(), frm.getSocketHandler());
-//				
-//				//Spieler gegenseitig verlinken
-//				sw.addZugBeendetListener(we);
-//				we.addZugBeendetListener(sw);
-//				
-//				//SpielbrettComponent mit den Spielern verknüpfen
-//				sc.setLokalerSpieler(ls);
-//				sc.addZugBeendetListener(ls);
-//
-//				//Spiel starten
-//				newSa.starten(sw, we);
-//				bsf.setSpielablauf(newSa);
-//				bsf.updateGUI();
-//			}
-		}
 	}
 }
 

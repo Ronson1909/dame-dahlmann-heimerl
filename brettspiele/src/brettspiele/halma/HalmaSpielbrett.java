@@ -62,7 +62,6 @@ public class HalmaSpielbrett implements ISpielsituation, Cloneable {
 	public static final int GRUEN = 3;
 
 	private int[][] spielbrett;
-	private int[][] TEMP_spielbrett;
 
 	private int eigeneFarbe;
 	private int spielerzahl;

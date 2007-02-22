@@ -6,22 +6,14 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
 
-import com.sun.xml.internal.bind.v2.runtime.output.InPlaceDOMOutput;
-
 import brettspiele.BrettspieleFenster;
-import brettspiele.IBrettspielComponent;
 import brettspiele.IBrettspielUI;
 import brettspiele.ILokalerSpieler;
-import brettspiele.ISpieler;
 import brettspiele.ZugBeendetListener;
 
 public class DameUI implements IBrettspielUI {
 	public Action createFileNewAction(BrettspieleFenster bsf) {
 		return new FileNewAction(bsf);
-	}
-
-	public Action createFileNewNetworkAction(BrettspieleFenster bsf) {
-		return new NetworkAction(bsf);
 	}
 
 	public String getName() {
@@ -53,7 +45,7 @@ public class DameUI implements IBrettspielUI {
 				return;
 			}
 
-			IBrettspielComponent sc = new SpielbrettComponent();
+			SpielbrettComponent sc = new SpielbrettComponent();
 			bsf.setBrettspielComponent(sc);
 
 			Spielablauf newSa = new Spielablauf();
@@ -82,58 +74,6 @@ public class DameUI implements IBrettspielUI {
 			bsf.setSpielablauf(newSa);
 			
 			//bsf.updateGUI();
-		}
-	}
-	
-	private class NetworkAction extends AbstractAction {
-		private BrettspieleFenster bsf;
-
-		private NetworkAction(BrettspieleFenster bsf) {
-			this.bsf=bsf;
-
-			super.putValue(NAME, "Dame...");			
-			super.putValue(SHORT_DESCRIPTION, "Startet ein Netzwerkspiel");			
-			//super.putValue(SMALL_ICON, new ImageIcon(ClassLoader.getSystemResource("dame/images/save.gif")));
-		}
-		
-		public void actionPerformed(ActionEvent e) {
-			NetzwerkDialog frm = new NetzwerkDialog(bsf);
-			frm.setVisible(true);
-			
-			if (frm.getSocketHandler() != null && frm.getObjectOutputStream() != null) {
-				IBrettspielComponent sc = bsf.getBrettspielComponent();
-				Spielablauf newSa = new Spielablauf();
-				
-				AbstractSpieler sw, we;
-				NetzwerkSpieler ns;
-				LokalerSpieler ls;
-				if (frm.isServer()) {
-					ls = new LokalerSpieler(bsf, Spielbrett.SCHWARZ, bsf);
-					ns = new NetzwerkSpieler(Spielbrett.WEISS, bsf);
-					we = ns;
-					sw = ls;
-				}
-				else {
-					ns = new NetzwerkSpieler(Spielbrett.SCHWARZ, bsf);
-					ls = new LokalerSpieler(bsf, Spielbrett.WEISS, bsf);
-					sw = ns;
-					we = ls;
-				}
-				ns.setNetwork(frm.getObjectOutputStream(), frm.getSocketHandler());
-				
-				//Spieler gegenseitig verlinken
-				sw.addZugBeendetListener(we);
-				we.addZugBeendetListener(sw);
-				
-				//SpielbrettComponent mit den Spielern verknüpfen
-				sc.setLokalerSpieler(ls);
-				sc.addZugBeendetListener(ls);
-
-				//Spiel starten
-				newSa.starten(sw, we);
-				bsf.setSpielablauf(newSa);
-				bsf.updateGUI();
-			}
 		}
 	}
 }

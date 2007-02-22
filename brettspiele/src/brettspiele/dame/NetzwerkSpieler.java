@@ -69,14 +69,9 @@ public class NetzwerkSpieler extends AbstractSpieler implements ObjectEmpfangenL
 		//Zug beenden, wenn eine Zugfolge kommt
 		Object obj = oee.getEmpfangenesObject();
 		
-		if (obj.getClass() == java.util.ArrayList.class) {
-			java.util.ArrayList al = (java.util.ArrayList)obj;
-			
-			if (al.size()>0 && al.get(0).getClass() == Zug.class) {
-				ZugFolge zf = (ZugFolge)obj;
-				
-				beendeZug(zf);
-			}
+		if (obj instanceof ZugFolge) {
+			ZugFolge zf = (ZugFolge)obj;
+			beendeZug(zf);
 		}
 	}
 
@@ -94,5 +89,18 @@ public class NetzwerkSpieler extends AbstractSpieler implements ObjectEmpfangenL
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void configure(java.awt.Window owner, Object info) {
+		NetzwerkDialog nwd = new NetzwerkDialog(owner, out, sh, (Integer)info == 1);
+		
+		nwd.setVisible(true);
+		this.setNetwork(nwd.getObjectOutputStream(), nwd.getSocketHandler()); 
+	}
+
+	@Override
+	public boolean isConfigurable() {
+		return true;
 	}
 }

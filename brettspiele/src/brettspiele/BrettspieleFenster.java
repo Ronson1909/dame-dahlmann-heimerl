@@ -38,7 +38,6 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 	private JMenuBar mnMain = new JMenuBar();
 	private JMenu mnFile = new JMenu();
 		private JMenu mnNeu = new JMenu();
-		private JMenu mnNeuNetzwerk = new JMenu();
 		private JPopupMenu pumNeu = new JPopupMenu();
 	private JMenu mnEdit = new JMenu();
 	private JMenu mnHelp = new JMenu();
@@ -66,13 +65,8 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 		mnNeu.setIcon(new ImageIcon(ClassLoader.getSystemResource("brettspiele/images/new.gif")));
 		mnFile.add(mnNeu);
 
-		mnNeuNetzwerk.setText("Neues Netzwerkspiel");
-		//mnNeuNetzwerk.setIcon(new ImageIcon(ClassLoader.getSystemResource("brettspiele/dame/images/new.gif")));
-		mnFile.add(mnNeuNetzwerk);
-		
 		for (IBrettspielUI bui : brettspiele) {
 			mnNeu.add(bui.createFileNewAction(this));
-			mnNeuNetzwerk.add(bui.createFileNewNetworkAction(this));
 			pumNeu.add(bui.createFileNewAction(this));
 		}
 		
