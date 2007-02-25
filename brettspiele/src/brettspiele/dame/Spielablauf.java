@@ -4,7 +4,6 @@ import brettspiele.*;
 
 import java.util.ArrayList;
 import java.util.Stack;
-import javax.swing.JOptionPane;
 
 /**
  * <p>Überschrift: </p>
@@ -19,7 +18,11 @@ import javax.swing.JOptionPane;
  * @version 1.0
  */
 public class Spielablauf implements ISpielablauf<ZugFolge> {
-	private ISpieler spieler[] = new ISpieler[2];
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7284860177225916737L;
+	private ISpieler<ZugFolge> spieler[] = new ISpieler[2];
     private Spielbrett sb;
     private Stack<ZugFolge> bisherigeZuege = new Stack<ZugFolge>();
     private Stack<ZugFolge> undoneZuege = new Stack<ZugFolge>();
@@ -45,7 +48,7 @@ public class Spielablauf implements ISpielablauf<ZugFolge> {
 	}
 
 
-    public IBrettspielComponent createBrettspielComponent() {
+    public IBrettspielComponent<ZugFolge> createBrettspielComponent() {
     	return new SpielbrettComponent();
     }
 
@@ -57,7 +60,7 @@ public class Spielablauf implements ISpielablauf<ZugFolge> {
     	return sb;
     }
     
-    public ISpieler[] getSpieler() {
+    public ISpieler<ZugFolge>[] getSpieler() {
     	return spieler;
     }
     
@@ -81,7 +84,7 @@ public class Spielablauf implements ISpielablauf<ZugFolge> {
      * Gibt den aktuellen Spieler zurück.
      * @return Der aktuelle Spieler.
      */
-    public ISpieler getSpielerAmZug() {
+    public ISpieler<ZugFolge> getSpielerAmZug() {
     	return spieler[sb.getFarbeAmZug()-1];
     }
 
@@ -89,7 +92,7 @@ public class Spielablauf implements ISpielablauf<ZugFolge> {
      * Gibt den schwarzen Spieler zurück.
      * @return Der schwarze Spieler.
      */
-    public ISpieler getSpielerSchwarz() {
+    public ISpieler<ZugFolge> getSpielerSchwarz() {
     	return spieler[0];
     }
 
@@ -97,7 +100,7 @@ public class Spielablauf implements ISpielablauf<ZugFolge> {
      * Gibt den weißen Spieler zurück.
      * @return Der weiße Spieler.
      */
-    public ISpieler getSpielerWeiss() {
+    public ISpieler<ZugFolge> getSpielerWeiss() {
     	return spieler[1];
     }
 
@@ -105,7 +108,7 @@ public class Spielablauf implements ISpielablauf<ZugFolge> {
     * Startet ein Spiel.
     *
     */
-    public void starten(ISpieler schwarz, ISpieler weiss) {
+    public void starten(ISpieler<ZugFolge> schwarz, ISpieler<ZugFolge> weiss) {
 //        while (kis[getFarbeAmZug()-1] != null) {
 //           	Spielbrett tmpSB = sb.clone();
 //           	ArrayList<Zug> zugfolge = kis[getFarbeAmZug()-1].gibNaechstenZug(tmpSB, getFarbeAmZug());

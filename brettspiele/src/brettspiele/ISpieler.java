@@ -1,7 +1,6 @@
 package brettspiele;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 /**
  * Spielerinterface

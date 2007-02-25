@@ -2,8 +2,6 @@ package brettspiele.dame;
 
 import java.util.ArrayList;
 
-import javax.swing.JFrame;
-
 import brettspiele.*;
 
 public abstract class AbstractSpieler implements ISpieler<ZugFolge> {
@@ -93,7 +91,7 @@ public abstract class AbstractSpieler implements ISpieler<ZugFolge> {
 	 * @param zf
 	 */
 	protected final void beendeZug(ZugFolge zf) {
-		for (ZugBeendetListener zbl : (Iterable<ZugBeendetListener<ZugFolge>>)zbls.clone()) {
+		for (ZugBeendetListener<ZugFolge> zbl : (Iterable<ZugBeendetListener<ZugFolge>>)zbls.clone()) {
 			zbl.zugBeendet(new ZugBeendetEvent<ZugFolge>(this, this, zf));
 		}
 	}

@@ -5,7 +5,7 @@ import brettspiele.ZugBeendetListener;
 public abstract class AbstractKI extends AbstractSpieler implements java.lang.Runnable {
 	protected Spielbrett sb;
 	
-	public AbstractKI(int eigeneFarbe, ZugBeendetListener zbl) {
+	public AbstractKI(int eigeneFarbe, ZugBeendetListener<ZugFolge> zbl) {
 		super(eigeneFarbe, zbl);
 	}
 

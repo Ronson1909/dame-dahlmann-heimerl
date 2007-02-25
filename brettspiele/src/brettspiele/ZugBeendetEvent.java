@@ -6,10 +6,14 @@ package brettspiele;
  *
  */
 public class ZugBeendetEvent<Z extends IZug> extends java.util.EventObject {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5090320113997141299L;
 	protected Z zug;
-	protected ISpieler spieler;
+	protected ISpieler<? extends Z> spieler;
 	
-	public ZugBeendetEvent(Object source, ISpieler spieler, Z zug) {
+	public ZugBeendetEvent(Object source, ISpieler<? extends Z> spieler, Z zug) {
 		super(source);
 		this.spieler=spieler;
 		this.zug=zug;
@@ -27,7 +31,7 @@ public class ZugBeendetEvent<Z extends IZug> extends java.util.EventObject {
 	 * Gibt den ausführenden Spieler zurück.
 	 * @return Der ausführende Spieler.
 	 */
-	public ISpieler getSpieler() {
+	public ISpieler<? extends Z> getSpieler() {
 		return spieler;
 	}
 }

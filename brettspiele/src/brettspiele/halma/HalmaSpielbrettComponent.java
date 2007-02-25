@@ -1,8 +1,13 @@
 package brettspiele.halma;
 
 import java.awt.AWTEvent;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
@@ -12,7 +17,11 @@ import javax.swing.JComponent;
 
 import brettspiele.*;
 
-public class HalmaSpielbrettComponent extends JComponent implements	IBrettspielComponent, ComponentListener {
+public class HalmaSpielbrettComponent extends JComponent implements	IBrettspielComponent<Zug>, ComponentListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 153730936058352848L;
 	protected final int leftBorder = 0; 
 	protected final int rightBorder = 0; 
 	protected final int topBorder = 0; 
@@ -26,22 +35,23 @@ public class HalmaSpielbrettComponent extends JComponent implements	IBrettspielC
 		addComponentListener(this);
 	}
 
-	protected ISpieler lokalerSpieler;
-	public void setLokalerSpieler(ISpieler lokalerSpieler) {
+	protected ISpieler<? extends Zug> lokalerSpieler;
+	
+	public void setLokalerSpieler(ISpieler<? extends Zug> lokalerSpieler) {
 		this.lokalerSpieler = lokalerSpieler;
 	}
 
-	public ISpieler getLokalerSpieler() {
+	public ISpieler<? extends Zug> getLokalerSpieler() {
 		return lokalerSpieler;
 	}
 
-	private ArrayList<ZugBeendetListener> zbls = new ArrayList<ZugBeendetListener>();
-	public void addZugBeendetListener(ZugBeendetListener zbl) {
+	private ArrayList<ZugBeendetListener<? extends Zug>> zbls = new ArrayList<ZugBeendetListener<? extends Zug>>();
+	public void addZugBeendetListener(ZugBeendetListener<? extends Zug> zbl) {
 		if (zbl!=null)
 			zbls.add(zbl);
 	}
 
-	public void removeZugBeendetListener(ZugBeendetListener zbl) {
+	public void removeZugBeendetListener(ZugBeendetListener<? extends Zug> zbl) {
 		if (zbl!=null)
 			zbls.remove(zbl);
 	}
@@ -51,9 +61,9 @@ public class HalmaSpielbrettComponent extends JComponent implements	IBrettspielC
 	}
 
 	protected void beendeZug(Zug z) {
-		ZugBeendetEvent zbe = new ZugBeendetEvent(this, lokalerSpieler, z);
+		ZugBeendetEvent<Zug> zbe = new ZugBeendetEvent<Zug>(this, lokalerSpieler, z);
 		
-		for (ZugBeendetListener zbl : (Iterable<ZugBeendetListener>)zbls.clone()) {
+		for (ZugBeendetListener<Zug> zbl : (Iterable<ZugBeendetListener<Zug>>)zbls.clone()) {
 			zbl.zugBeendet(zbe);
 		}
 	}
@@ -61,12 +71,16 @@ public class HalmaSpielbrettComponent extends JComponent implements	IBrettspielC
 	//Das Spielbrett das gezeichnet wird
 	protected HalmaSpielbrett sb;
 
-	public ISpielsituation getSpielsituation() {
+	public HalmaSpielbrett getSpielsituation() {
 		return sb;
 	}
 
 	public void setSpielsituation(ISpielsituation wert) {
-		sb=(HalmaSpielbrett)wert;
+		setSpielsituation((HalmaSpielbrett)wert);
+	}
+
+	public void setSpielsituation(HalmaSpielbrett wert) {
+		sb=wert;
 		this.repaint();
 	}
 	
@@ -82,6 +96,9 @@ public class HalmaSpielbrettComponent extends JComponent implements	IBrettspielC
 
 	@Override
 	public void paint(Graphics g) {
+		Graphics2D g2 = (Graphics2D)g;
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
 		//Linien von oben links nach unten rechts schwarz
 		g.setColor(Color.BLACK);
 		
@@ -109,7 +126,7 @@ public class HalmaSpielbrettComponent extends JComponent implements	IBrettspielC
 	    paintArrow(g, UpDownEnum.Up, Color.blue, 5, 9);
 	    paintArrow(g, UpDownEnum.Up, new Color(0,150,0), 21, 9);
 	    paintArrow(g, UpDownEnum.Down, Color.red, 13, 17);
-	    paintArrow(g, UpDownEnum.Down, Color.green, 5, 9);
+	    paintArrow(g, UpDownEnum.Down, new Color(0,150,0), 5, 9);
 	    paintArrow(g, UpDownEnum.Down, Color.blue, 21, 9);
 		
 	    if (sb!=null)
@@ -233,9 +250,23 @@ public class HalmaSpielbrettComponent extends JComponent implements	IBrettspielC
 	
 	protected void processMouseMotionEvent(MouseEvent e) {
 		if (clickedCoord.x != -1 && clickedCoord.y != -1) {
-			mouseCoord = new java.awt.Point(e.getX(), e.getY());
+			Rectangle clip = new Rectangle(0,0,-1,-1);
+			
+			Point pnt = mouseCoord;
+			pnt.x-=figureRadX;
+			pnt.y-=figureRadY;
+			clip.add(pnt);
+			clip.add(pnt.x + figureRadX*2, pnt.y + figureRadY*2);
 
-			this.repaint();
+			mouseCoord = e.getPoint();
+
+			pnt = (Point)mouseCoord.clone();
+			pnt.x-=figureRadX;
+			pnt.y-=figureRadY;
+			clip.add(pnt);
+			clip.add(pnt.x + figureRadX*2, pnt.y + figureRadY*2);
+			
+			this.repaint(clip.x, clip.y, clip.width, clip.height);
 		}
 		
 		super.processMouseMotionEvent(e);
@@ -261,5 +292,19 @@ public class HalmaSpielbrettComponent extends JComponent implements	IBrettspielC
 		}
 			
 		return pnt;
+	}
+
+	@Override
+	public Dimension getPreferredSize() {
+		Dimension d = this.getSize();
+		int seitenlänge = Math.min(d.height, d.width);
+		//seitenlänge*=8;
+		d.setSize(seitenlänge,seitenlänge);
+		return d;
+	}
+	
+	@Override
+	public boolean isPreferredSizeSet() {
+		return true;
 	}
 }

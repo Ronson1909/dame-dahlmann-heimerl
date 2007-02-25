@@ -3,14 +3,12 @@ package brettspiele.dame;
 import javax.swing.*;
 
 import brettspiele.SocketHandler;
-import brettspiele.SocketHandler.ObjectEmpfangenEvent;
 
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.*;
 import java.io.ObjectOutputStream;
-import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.awt.Dimension;
 import javax.swing.JPanel;

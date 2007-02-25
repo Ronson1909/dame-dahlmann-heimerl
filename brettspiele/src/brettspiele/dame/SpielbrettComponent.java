@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import brettspiele.*;
 
 public class SpielbrettComponent extends SpielbrettReadOnlyComponent implements IBrettspielComponent<ZugFolge> {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6402184737019169647L;
 	public SpielbrettComponent() throws HeadlessException {
 		super();
 		
@@ -13,12 +17,12 @@ public class SpielbrettComponent extends SpielbrettReadOnlyComponent implements 
 		this.enableEvents(AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK);
 	}
 
-	protected ISpieler lokalerSpieler;
-	public void setLokalerSpieler(ISpieler lokalerSpieler) {
+	protected ISpieler<? extends ZugFolge> lokalerSpieler;
+	public void setLokalerSpieler(ISpieler<? extends ZugFolge> lokalerSpieler) {
 		this.lokalerSpieler = lokalerSpieler;
 	}
 	
-	public ISpieler getLokalerSpieler() {
+	public ISpieler<? extends ZugFolge> getLokalerSpieler() {
 		return lokalerSpieler;
 	}
 
@@ -39,17 +43,37 @@ public class SpielbrettComponent extends SpielbrettReadOnlyComponent implements 
 				feld=sb.getFeld(clickedCoord.x, 7-clickedCoord.y);				
 			}
 			
-			final int Feldbreite = getFeldbreite(); 
-			int ZweiterKreisOffset = (int)(Feldbreite * ZweiterKreisOffsetPercentage / 100);
+			//Point pnt = getPaintCoordinateFromMouse(mouseCoord, feld==sb.getEigeneDame());
+			int ZweiterKreisOffset = (int)(feldbreite * ZweiterKreisOffsetPercentage / 100);
 			
 			if (feld==sb.getEigeneDame()) {
 				ZweiterKreisOffset*=2;
 			}
 
-			int paintX = (int) (mouseCoord.x-Feldbreite*SteinPercentage/200+ZweiterKreisOffset);
-			int paintY = (int) (mouseCoord.y-Feldbreite*SteinPercentage/200+ZweiterKreisOffset);
+			int paintX = (int) (mouseCoord.x-feldbreite*SteinPercentage/200+ZweiterKreisOffset);
+			int paintY = (int) (mouseCoord.y-feldbreite*SteinPercentage/200+ZweiterKreisOffset);
 			zeichneFigur(g, feld, paintX, paintY, java.awt.Color.white, java.awt.Color.gray);
 		}
+	}
+
+	protected Point getPaintCoordinateFromMouse(Point mc, boolean dame) {
+		int ZweiterKreisOffset = (int)(feldbreite * ZweiterKreisOffsetPercentage / 100);
+		
+		if (dame) {
+			ZweiterKreisOffset*=2;
+		}
+
+		Point pnt = new Point();
+		pnt.x = (int) (mc.x-feldbreite*SteinPercentage/100/2+ZweiterKreisOffset);
+		pnt.y = (int) (mc.y-feldbreite*SteinPercentage/100/2+ZweiterKreisOffset);
+		return pnt;
+	}
+
+	protected Point getTopLeftCoordinateFromMouse(Point mc) {
+		Point pnt = new Point();
+		pnt.x = (int) (mc.x-feldbreite*SteinPercentage/100/2);
+		pnt.y = (int) (mc.y-feldbreite*SteinPercentage/100/2);
+		return pnt;
 	}
 
 	/**
@@ -57,9 +81,8 @@ public class SpielbrettComponent extends SpielbrettReadOnlyComponent implements 
 	 * oder der temporären Stelle.
 	 */
 	protected void zeichneFigur(Graphics g, int x, int y) {
-		final int Feldbreite = getFeldbreite(); 
-		int kreisX=(int)(leftBorder + Feldbreite*x + Feldbreite * (100-SteinPercentage) / 200);
-		int kreisY=(int)(topBorder + Feldbreite*y + Feldbreite * (100-SteinPercentage) / 200);
+		int kreisX=(int)(leftBorder + feldbreite*x + feldbreite * (100-SteinPercentage) / 200);
+		int kreisY=(int)(topBorder + feldbreite*y + feldbreite * (100-SteinPercentage) / 200);
 
 		if (tempZugfolge != null && 
 		    tempZugfolge.size()>0 && 
@@ -75,15 +98,15 @@ public class SpielbrettComponent extends SpielbrettReadOnlyComponent implements 
 				//sondern unten grau.
 			}
 			else {
-				kreisX=(int)(leftBorder + Feldbreite*tmpX + Feldbreite * (100-SteinPercentage) / 200);
-				kreisY=(int)(topBorder + Feldbreite*tmpY + Feldbreite * (100-SteinPercentage) / 200);
+				kreisX=(int)(leftBorder + feldbreite*tmpX + feldbreite * (100-SteinPercentage) / 200);
+				kreisY=(int)(topBorder + feldbreite*tmpY + feldbreite * (100-SteinPercentage) / 200);
 				
 				zeichneFigur(g, sb.getFeld(x,7-y), kreisX, kreisY, java.awt.Color.white, java.awt.Color.gray );
 			}
 		}
 		else {
 			if (clickedCoord.x==x && clickedCoord.y==y) {
-				//Wenn das Stein gerade gezogen (Drag'n'Drop)
+				//Wenn der Stein gerade gezogen (Drag'n'Drop)
 				//wird, dann diesen Stein nicht normal zeichnen,
 				//sondern unten grau.
 			}
@@ -110,7 +133,8 @@ public class SpielbrettComponent extends SpielbrettReadOnlyComponent implements 
 					if (sb.getFeld(clickedCoord.x, 7-clickedCoord.y) == lokalerSpieler.getEigeneFarbe() || sb.getFeld(clickedCoord.x, 7-clickedCoord.y) == lokalerSpieler.getEigeneFarbe() + 2) { //(sb.isEigener(clickedCoord.x, 7-clickedCoord.y)) {
 						System.out.println("Clicked " + clickedCoord.x + "," + clickedCoord.y);
 
-						mouseCoord = new java.awt.Point(e.getX(), e.getY());
+						mouseCoord = e.getPoint();
+						//processMouseMotionEvent(e);
 						this.repaint();
 					}
 					else if (tempZugfolge != null && 
@@ -120,7 +144,8 @@ public class SpielbrettComponent extends SpielbrettReadOnlyComponent implements 
 
 						System.out.println("Clicked " + clickedCoord.x + "," + clickedCoord.y);
 
-						mouseCoord = new java.awt.Point(e.getX(), e.getY());
+						mouseCoord = e.getPoint();
+						//processMouseMotionEvent(e);
 						this.repaint();
 					}
 					else {
@@ -190,13 +215,13 @@ public class SpielbrettComponent extends SpielbrettReadOnlyComponent implements 
 		super.processMouseEvent(e);
 	}
 	
-	private ArrayList<ZugBeendetListener<ZugFolge>> zbls = new ArrayList<ZugBeendetListener<ZugFolge>>();
-	public void addZugBeendetListener(ZugBeendetListener<ZugFolge> zbl) {
+	private ArrayList<ZugBeendetListener<? extends ZugFolge>> zbls = new ArrayList<ZugBeendetListener<? extends ZugFolge>>();
+	public void addZugBeendetListener(ZugBeendetListener<? extends ZugFolge> zbl) {
 		if (zbl!=null)
 			zbls.add(zbl);
 	}
 
-	public void removeZugBeendetListener(ZugBeendetListener<ZugFolge> zbl) {
+	public void removeZugBeendetListener(ZugBeendetListener<? extends ZugFolge> zbl) {
 		if (zbl!=null)
 			zbls.remove(zbl);
 	}
@@ -215,9 +240,19 @@ public class SpielbrettComponent extends SpielbrettReadOnlyComponent implements 
 	
 	protected void processMouseMotionEvent(MouseEvent e) {
 		if (clickedCoord.x != -1 && clickedCoord.y != -1) {
-			mouseCoord = new java.awt.Point(e.getX(), e.getY());
+			Rectangle clip = new Rectangle(0,0,-1,-1);
+			
+			Point pnt = getTopLeftCoordinateFromMouse(mouseCoord);
+			clip.add(pnt);
+			clip.add(pnt.x + feldbreite, pnt.y + feldbreite);
 
-			this.repaint();
+			mouseCoord = e.getPoint();
+
+			pnt = getTopLeftCoordinateFromMouse(mouseCoord);
+			clip.add(pnt);
+			clip.add(pnt.x + feldbreite, pnt.y + feldbreite);
+			
+			this.repaint(clip.x, clip.y, clip.width, clip.height);
 		}
 		
 		super.processMouseMotionEvent(e);

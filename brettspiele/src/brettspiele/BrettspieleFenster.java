@@ -5,13 +5,17 @@ import brettspiele.halma.HalmaUI;
 
 import javax.swing.*;
 
-import java.awt.BorderLayout;
 import java.awt.HeadlessException;
-import java.awt.PopupMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
-public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
+public class BrettspieleFenster extends JFrame implements ZugBeendetListener<IZug>, ComponentListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8798203200509822515L;
 	private static IBrettspielUI[] brettspiele = new IBrettspielUI[] {new DameUI(), new HalmaUI()};
 	
 	public static void main(String[] args) {
@@ -33,8 +37,9 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 		main.setVisible(true);
     }
 
-	private ISpielablauf sa;
-	private IBrettspielComponent sc;
+	//private IBrettspielUI currentUI=null;
+	private ISpielablauf<? extends IZug> sa;
+	private IBrettspielComponent<? extends IZug> sc;
 	private JMenuBar mnMain = new JMenuBar();
 	private JMenu mnFile = new JMenu();
 		private JMenu mnNeu = new JMenu();
@@ -49,6 +54,7 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 	public BrettspieleFenster() throws HeadlessException {
 		super("Brettspiele");
 		this.setSize(400, 400);
+		this.addComponentListener(this);
 		
 		//setBrettspielComponent(brettspiele[0].createBrettspielComponent());
 		
@@ -61,7 +67,7 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 
 		mnFile.setText("Datei");
 		
-		mnNeu.setText("Neues lokales Spiel");
+		mnNeu.setText("Neues Spiel");
 		mnNeu.setIcon(new ImageIcon(ClassLoader.getSystemResource("brettspiele/images/new.gif")));
 		mnFile.add(mnNeu);
 
@@ -122,7 +128,7 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 		return sc;
 	}
 
-	public void setBrettspielComponent(IBrettspielComponent sc) {
+	public void setBrettspielComponent(IBrettspielComponent<? extends IZug> sc) {
 		if (this.sc!=sc && this.sc!=null) {
 			this.remove((JComponent)this.sc);
 		}
@@ -131,9 +137,10 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 
 		this.add((JComponent)this.sc);
 		this.validate();
+		this.componentResized(new ComponentEvent(this, ComponentEvent.COMPONENT_RESIZED));
 	}
 
-	public void setSpielablauf(ISpielablauf wert) {
+	public void setSpielablauf(ISpielablauf<? extends IZug> wert) {
 		if (wert != sa) {
 			sa = wert;
 			sc.setSpielsituation(sa.getSpielsituation());
@@ -144,8 +151,8 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 		}
 	}
 
-	public void zugBeendet(ZugBeendetEvent zbe) {
-		sa.zugBeendet(zbe);
+	public void zugBeendet(ZugBeendetEvent<IZug> zbe) {
+		sa.zugBeendet((ZugBeendetEvent) zbe);
 		sc.repaint();
 
        	int tmp = sa.getSpielsituation().isSpielBeendet();
@@ -157,9 +164,13 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
        	updateGUI();
 	}
 
-	FileOpenAction foa = new FileOpenAction();
-	private class FileOpenAction extends AbstractAction {
-		private FileOpenAction() {
+	AbstractAction foa = new AbstractAction() {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -3927301365567006702L;
+
+		{
 			super.putValue(NAME, "Öffnen...");			
 			super.putValue(SHORT_DESCRIPTION, "Öffnet einen Spielstand");			
 			super.putValue(SMALL_ICON, new ImageIcon(ClassLoader.getSystemResource("brettspiele/images/open.gif")));
@@ -184,15 +195,16 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 			        java.io.ObjectInputStream ois = new java.io.ObjectInputStream(fis);
 	
 			        try {
-			        	ISpielablauf newSa = (ISpielablauf)ois.readObject();
+			        	ISpielablauf<? extends IZug> newSa = (ISpielablauf<? extends IZug>)ois.readObject();
 			        	setBrettspielComponent(newSa.createBrettspielComponent());
 
-			        	for (ISpieler sp : newSa.getSpieler()) {
-			        		sp.addZugBeendetListener(BrettspieleFenster.this);
+			        	for (ISpieler<? extends IZug> sp : newSa.getSpieler()) {
+			        		sp.addZugBeendetListener((ZugBeendetListener) BrettspieleFenster.this);
 			        		
 			        		if (sp instanceof ILokalerSpieler) {
-				        		((ILokalerSpieler)sp).setBrettspieleFenster(BrettspieleFenster.this);
-				    			sc.addZugBeendetListener(sp);
+			        			ILokalerSpieler<? extends IZug> lsp = (ILokalerSpieler<? extends IZug>)sp; 
+			        			lsp.setBrettspieleFenster(BrettspieleFenster.this);
+				    			sc.addZugBeendetListener((ILokalerSpieler)lsp);
 			        		}
 			        	}
 
@@ -214,11 +226,15 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 				}
 	        }
 		}
-	}
+	};
 
-	FileSaveAction fsa = new FileSaveAction();
-	private class FileSaveAction extends AbstractAction {
-		private FileSaveAction() {
+	AbstractAction fsa = new AbstractAction() {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -7796009538961976199L;
+
+		{
 			this.setEnabled(false);
 
 			super.putValue(NAME, "Speichern unter...");			
@@ -287,11 +303,15 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 				}
 		    }
 		}
-	}
+	};
 
-	UndoMoveAction uma = new UndoMoveAction();
-	private class UndoMoveAction extends AbstractAction {
-		private UndoMoveAction() {
+	AbstractAction uma = new AbstractAction() {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -8335896770249737912L;
+
+		{
 			this.setEnabled(false);
 
 			super.putValue(NAME, "Zug rückgängig");			
@@ -338,11 +358,15 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 
 			//JOptionPane.showMessageDialog(DameFenster.this, "Noch nicht implementiert!", "Fehlt noch", JOptionPane.INFORMATION_MESSAGE);
 		}
-	}
+	};
 
-	RedoMoveAction rma = new RedoMoveAction();
-	private class RedoMoveAction extends AbstractAction {
-		private RedoMoveAction() {
+	AbstractAction rma = new AbstractAction() {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -1320816990475295255L;
+
+		{
 			this.setEnabled(false);
 
 			super.putValue(NAME, "Zug wiederherstellen");			
@@ -389,11 +413,15 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 
 			//JOptionPane.showMessageDialog(DameFenster.this, "Noch nicht implementiert!", "Fehlt noch", JOptionPane.INFORMATION_MESSAGE);
 		}
-	}
+	};
 
-	CloseAction cla = new CloseAction();
-	private class CloseAction extends AbstractAction {
-		private CloseAction() {
+	AbstractAction cla = new AbstractAction() {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 310338423441512229L;
+
+		{
 			super.putValue(NAME, "Beenden");			
 			super.putValue(SHORT_DESCRIPTION, "Beendet das Programm");			
 
@@ -405,11 +433,15 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 		public void actionPerformed(ActionEvent e) {
 			BrettspieleFenster.this.setVisible(false);
 		}
-	}
+	};
 
-	AboutAction about_a = new AboutAction();
-	private class AboutAction extends AbstractAction {
-		private AboutAction() {
+	AbstractAction about_a = new AbstractAction() {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -1357430677777715506L;
+
+		{
 			super.putValue(NAME, "Über...");			
 			super.putValue(SHORT_DESCRIPTION, "Informationen zu diesem Programm");			
 
@@ -420,5 +452,25 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener {
 			UeberDialog frm = new UeberDialog(BrettspieleFenster.this);
 			frm.setVisible(true);
 		}
+	};
+
+	public void componentHidden(ComponentEvent e) {
+	}
+
+	public void componentMoved(ComponentEvent e) {
+	}
+
+	public void componentResized(ComponentEvent e) {
+		JComponent scp = ((JComponent)sc);
+		if (scp != null && scp.isPreferredSizeSet()) {
+			java.awt.Dimension dCP = scp.getPreferredSize();
+			java.awt.Dimension dC = scp.getSize();
+			java.awt.Dimension dF = this.getSize();
+
+			this.setSize(dF.width - (dC.width - dCP.width), dF.height - (dC.height - dCP.height));
+		}
+	}
+
+	public void componentShown(ComponentEvent e) {
 	}
 }

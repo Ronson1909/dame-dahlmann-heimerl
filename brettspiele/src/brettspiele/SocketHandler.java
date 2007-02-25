@@ -34,6 +34,10 @@ public class SocketHandler extends Thread {
     }
     
 	public class ObjectEmpfangenEvent extends java.util.EventObject {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 7230443325076254873L;
 		private Object obj;
 		
 		private ObjectEmpfangenEvent(Object source, Object obj) {

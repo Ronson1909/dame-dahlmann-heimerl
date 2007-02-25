@@ -6,6 +6,11 @@ import java.util.Stack;
 import brettspiele.ISpielsituation;
 
 public class HalmaSpielbrett implements ISpielsituation, Cloneable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5541904529708814963L;
+
 	public HalmaSpielbrett clone() {
 		HalmaSpielbrett sb = new HalmaSpielbrett();
 

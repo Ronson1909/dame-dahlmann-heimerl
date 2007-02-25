@@ -13,7 +13,12 @@ package brettspiele.dame;
  * @version 1.0
  */
 public class Zug implements java.io.Serializable {
-    public Zug() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1347602428896343228L;
+
+	public Zug() {
     }
 
     public Zug(int startX, int startY, int endeX, int endeY) {

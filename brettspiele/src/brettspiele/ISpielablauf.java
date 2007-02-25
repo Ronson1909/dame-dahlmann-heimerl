@@ -1,24 +1,22 @@
 package brettspiele;
 
-import java.util.ArrayList;
-
 public interface ISpielablauf<Z extends IZug> extends java.io.Serializable, ZugBeendetListener<Z> {
     public ISpielsituation getSpielsituation();
     public int getFarbeAmZug();
 
-    public IBrettspielComponent createBrettspielComponent();
+    public IBrettspielComponent<Z> createBrettspielComponent();
     
     /**
      * Gibt den aktuellen Spieler zurück.
      * @return Der aktuelle Spieler.
      */
-    public ISpieler getSpielerAmZug();
+    public ISpieler<Z> getSpielerAmZug();
 
     /**
      * Gibt alle Spieler als Array zurück
      * @return Die Spieler des Spiels als Array.
      */
-    public ISpieler[] getSpieler();
+    public ISpieler<Z>[] getSpieler();
 
     /**
      * Macht mehrere Züge rückgängig. Wenn

@@ -3,7 +3,12 @@ package brettspiele.halma;
 import brettspiele.IZug;
 
 public class Zug implements IZug, Cloneable {
-    public Zug() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -7291732899816591069L;
+
+	public Zug() {
     }
 
     public Zug(int startX, int startY, int endeX, int endeY) {

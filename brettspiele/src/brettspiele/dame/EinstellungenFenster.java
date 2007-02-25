@@ -3,9 +3,6 @@ package brettspiele.dame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import java.awt.AWTEvent;
-import java.awt.Frame;
-import java.awt.BorderLayout;
 import javax.swing.JDialog;
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
@@ -15,13 +12,17 @@ import java.awt.Dimension;
 import javax.swing.JButton;
 
 import brettspiele.BrettspieleFenster;
+import brettspiele.ZugBeendetListener;
 import brettspiele.dame.heimerlKI.HeimerlKI;
 
 import java.awt.Insets;
 
 public class EinstellungenFenster extends JDialog {
 
-	private static final long serialVersionUID = 1L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3681194095381414650L;
 
 	private JPanel jContentPane = null;  //  @jve:decl-index=0:visual-constraint="10,10"
 
@@ -95,17 +96,17 @@ public class EinstellungenFenster extends JDialog {
 		if (p instanceof LokalerSpieler)
 			cmb.addItem(new SpielerComboBoxItem("Lokaler Spieler", p));
 		else
-			cmb.addItem(new SpielerComboBoxItem("Lokaler Spieler", new LokalerSpieler(bsf, farbe, bsf)));
+			cmb.addItem(new SpielerComboBoxItem("Lokaler Spieler", new LokalerSpieler(bsf, farbe)));
 		
 		if (p instanceof HeimerlKI)
 			cmb.addItem(new SpielerComboBoxItem("Heimerls Killer KI", p));
 		else
-			cmb.addItem(new SpielerComboBoxItem("Heimerls Killer KI", new HeimerlKI(farbe, bsf)));
+			cmb.addItem(new SpielerComboBoxItem("Heimerls Killer KI", new HeimerlKI(farbe, (ZugBeendetListener)bsf)));
 		
 		if (p instanceof NetzwerkSpieler)
 			cmb.addItem(new SpielerComboBoxItem("Netzwerkspieler", p));
 		else
-			cmb.addItem(new SpielerComboBoxItem("Netzwerkspieler", new NetzwerkSpieler(farbe, bsf)));
+			cmb.addItem(new SpielerComboBoxItem("Netzwerkspieler", new NetzwerkSpieler(farbe, (ZugBeendetListener)bsf)));
 	}
 
 	public int getResult() {

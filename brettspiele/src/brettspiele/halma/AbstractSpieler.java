@@ -14,7 +14,7 @@ public abstract class AbstractSpieler implements ISpieler<Zug> {
 		this.eigeneFarbe = eigeneFarbe;
 	}
 
-	public AbstractSpieler(int eigeneFarbe, ZugBeendetListener zbl) {
+	public AbstractSpieler(int eigeneFarbe, ZugBeendetListener<Zug> zbl) {
 		this(eigeneFarbe);
 
 		this.addZugBeendetListener(zbl);
@@ -52,19 +52,21 @@ public abstract class AbstractSpieler implements ISpieler<Zug> {
 	}
 	private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
 		eigeneFarbe = in.readInt();
-		zbls = new ArrayList<ZugBeendetListener>();
+		zbls = new ArrayList<ZugBeendetListener<? extends Zug>>();
 	}
 	private void readObjectNoData() throws java.io.ObjectStreamException {
 		eigeneFarbe = HalmaSpielbrett.ROT;
-		zbls = new ArrayList<ZugBeendetListener>();
+		zbls = new ArrayList<ZugBeendetListener<? extends Zug>>();
 	}
 	
-	private ArrayList<ZugBeendetListener> zbls = new ArrayList<ZugBeendetListener>();
-	public void addZugBeendetListener(ZugBeendetListener zbl) {
+	private ArrayList<ZugBeendetListener<? extends Zug>> zbls = new ArrayList<ZugBeendetListener<? extends Zug>>();
+	
+	@Override
+	public void addZugBeendetListener(ZugBeendetListener<Zug> zbl) {
 		if (zbl!=null)
 			zbls.add(zbl);
 	}
-	public void removeZugBeendetListener(ZugBeendetListener zbl) {
+	public void removeZugBeendetListener(ZugBeendetListener<Zug> zbl) {
 		if (zbl!=null)
 			zbls.remove(zbl);
 	}
@@ -82,12 +84,12 @@ public abstract class AbstractSpieler implements ISpieler<Zug> {
 		beendeZug(null);
 	}
 	
-	protected final void beendeZug(IZug zug) {
+	protected final void beendeZug(Zug zug) {
 		java.util.Date now = new java.util.Date();
 		System.out.println("Beende Zug um " + now.toGMTString());
 
-		for (ZugBeendetListener zbl : (Iterable<ZugBeendetListener>)zbls.clone()) {
-			zbl.zugBeendet(new ZugBeendetEvent(this, this, zug));
+		for (ZugBeendetListener<Zug> zbl : (Iterable<ZugBeendetListener<Zug>>)zbls.clone()) {
+			zbl.zugBeendet(new ZugBeendetEvent<Zug>(this, this, zug));
 		}
 	}
 }

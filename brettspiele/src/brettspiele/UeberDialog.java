@@ -8,6 +8,11 @@ import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 
 public class UeberDialog extends JDialog {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3340974367995255162L;
+
 	public UeberDialog(java.awt.Window owner) throws HeadlessException {
 		super(owner, "Über Brettspiele", java.awt.Dialog.ModalityType.APPLICATION_MODAL);
 		//this.setSize(400, 100);

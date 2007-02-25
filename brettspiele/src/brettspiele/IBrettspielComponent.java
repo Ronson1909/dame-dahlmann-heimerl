@@ -11,13 +11,13 @@ public interface IBrettspielComponent<Z extends IZug> {
 	 * Setzt den lokalen Spieler, der Züge ausführen darf.
 	 * @param lokalerSpieler Der lokale Spieler, der Züge ausführen darf.
 	 */
-	public void setLokalerSpieler(ISpieler lokalerSpieler);
+	public void setLokalerSpieler(ISpieler<? extends Z> lokalerSpieler);
 	
 	/**
 	 * Gibt den lokalen Spieler zurück, der Züge ausführen darf.
 	 * @return Der lokale Spieler, der Züge ausführen darf.
 	 */
-	public ISpieler getLokalerSpieler();
+	public ISpieler<? extends Z> getLokalerSpieler();
 
 	/**
 	 * Gibt die angezeigte Spielsituation zurück.
@@ -31,8 +31,8 @@ public interface IBrettspielComponent<Z extends IZug> {
 	 */
 	public void setSpielsituation(ISpielsituation wert);
 
-	public void addZugBeendetListener(ZugBeendetListener<Z> zbl);
-	public void removeZugBeendetListener(ZugBeendetListener<Z> zbl);
+	public void addZugBeendetListener(ZugBeendetListener<? extends Z> zbl);
+	public void removeZugBeendetListener(ZugBeendetListener<? extends Z> zbl);
 	public void clearZugBeendetListeners();
 	
 	public void repaint();

@@ -1,25 +1,40 @@
 package brettspiele.dame;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.HeadlessException;
+import java.awt.RenderingHints;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+
 import javax.swing.JComponent;
 
 import brettspiele.ISpielsituation;
 
-public class SpielbrettReadOnlyComponent extends JComponent {
-	public SpielbrettReadOnlyComponent() throws HeadlessException {
+public class SpielbrettReadOnlyComponent extends JComponent implements ComponentListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4208846500614425379L;
 
+	public SpielbrettReadOnlyComponent() throws HeadlessException {
+		addComponentListener(this);
 	}
 
 	//Das Spielbrett das gezeichnet wird
 	protected Spielbrett sb;
 
-	public ISpielsituation getSpielsituation() {
+	public Spielbrett getSpielsituation() {
 		return sb;
 	}
 
 	public void setSpielsituation(ISpielsituation wert) {
-		sb=(Spielbrett)wert;
+		setSpielsituation((Spielbrett)wert);
+	}
+
+	public void setSpielsituation(Spielbrett wert) {
+		sb=wert;
 		this.repaint();
 	}
 
@@ -32,21 +47,24 @@ public class SpielbrettReadOnlyComponent extends JComponent {
 
 	@Override
 	public void paint(Graphics g) {
-		java.awt.Rectangle clip = g.getClipBounds();
-		
-		g.clearRect(clip.x, clip.y, clip.width, clip.height);
-		
-		final int Feldbreite = getFeldbreite(); 
+		Graphics2D g2 = (Graphics2D)g;
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		//java.awt.Rectangle clip = g.getClipBounds();
+		//g.clearRect(clip.x, clip.y, clip.width, clip.height);
 		
 		//Felder mit passender Farbe zeichnen
 		for (int x=0;x<8;x++) {
 			for (int y=0;y<8;y++) {
-				if ((x+y) % 2 ==0)
-					g.setColor(java.awt.Color.white);
-				else
-					g.setColor(java.awt.Color.black);
-					
-				g.fillRect(leftBorder + Feldbreite*x, topBorder + y*Feldbreite, Feldbreite, Feldbreite);
+				//if (g.hitClip(x*Feldbreite, y*Feldbreite, Feldbreite, Feldbreite)) {
+					//oben links weiß
+					if ((x+y) % 2 ==0)
+						g.setColor(java.awt.Color.white);
+					else
+						g.setColor(java.awt.Color.black);
+						
+					g.fillRect(leftBorder + feldbreite*x, topBorder + y*feldbreite, feldbreite, feldbreite);
+				//}
 			}
 		}
 
@@ -54,11 +72,8 @@ public class SpielbrettReadOnlyComponent extends JComponent {
 			return;
 		
 		//Steine zeichnen
-		for (int x=0;x<8;x++) {
-			for (int y=0;y<8;y++) {
-				if (x % 2 == y % 2)
-					continue;
-				
+		for (int y=0;y<8;y++) {
+			for (int x=(y+1)%2;x<8;x+=2) {
 				zeichneFigur(g, x, y);
 			}
 		}
@@ -73,9 +88,9 @@ public class SpielbrettReadOnlyComponent extends JComponent {
 	 * @param y Der auf die Anzeige bezogene Spielbrett-Y-Wert (zwischen 0 und 7, 0 oben).
 	 */
 	protected void zeichneFigur(Graphics g, int x, int y) {
-		final int Feldbreite = getFeldbreite(); 
-		final int kreisX=(int)(leftBorder + Feldbreite*x + Feldbreite * (100-SteinPercentage) / 200);
-		final int kreisY=(int)(topBorder + Feldbreite*y + Feldbreite * (100-SteinPercentage) / 200);
+		final int kreisX=(int)(leftBorder + feldbreite*x + feldbreite * (100-SteinPercentage) / 200);
+		final int kreisY=(int)(topBorder + feldbreite*y + feldbreite * (100-SteinPercentage) / 200);
+		
 		zeichneFigur(g, sb.getFeld(x,7-y), kreisX, kreisY);
 	}
 	
@@ -109,9 +124,8 @@ public class SpielbrettReadOnlyComponent extends JComponent {
 	 * @param background Hintergrundfarbe für Füllung.
 	 */
 	protected void zeichneFigur(Graphics g, int figur, int kreisX, int kreisY, java.awt.Color foreground, java.awt.Color background) {
-		final int Feldbreite = getFeldbreite(); 
-		final int ZweiterKreisOffset = (int)(Feldbreite * ZweiterKreisOffsetPercentage / 100);
-		final int kreisD=(int)(Feldbreite * SteinPercentage / 100);
+		final int ZweiterKreisOffset = (int)(feldbreite * ZweiterKreisOffsetPercentage / 100);
+		final int kreisD=(int)(feldbreite * SteinPercentage / 100);
 
 		//Zeichne den ersten Stein
 		switch (figur) {
@@ -149,9 +163,8 @@ public class SpielbrettReadOnlyComponent extends JComponent {
 	 * Berechnet gemäß der Größe der Komponente die Seitenlänge eines Feldquadrats in Pixeln.
 	 * @return Die Seiten eines Feldquadrats in Pixeln.
 	 */
-	protected final int getFeldbreite() {
-		return Math.min(this.getHeight()-topBorder-bottomBorder, this.getWidth()-leftBorder-rightBorder) / 8;
-	}
+	//protected final int getFeldbreite() {
+	//}
 	
 	/**
 	 * Konvertiert Grafikkoordinaten in Spielbrettkoordinaten bzw. (-1,-1),
@@ -164,8 +177,8 @@ public class SpielbrettReadOnlyComponent extends JComponent {
 		java.awt.Point pnt = new java.awt.Point();
 		
 		//cast zu double und Math.floor wegen Rundungsproblematik
-		pnt.x = (int)Math.floor((double)(xControl-leftBorder)/getFeldbreite());
-		pnt.y = (int)Math.floor((double)(yControl-topBorder)/getFeldbreite());
+		pnt.x = (int)Math.floor((double)(xControl-leftBorder)/feldbreite);
+		pnt.y = (int)Math.floor((double)(yControl-topBorder)/feldbreite);
 		
 		if (pnt.y>7 || pnt.y<0 || pnt.x>7 || pnt.x<0) {
 			pnt.x=-1;
@@ -173,5 +186,34 @@ public class SpielbrettReadOnlyComponent extends JComponent {
 		}
 			
 		return pnt;
+	}
+
+	public void componentHidden(ComponentEvent e) {
+	}
+
+	public void componentMoved(ComponentEvent e) {
+	}
+
+	protected int feldbreite;
+	public void componentResized(ComponentEvent e) {
+		feldbreite = Math.min(this.getHeight()-topBorder-bottomBorder, this.getWidth()-leftBorder-rightBorder) / 8;
+    	repaint();
+	}
+
+	public void componentShown(ComponentEvent e) {
+	}
+	
+	@Override
+	public Dimension getPreferredSize() {
+		Dimension d = this.getSize();
+		int seitenlänge = Math.min(d.height, d.width)/8;
+		seitenlänge*=8;
+		d.setSize(seitenlänge,seitenlänge);
+		return d;
+	}
+	
+	@Override
+	public boolean isPreferredSizeSet() {
+		return true;
 	}
 }

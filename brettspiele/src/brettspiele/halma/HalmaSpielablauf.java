@@ -5,7 +5,12 @@ import java.util.Stack;
 import brettspiele.*;
 
 public class HalmaSpielablauf implements ISpielablauf<Zug> {
-	private ISpieler spieler[] = new ISpieler[2];
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4620421434575426390L;
+	
+	private ISpieler<Zug> spieler[] = new ISpieler[2];
     private HalmaSpielbrett sb;
     private Stack<Zug> bisherigeZuege = new Stack<Zug>();
     private Stack<Zug> undoneZuege = new Stack<Zug>();
@@ -46,7 +51,7 @@ public class HalmaSpielablauf implements ISpielablauf<Zug> {
 		}
 	}
 
-    public IBrettspielComponent createBrettspielComponent() {
+    public IBrettspielComponent<Zug> createBrettspielComponent() {
     	return new HalmaSpielbrettComponent();
     }
 
@@ -58,11 +63,11 @@ public class HalmaSpielablauf implements ISpielablauf<Zug> {
     	return sb;
     }
     
-    public ISpieler[] getSpieler() {
+    public ISpieler<Zug>[] getSpieler() {
     	return spieler;
     }
 
-    public void setSpieler(int i, ISpieler sp) {
+    public void setSpieler(int i, ISpieler<Zug> sp) {
     	spieler[i] = sp;
     }
 
@@ -71,7 +76,7 @@ public class HalmaSpielablauf implements ISpielablauf<Zug> {
 		return sb.getFarbeAmZug();
 	}
 
-	public ISpieler getSpielerAmZug() {
+	public ISpieler<Zug> getSpielerAmZug() {
 		// TODO Auto-generated method stub
 		return spieler[getFarbeAmZug()-1];
 	}

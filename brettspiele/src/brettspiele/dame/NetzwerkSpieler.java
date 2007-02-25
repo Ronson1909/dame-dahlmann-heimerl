@@ -2,14 +2,18 @@ package brettspiele.dame;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 
 import brettspiele.*;
 import brettspiele.SocketHandler.*;
 
 
 public class NetzwerkSpieler extends AbstractSpieler implements ObjectEmpfangenListener {
-    public NetzwerkSpieler(int eigeneFarbe, ZugBeendetListener zbl) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2824430740565737816L;
+
+	public NetzwerkSpieler(int eigeneFarbe, ZugBeendetListener<ZugFolge> zbl) {
 		super(eigeneFarbe, zbl);
 	}
 

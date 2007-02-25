@@ -25,6 +25,10 @@ public class DameUI implements IBrettspielUI {
 	}
 	
 	private class FileNewAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 7666494075866269284L;
 		private BrettspieleFenster bsf;
 		
 		private FileNewAction(BrettspieleFenster bsf) {
@@ -79,17 +83,21 @@ public class DameUI implements IBrettspielUI {
 }
 
 class LokalerSpieler extends AbstractSpieler implements ZugBeendetListener<ZugFolge>, ILokalerSpieler<ZugFolge> {
-	private BrettspieleFenster df;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1750833623289126378L;
+	private BrettspieleFenster bsf;
 	
-	public LokalerSpieler(BrettspieleFenster df, int eigeneFarbe, ZugBeendetListener<ZugFolge> zbl) {
-		super(eigeneFarbe, zbl);
+	public LokalerSpieler(BrettspieleFenster bsf, int eigeneFarbe) {
+		super(eigeneFarbe, (ZugBeendetListener)bsf);
 		
-		this.df=df;
+		this.bsf=bsf;
 	}
 	
 	@Override
 	public void startGettingNaechstenZug(Spielbrett sb) {
-		df.getBrettspielComponent().setLokalerSpieler(this);
+		((SpielbrettComponent)bsf.getBrettspielComponent()).setLokalerSpieler(this);
 	}
 
 	public void zugBeendet(brettspiele.ZugBeendetEvent<ZugFolge> zbe) {
@@ -99,10 +107,10 @@ class LokalerSpieler extends AbstractSpieler implements ZugBeendetListener<ZugFo
 	}
 
 	public BrettspieleFenster getBrettspieleFenster() {
-		return df;
+		return bsf;
 	}
 
 	public void setBrettspieleFenster(BrettspieleFenster df) {
-		this.df = df;
+		this.bsf = df;
 	}
 }

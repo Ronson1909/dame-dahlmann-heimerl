@@ -12,6 +12,10 @@ public class HalmaUI implements IBrettspielUI {
 	}
 
 	private class FileNewAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -6104494243360296644L;
 		private BrettspieleFenster bsf;
 		
 		private FileNewAction(BrettspieleFenster bsf) {
@@ -23,19 +27,19 @@ public class HalmaUI implements IBrettspielUI {
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-			IBrettspielComponent sc = new HalmaSpielbrettComponent();
+			HalmaSpielbrettComponent sc = new HalmaSpielbrettComponent();
 			bsf.setBrettspielComponent(sc);
 			
 			int res = JOptionPane.showOptionDialog(bsf, "Wollen Sie gegen eine KI spielen?", "KI", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
 			
 			HalmaSpielablauf newSa = new HalmaSpielablauf();
-			LokalerSpieler rt = new LokalerSpieler(bsf, HalmaSpielbrett.ROT, bsf);
+			LokalerSpieler rt = new LokalerSpieler(bsf, HalmaSpielbrett.ROT);
 
-			ISpieler bl;
+			AbstractSpieler bl;
 			if (res==JOptionPane.YES_OPTION)  
-				bl = new brettspiele.halma.heimerlKI.HeimerlKI(HalmaSpielbrett.BLAU, bsf);
+				bl = new brettspiele.halma.heimerlKI.HeimerlKI(HalmaSpielbrett.BLAU, (ZugBeendetListener) bsf);
 			else {
-				bl = new LokalerSpieler(bsf, HalmaSpielbrett.BLAU, bsf);
+				bl = new LokalerSpieler(bsf, HalmaSpielbrett.BLAU);
 				sc.addZugBeendetListener(bl);
 			}
 				
@@ -66,30 +70,34 @@ public class HalmaUI implements IBrettspielUI {
 }
 
 class LokalerSpieler extends AbstractSpieler implements ZugBeendetListener<Zug>, ILokalerSpieler<Zug> {
-	private BrettspieleFenster df;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2889980403928999051L;
+	private BrettspieleFenster sbf;
 	
-	public LokalerSpieler(BrettspieleFenster df, int eigeneFarbe, ZugBeendetListener zbl) {
-		super(eigeneFarbe, zbl);
+	public LokalerSpieler(BrettspieleFenster sbf, int eigeneFarbe) {
+		super(eigeneFarbe, (ZugBeendetListener)sbf);
 		
-		this.df=df;
+		this.sbf=sbf;
 	}
 	
 	@Override
 	public void startGettingNaechstenZug(HalmaSpielbrett sb) {
-		df.getBrettspielComponent().setLokalerSpieler(this);
+		((HalmaSpielbrettComponent)sbf.getBrettspielComponent()).setLokalerSpieler(this);
 	}
 
-	public void zugBeendet(ZugBeendetEvent zbe) {
+	public void zugBeendet(ZugBeendetEvent<Zug> zbe) {
 		if (zbe.getSpieler()==this) {
 			beendeZug(zbe.getZug());
 		}
 	}
 
 	public BrettspieleFenster getBrettspieleFenster() {
-		return df;
+		return sbf;
 	}
 
-	public void setBrettspieleFenster(BrettspieleFenster df) {
-		this.df = df;
+	public void setBrettspieleFenster(BrettspieleFenster sbf) {
+		this.sbf = sbf;
 	}
 }
