@@ -2,6 +2,7 @@ package brettspiele;
 
 import brettspiele.dame.DameUI;
 import brettspiele.halma.HalmaUI;
+import brettspiele.schafkopf.SchafkopfUI;
 
 import javax.swing.*;
 
@@ -16,7 +17,7 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener<IZu
 	 * 
 	 */
 	private static final long serialVersionUID = 8798203200509822515L;
-	private static IBrettspielUI[] brettspiele = new IBrettspielUI[] {new DameUI(), new HalmaUI()};
+	private static IBrettspielUI[] brettspiele = new IBrettspielUI[] {new DameUI(), new HalmaUI(), new SchafkopfUI()};
 	
 	public static void main(String[] args) {
         try {
