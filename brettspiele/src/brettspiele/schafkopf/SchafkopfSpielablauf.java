@@ -28,12 +28,10 @@ public class SchafkopfSpielablauf implements ISpielablauf<IZug> {
 	}
 
 	public int getFarbeAmZug() {
-		// TODO Auto-generated method stub
 		return ss.getSpielerAmZug();
 	}
 
 	public int getRedoCount() {
-		// TODO Auto-generated method stub
 		return undoneZuege.size();
 	}
 
@@ -81,7 +79,20 @@ public class SchafkopfSpielablauf implements ISpielablauf<IZug> {
 	
 	private void macheZugInt(IZug z) {
 		try {
-			ss.ausspielen((Ausspielvorgang)z);
+			if (z instanceof Ausspielvorgang) {
+				ss.ausspielen((Ausspielvorgang)z);
+			}
+			else if (z instanceof Stichbestaetigung) {
+				ss.bestaetigeStich((Stichbestaetigung)z);
+			}
+			else if (z instanceof Spielen) {
+				ss.spielenJaNein((Spielen)z);
+			}
+			else if (z instanceof Spielartwahl) {
+				ss.waehleSpielart((Spielartwahl)z);
+			}
+			else
+				throw new Exception("Unbekannter Zug");
 
 			bisherigeZuege.add(z);
 		}

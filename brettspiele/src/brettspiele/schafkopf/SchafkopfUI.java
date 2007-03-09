@@ -4,14 +4,9 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.JOptionPane;
 
 import brettspiele.BrettspieleFenster;
 import brettspiele.IBrettspielUI;
-import brettspiele.ILokalerSpieler;
-import brettspiele.IZug;
-import brettspiele.ZugBeendetEvent;
-import brettspiele.ZugBeendetListener;
 import brettspiele.schafkopf.heimerlKI.HeimerlKI;
 
 public class SchafkopfUI implements IBrettspielUI {
@@ -85,37 +80,4 @@ public class SchafkopfUI implements IBrettspielUI {
 		return "Schafkopf";
 	}
 
-}
-
-class LokalerSpieler extends AbstractSpieler implements ZugBeendetListener<IZug>, ILokalerSpieler<IZug> {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 8963559813713308326L;
-	private BrettspieleFenster sbf;
-	
-	public LokalerSpieler(BrettspieleFenster sbf, int eigenePosition) {
-		super(eigenePosition, (ZugBeendetListener)sbf);
-		
-		this.sbf=sbf;
-	}
-	
-	@Override
-	public void startGettingNaechstenZug(SchafkopfSpielsituation ss) {
-		((SchafkopfSpielbrettComponent)sbf.getBrettspielComponent()).setLokalerSpieler(this);
-	}
-
-	public void zugBeendet(ZugBeendetEvent<IZug> zbe) {
-		if (zbe.getSpieler()==this) {
-			beendeZug(zbe.getZug());
-		}
-	}
-
-	public BrettspieleFenster getBrettspieleFenster() {
-		return sbf;
-	}
-
-	public void setBrettspieleFenster(BrettspieleFenster sbf) {
-		this.sbf = sbf;
-	}
 }

@@ -66,9 +66,11 @@ public abstract class AbstractSpieler implements ISpieler<IZug> {
 	}
 
 	final public void startGettingNaechstenZug(ISpielsituation ss) {
+		SchafkopfSpielsituation ss2 = (SchafkopfSpielsituation)ss;
+		
 		java.util.Date now = new java.util.Date();
-		System.out.println("Starte Zug um " + now.toGMTString());
-		startGettingNaechstenZug((SchafkopfSpielsituation)ss);
+		System.out.println("Spieler " + eigenePosition + " startet Zug (" + ss2.getStatus().toString() + ") um " + now.toGMTString());
+		startGettingNaechstenZug(ss2);
 	}
 	public abstract void startGettingNaechstenZug(SchafkopfSpielsituation sb);
 	public void cancelGettingNaechstenZug() {
@@ -76,8 +78,8 @@ public abstract class AbstractSpieler implements ISpieler<IZug> {
 	}
 	
 	protected final void beendeZug(IZug zug) {
-		java.util.Date now = new java.util.Date();
-		System.out.println("Beende Zug um " + now.toGMTString());
+		//java.util.Date now = new java.util.Date();
+		//System.out.println("Spieler " + eigenePosition + " beendet Zug um " + now.toGMTString());
 
 		for (ZugBeendetListener<IZug> zbl : (Iterable<ZugBeendetListener<IZug>>)zbls.clone()) {
 			zbl.zugBeendet(new ZugBeendetEvent<IZug>(this, this, zug));

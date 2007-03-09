@@ -1,9 +1,22 @@
 package brettspiele.schafkopf.heimerlKI;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import brettspiele.ZugBeendetListener;
 import brettspiele.schafkopf.AbstractKI;
 import brettspiele.schafkopf.Ausspielvorgang;
+import brettspiele.schafkopf.Geier;
+import brettspiele.schafkopf.ISpielart;
+import brettspiele.schafkopf.Sauspiel;
+import brettspiele.schafkopf.Spielartwahl;
+import brettspiele.schafkopf.Spielen;
+import brettspiele.schafkopf.Stichbestaetigung;
+import brettspiele.schafkopf.Wenz;
+import brettspiele.schafkopf.SchafkopfSpielsituation.Farben;
 import brettspiele.schafkopf.SchafkopfSpielsituation.Spielkarten;
+import brettspiele.schafkopf.SchafkopfSpielsituation.Status;
 
 public class HeimerlKI extends AbstractKI {
 
@@ -18,18 +31,88 @@ public class HeimerlKI extends AbstractKI {
 
 	@Override
 	public void run() {
-		Spielkarten[] eigeneKarten = this.sss.getEigeneKarten();
+		List<Spielkarten> eigeneKarten = this.sss.getSpielerkarten();
 		
-		for (Spielkarten karte : eigeneKarten) {
-			try {
-				sss.getAktuellesSpiel().prüfeAufGültigeKarte(this.sss, karte);
-				
-				beendeZug(new Ausspielvorgang(karte));
+		switch (this.sss.getStatus()) {
+		case WARTE_AUF_SPIELEN_JA_NEIN:
+			ArrayList<Spielkarten> sauspielTrümpfe = Sauspiel.getTrümpfeStatic(eigeneKarten);
+			
+			if (this.sss.getSpielerMitSpielabsicht().size()==0 && sauspielTrümpfe.size()>=5) {
+				beendeZug( new Spielen(true) );
 				return;
 			}
-			catch (Exception ex) {
+			else {
+//				for (Farben farbe : Farben.values()) {
+//					Wenz w = new Wenz(farbe);
+//					if (w.getTrümpfe(eigeneKarten).size()>=6) {
+//						beendeZug( new Spielen(true) );
+//						return;
+//					}
+//
+//					Geier g = new Geier(farbe);
+//					if (g.getTrümpfe(eigeneKarten).size()>=6) {
+//						beendeZug( new Spielen(true) );
+//						return;
+//					}
+//				}
+				
 			}
+			beendeZug( new Spielen(false) );
+			
+			break;
+		case WARTE_AUF_SPIELARTWAHL:
+			List<ISpielart> sas = this.sss.getMoeglicheSpiele();
+
+			beendeZug( new Spielartwahl(sas.get(0)) );
+
+//			ISpielart bestesSpiel=null; 
+//			for (ISpielart sa : sas) {
+//				if (sa instanceof Sauspiel) {
+//					if (sa.getTrümpfe(eigeneKarten).size()>=5)
+//						bestesSpiel=sa;
+//				}
+//			}
+//			
+//			beendeZug( new Spielartwahl( bestesSpiel ) );
+			break;
+		case WARTE_AUF_STICHBESTAETIGUNG:
+			beendeZug( new Stichbestaetigung() );
+			break;
+		case WARTE_AUF_AUSSPIELEN:
+			ArrayList<Spielkarten> gültigeKarten = new ArrayList<Spielkarten>(eigeneKarten.size());
+			
+			for (Spielkarten karte : eigeneKarten) {
+				
+				try {
+					sss.getAktuellesSpiel().prüfeAufGültigeKarte(this.sss, karte);
+					
+					gültigeKarten.add(karte);
+				}
+				catch (Exception ex) {
+				}
+			}
+
+			List<Spielkarten> stich = this.sss.getStich();
+			
+			//Bei erster Karte im Stich, einfach erstbeste Karte wählen
+			if (stich.size()==0 || stich.size()==4) {
+				beendeZug(new Ausspielvorgang(gültigeKarten.get(0)));
+			}
+			else {
+				//sonst höchste Karte im Stich mit eigener höchster vergleichen
+				ISpielart spiel = this.sss.getAktuellesSpiel();
+				
+				Spielkarten maxStich = Collections.max(stich, spiel);
+				Spielkarten maxEigene = Collections.max(gültigeKarten, spiel);
+				
+				if (spiel.compare(maxStich, maxEigene)>0) {
+					beendeZug(new Ausspielvorgang( Collections.min(gültigeKarten, spiel) ));
+				}
+				else {
+					beendeZug(new Ausspielvorgang( maxEigene ));
+				}
+			}
+			break;
 		}
 	}
-
 }

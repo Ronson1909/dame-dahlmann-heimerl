@@ -12,7 +12,9 @@ import java.awt.Toolkit;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JComponent;
 
@@ -23,6 +25,7 @@ import brettspiele.ISpielsituation;
 import brettspiele.ZugBeendetEvent;
 import brettspiele.ZugBeendetListener;
 import brettspiele.schafkopf.SchafkopfSpielsituation.Spielkarten;
+import brettspiele.schafkopf.SchafkopfSpielsituation.Status;
 
 public class SchafkopfSpielbrettComponent extends JComponent implements
 		IBrettspielComponent<IZug> {
@@ -119,11 +122,9 @@ public class SchafkopfSpielbrettComponent extends JComponent implements
 			return;
 		
 		for (int sp=0;sp<=3;sp++) {
-			Spielkarten[] kartenDesSpielers = ss.getKartenDesSpielers(sp);
+			List<Spielkarten> kartenDesSpielers = ss.getSpielerkarten(sp);
 
-			int startX=0;
-			int startY=0;
-			int rot=0;
+			int startX, startY, rot;
 			
 			switch (sp) {
 			case 0:
@@ -146,32 +147,91 @@ public class SchafkopfSpielbrettComponent extends JComponent implements
 				startY=this.getWidth()-kartenhoehe;
 				rot=270;
 				break;
+			default:
+				throw new IllegalArgumentException();
 			}
 
+			//Die Spielkarten der Spieler zeichnen
 			int dX = (int) (kartenbreite * abstand);
-			for (int i=kartenDesSpielers.length-1; i>=0; i--) {
+			for (int i=kartenDesSpielers.size()-1; i>=0; i--) {
 				AffineTransform affineTransform = new AffineTransform();
 				affineTransform.rotate(Math.toRadians(rot), 0, 0);//kartenbreite/2, kartenhoehe/2); 
 				affineTransform.translate(i*dX, 0);
 				affineTransform.translate(startX, startY);
 
-				g2d.drawImage(kartenbilder[kartenDesSpielers[i].ordinal()], affineTransform, this); 
+				g2d.drawImage(kartenbilder[kartenDesSpielers.get(i).ordinal()], affineTransform, this); 
 			}
 		}
 
-		int rot=ss.getAusspielenderSpieler()*90;
-		for (int i=0;i<ss.getStich().length;i++) {
-			Spielkarten karte = ss.getStich()[i];
-			
-			AffineTransform affineTransform = new AffineTransform();
-			affineTransform.translate(this.getWidth()/2-kartenbreite/2, this.getHeight()/2-kartenhoehe/2);
-			affineTransform.rotate(Math.toRadians(rot), kartenbreite/2, kartenhoehe/2);//kartenbreite/2, kartenhoehe/2); 
-			affineTransform.translate(0, kartenhoehe/2);
-
-			g2d.drawImage(kartenbilder[karte.ordinal()], affineTransform, this); 
-
-			rot += 90;
+		//den aktuellen Stich zeichnen
+		{
+			int rot=ss.getAusspielenderSpieler()*90;
+			for (int i=0;i<ss.getStich().size();i++) {
+				Spielkarten karte = ss.getStich().get(i);
+				
+				AffineTransform affineTransform = new AffineTransform();
+				affineTransform.translate(this.getWidth()/2-kartenbreite/2, this.getHeight()/2-kartenhoehe/2);
+				affineTransform.rotate(Math.toRadians(rot), kartenbreite/2, kartenhoehe/2);//kartenbreite/2, kartenhoehe/2); 
+				affineTransform.translate(0, kartenhoehe/2);
+	
+				g2d.drawImage(kartenbilder[karte.ordinal()], affineTransform, this); 
+	
+				rot += 90;
+			}
 		}
+		
+		g2d.setColor(Color.YELLOW);
+		//if (ss.getStatus() == Status.WARTE_AUF_SPIELARTWAHL || ss.getStatus()== Status.WARTE_AUF_SPIELEN_JA_NEIN) {
+		
+		//Anzeige für Spielen / nicht-Spielen
+		for (int idx : ss.getSpielerMitSpielabsicht()) {
+			if (ss.getStatus() == Status.WARTE_AUF_SPIELARTWAHL || ss.getStatus()== Status.WARTE_AUF_SPIELEN_JA_NEIN || ss.getAktuellesSpiel() == ss.getSpielabsichtDerSpieler()[idx]) {
+			
+				int startX, startY, rot;
+				
+				switch (idx) {
+				case 0:
+					startX=kartenhoehe;
+					startY=this.getHeight()-kartenhoehe;
+					rot=0;
+					break;
+				case 1:
+					startX=kartenhoehe;
+					startY=-kartenhoehe;
+					rot=90;
+					break;
+				case 2:
+					//startX=-(this.getWidth()-kartenhoehe);
+					//startY=-kartenhoehe;
+					startX=kartenhoehe;
+					startY=kartenhoehe+50;
+					rot=0;
+					break;
+				case 3:
+					startX=-(this.getHeight()-kartenhoehe);
+					startY=this.getWidth()-kartenhoehe;
+					rot=270;
+					break;
+				default:
+					throw new IllegalArgumentException();
+				}
+	
+				String strSpiele = "Spiele";
+				if (ss.getSpielabsichtDerSpieler()[idx] != null)
+					strSpiele += " - " + ss.getSpielabsichtDerSpieler()[idx].toString();
+				
+				Rectangle2D rect = g2d.getFontMetrics().getStringBounds(strSpiele, g2d);
+				
+				AffineTransform affineTransform = new AffineTransform();
+				affineTransform.rotate(Math.toRadians(rot), 0, 0);//kartenbreite/2, kartenhoehe/2); 
+				affineTransform.translate((kartenbreite + 7*abstand*kartenbreite) / 2 - rect.getCenterX(), 0);
+				affineTransform.translate(startX, startY);
+				g2d.setTransform(affineTransform);
+				g2d.drawString(strSpiele, 0, 0);
+			}
+		}
+
+		g2d.setTransform(new AffineTransform());
 	}
 
 	protected void processMouseEvent(MouseEvent e) {
@@ -181,19 +241,26 @@ public class SchafkopfSpielbrettComponent extends JComponent implements
 		if (e.getID()==MouseEvent.MOUSE_CLICKED) {
 			if (e.getButton()==MouseEvent.BUTTON1) {
 				//Left Button Click
-				Point clickedCoord = convertControlCoordsToFieldCoords(e.getX(), e.getY());
 				
-				if (clickedCoord.x != -1 && clickedCoord.y != -1) {
-					if (clickedCoord.x < ss.getEigeneKarten().length) {
-						System.out.println("Clicked " + clickedCoord.x + "," + clickedCoord.y);
-						beendeZug(new Ausspielvorgang(ss.getEigeneKarten()[clickedCoord.x]));
+				if (ss.getStatus() == Status.WARTE_AUF_STICHBESTAETIGUNG) {
+					beendeZug( new Stichbestaetigung() );
+				}
+				else if (ss.getStatus() == Status.WARTE_AUF_AUSSPIELEN) {
+					Point clickedCoord = convertControlCoordsToFieldCoords(e.getX(), e.getY());
+					
+					if (clickedCoord.x != -1 && clickedCoord.y != -1) {
+						if (clickedCoord.x < ss.getSpielerkarten().size()) {
+							System.out.println("Clicked " + clickedCoord.x + "," + clickedCoord.y);
+							
+							beendeZug( new Ausspielvorgang( ss.getSpielerkarten().get(clickedCoord.x) ) );
+						}
+						else {
+							System.out.println("Clicked invalid (own) card!");
+						}
 					}
 					else {
-						System.out.println("Clicked invalid (own) card!");
+						System.out.println("Clicked invalid (other) card!");
 					}
-				}
-				else {
-					System.out.println("Clicked invalid (other) card!");
 				}
 			}
 		}
