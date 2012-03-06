@@ -65,7 +65,7 @@ public class Sauspiel extends AbstractSpielart {
 			return -farbe0.compareTo(farbe1);
 	}
 
-	public void prüfeAufGültigeKarte(SchafkopfSpielsituation sss, Spielkarten zuSpielendeKarte) {
+	public void pruefeAufGueltigeKarte(SchafkopfSpielsituation sss, Spielkarten zuSpielendeKarte) {
 		List<Spielkarten> stich = sss.getStich();
 		List<Spielkarten> eigeneKarten = sss.getSpielerkarten(sss.getSpielerAmZug());
 		boolean habDieGesuchteSau = eigeneKarten.contains(gesuchteSau);
@@ -98,7 +98,7 @@ public class Sauspiel extends AbstractSpielart {
 
 			//Trumpf zugeben
 			if (isTrumpf(ersteKarte)) {
-				if (getTrümpfe(eigeneKarten).size()>0) {
+				if (getTruempfe(eigeneKarten).size()>0) {
 					if (!isTrumpf(zuSpielendeKarte)) {
 						throw new IllegalArgumentException("Trumpf zugeben!");
 					}
@@ -110,7 +110,7 @@ public class Sauspiel extends AbstractSpielart {
 				ArrayList<Spielkarten> kartenDerFarbe = getKartenDerFarbe(eigeneKarten, SchafkopfSpielsituation.getFarbe(ersteKarte));
 				
 				if (kartenDerFarbe.size()>0) {
-					//gesuchte Sau zugeben außer weggelaufen
+					//gesuchte Sau zugeben auï¿½er weggelaufen
 					if (kartenDerFarbe.contains(gesuchteSau) && !weggelaufen && zuSpielendeKarte != gesuchteSau) {
 						throw new IllegalArgumentException("Sau zugeben!");
 					}
@@ -121,7 +121,7 @@ public class Sauspiel extends AbstractSpielart {
 					}
 				}
 				
-				//nicht die gesuchte Sau schmieren, außer letzte Karte.
+				//nicht die gesuchte Sau schmieren, auï¿½er letzte Karte.
 				else {
 					if (gesuchteSau == zuSpielendeKarte && !weggelaufen && eigeneKarten.size()>1) {
 						throw new IllegalArgumentException("Nicht die gesuchte Sau schmieren!");
@@ -148,27 +148,27 @@ public class Sauspiel extends AbstractSpielart {
 	
 	public Spielkarten getHoechsteKarte(List<Spielkarten> stich) {
 		if (stich == null || stich.size()>4 || stich.size() < 1)
-			throw new IllegalArgumentException("Ungültiger Stich in getHoechsteKarte");
+			throw new IllegalArgumentException("Ungï¿½ltiger Stich in getHoechsteKarte");
 		
 		//ist erste Karte Trumpf?
 		if (isTrumpf(stich.get(0))) {
-			//dann zählt die höchste Karte
+			//dann zï¿½hlt die hï¿½chste Karte
 			return Collections.max(stich, this);
 		}
 		else {
-			//wenn nicht, wurde überhaupt ein Trumpf gespielt? Der höchste sticht.
+			//wenn nicht, wurde ï¿½berhaupt ein Trumpf gespielt? Der hï¿½chste sticht.
 			Spielkarten max = Collections.max(stich, this);
 			
 			if (isTrumpf(max))
 				return max;
 			else {
-				//sonst zählt der höchste der Farbe der ersten Karte.
+				//sonst zï¿½hlt der hï¿½chste der Farbe der ersten Karte.
 				return Collections.max(getKartenDerFarbe(stich, SchafkopfSpielsituation.getFarbe(stich.get(0))), this);
 			}
 		}
 	}
 
-	public static ArrayList<Spielkarten> getTrümpfeStatic(Collection<Spielkarten> hand) {
+	public static ArrayList<Spielkarten> getTruempfeStatic(Collection<Spielkarten> hand) {
 		ArrayList<Spielkarten> tr = new ArrayList<Spielkarten>();
 		
 		for (Spielkarten karte : hand)
@@ -178,8 +178,8 @@ public class Sauspiel extends AbstractSpielart {
 		return tr;
 	}
 
-	public ArrayList<Spielkarten> getTrümpfe(Collection<Spielkarten> hand) {
-		return getTrümpfeStatic(hand);
+	public ArrayList<Spielkarten> getTruempfe(Collection<Spielkarten> hand) {
+		return getTruempfeStatic(hand);
 	}
 
 	public static ArrayList<Spielkarten> getKartenDerFarbeStatic(Collection<Spielkarten> hand, Farben farbe) {
@@ -222,7 +222,7 @@ public class Sauspiel extends AbstractSpielart {
 
 	public void setGesuchteSau(Spielkarten gesuchteSau) {
 		if (SchafkopfSpielsituation.getBild(gesuchteSau) != Bilder.AS)
-			throw new IllegalArgumentException("Sie müssen auf eine Sau spielen!");
+			throw new IllegalArgumentException("Sie mï¿½ssen auf eine Sau spielen!");
 		
 		this.gesuchteSau = gesuchteSau;
 	}
@@ -239,7 +239,7 @@ public class Sauspiel extends AbstractSpielart {
 			this.gesuchteSau=Spielkarten.As_Schellen;
 			break;
 		default:
-			throw new IllegalArgumentException("Sie können nicht auf die Herz-Sau spielen!");
+			throw new IllegalArgumentException("Sie kï¿½nnen nicht auf die Herz-Sau spielen!");
 		}
 	}
 	

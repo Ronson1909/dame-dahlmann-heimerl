@@ -172,15 +172,15 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener<IZu
 		private static final long serialVersionUID = -3927301365567006702L;
 
 		{
-			super.putValue(NAME, "Öffnen...");			
-			super.putValue(SHORT_DESCRIPTION, "Öffnet einen Spielstand");			
+			super.putValue(NAME, "ï¿½ffnen...");			
+			super.putValue(SHORT_DESCRIPTION, "ï¿½ffnet einen Spielstand");			
 			super.putValue(SMALL_ICON, new ImageIcon(ClassLoader.getSystemResource("brettspiele/images/open.gif")));
 		}
 		
 		public void actionPerformed(ActionEvent e) {
 			JFileChooser od = new JFileChooser();
 
-			od.setDialogTitle("Spielstand öffnen...");
+			od.setDialogTitle("Spielstand ï¿½ffnen...");
 			
 			for (IBrettspielUI bsui : brettspiele) {
 		        od.addChoosableFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
@@ -257,7 +257,7 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener<IZu
 		    if (returnVal == JFileChooser.APPROVE_OPTION) {
 		    	if (sd.getSelectedFile().exists()) {
 		    		int response = JOptionPane.showConfirmDialog (null,
-		    				"Wollen Sie die vorhandene Datei wirklich überschreiben?","Überschreiben",
+		    				"Wollen Sie die vorhandene Datei wirklich ï¿½berschreiben?","ï¿½berschreiben",
 		    				JOptionPane.YES_NO_OPTION,
 		    				JOptionPane.QUESTION_MESSAGE);
 		    		
@@ -315,8 +315,8 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener<IZu
 		{
 			this.setEnabled(false);
 
-			super.putValue(NAME, "Zug rückgängig");			
-			super.putValue(SHORT_DESCRIPTION, "Macht den letzten Zug rückgängig");			
+			super.putValue(NAME, "Zug rï¿½ckgï¿½ngig");			
+			super.putValue(SHORT_DESCRIPTION, "Macht den letzten Zug rï¿½ckgï¿½ngig");			
 
 			KeyStroke accKey = KeyStroke.getKeyStroke("ctrl Z");
 			super.putValue(ACCELERATOR_KEY, accKey);		
@@ -335,26 +335,26 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener<IZu
 			}
 			assert(currSpielerIdx!=-1);
 			
-			int undoZüge = 1;
+			int undoZuege = 1;
 			
 			for (int i=currSpielerIdx-1;i>=0;i--) {
 				if (sa.getSpieler()[i] instanceof ILokalerSpieler) {
-					sa.undoZug(undoZüge);
+					sa.undoZug(undoZuege);
 					sc.repaint();
 					updateGUI();
 					return;
 				}
-				undoZüge++;
+				undoZuege++;
 			}
 
 			for (int i=sa.getSpieler().length-1;i>=currSpielerIdx;i--) {
 				if (sa.getSpieler()[i] instanceof ILokalerSpieler) {
-					sa.undoZug(undoZüge);
+					sa.undoZug(undoZuege);
 					sc.repaint();
 					updateGUI();
 					return;
 				}
-				undoZüge++;
+				undoZuege++;
 			}
 
 			//JOptionPane.showMessageDialog(DameFenster.this, "Noch nicht implementiert!", "Fehlt noch", JOptionPane.INFORMATION_MESSAGE);
@@ -371,7 +371,7 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener<IZu
 			this.setEnabled(false);
 
 			super.putValue(NAME, "Zug wiederherstellen");			
-			super.putValue(SHORT_DESCRIPTION, "Stellt den letzten rückgängig gemachten Zug wieder her");			
+			super.putValue(SHORT_DESCRIPTION, "Stellt den letzten rï¿½ckgï¿½ngig gemachten Zug wieder her");			
 
 			KeyStroke accKey = KeyStroke.getKeyStroke("ctrl Y");
 			super.putValue(ACCELERATOR_KEY, accKey);		
@@ -390,26 +390,26 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener<IZu
 			}
 			assert(currSpielerIdx!=-1);
 			
-			int redoZüge = 1;
+			int redoZuege = 1;
 			
 			for (int i=currSpielerIdx+1;i<sa.getSpieler().length;i++) {
 				if (sa.getSpieler()[i] instanceof ILokalerSpieler) {
-					sa.redoZug(redoZüge);
+					sa.redoZug(redoZuege);
 					sc.repaint();
 					updateGUI();
 					return;
 				}
-				redoZüge++;
+				redoZuege++;
 			}
 
 			for (int i=0;i<=currSpielerIdx;i++) {
 				if (sa.getSpieler()[i] instanceof ILokalerSpieler) {
-					sa.redoZug(redoZüge);
+					sa.redoZug(redoZuege);
 					sc.repaint();
 					updateGUI();
 					return;
 				}
-				redoZüge++;
+				redoZuege++;
 			}
 
 			//JOptionPane.showMessageDialog(DameFenster.this, "Noch nicht implementiert!", "Fehlt noch", JOptionPane.INFORMATION_MESSAGE);
@@ -443,7 +443,7 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener<IZu
 		private static final long serialVersionUID = -1357430677777715506L;
 
 		{
-			super.putValue(NAME, "Über...");			
+			super.putValue(NAME, "ï¿½ber...");			
 			super.putValue(SHORT_DESCRIPTION, "Informationen zu diesem Programm");			
 
 			//super.putValue(SMALL_ICON, new ImageIcon(ClassLoader.getSystemResource("dame/images/redo.gif")));

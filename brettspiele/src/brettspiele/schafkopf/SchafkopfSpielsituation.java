@@ -24,7 +24,7 @@ public class SchafkopfSpielsituation implements ISpielsituation {
 	public enum Bilder {
 		AS,
 		ZEHN,
-		KÖNIG,
+		KOENIG,
 		OBER,
 		UNTER,
 		NEUN,
@@ -37,10 +37,10 @@ public class SchafkopfSpielsituation implements ISpielsituation {
 		As_Gras,
 		As_Herz,
 		As_Schellen,
-		König_Eichel,
-		König_Gras,
-		König_Herz,
-		König_Schellen,
+		Koenig_Eichel,
+		Koenig_Gras,
+		Koenig_Herz,
+		Koenig_Schellen,
 		Ober_Eichel,
 		Ober_Gras,
 		Ober_Herz,
@@ -81,7 +81,7 @@ public class SchafkopfSpielsituation implements ISpielsituation {
 	private ArrayList<Spielkarten> kartenDerSpieler[] = new ArrayList[4];
 	private ArrayList<Integer> spielerMitSpielabsicht = new ArrayList<Integer>(4);
 	private ISpielart[] spielabsichtDerSpieler = new ISpielart[4];
-	private ArrayList<Integer> spielerMitSpielabsichtInt; //nur für interne Verwendung
+	private ArrayList<Integer> spielerMitSpielabsichtInt; //nur fï¿½r interne Verwendung
 	
 	private int stichgewinner;
 	private ArrayList<Spielkarten> stich = new ArrayList<Spielkarten>(4);
@@ -185,7 +185,7 @@ public class SchafkopfSpielsituation implements ISpielsituation {
 	}
 
 	/**
-	 * Gibt die Karten des aktuellen Spielers zurück.
+	 * Gibt die Karten des aktuellen Spielers zurï¿½ck.
 	 * @return Die Karten des aktuellen Spielers als List.
 	 */
 	public List<Spielkarten> getSpielerkarten() {
@@ -193,7 +193,7 @@ public class SchafkopfSpielsituation implements ISpielsituation {
 	}
 
 	/**
-	 * Gibt die Karten eines Spielers zurück.
+	 * Gibt die Karten eines Spielers zurï¿½ck.
 	 * @param sp Der Index des Spielers, dessen Karten ermittelt werden sollen.
 	 * @return Die Karten eines Spielers als List.
 	 */
@@ -210,7 +210,7 @@ public class SchafkopfSpielsituation implements ISpielsituation {
 	}
 
 	/**
-	 * Gibt den aktuellen Stich zurück.
+	 * Gibt den aktuellen Stich zurï¿½ck.
 	 * @return Der aktuelle Stich.
 	 */
 	public List<Spielkarten> getStich() {
@@ -218,8 +218,8 @@ public class SchafkopfSpielsituation implements ISpielsituation {
 	}
 
 	/**
-	 * Gibt die bisherigen Stiche der Spieler zurück.
-	 * @param spieler Der Index des Spielers, dessen Stiche zurückgegeben werden sollen.
+	 * Gibt die bisherigen Stiche der Spieler zurï¿½ck.
+	 * @param spieler Der Index des Spielers, dessen Stiche zurï¿½ckgegeben werden sollen.
 	 * @return Die Stiche des Spielers als List.
 	 */
 	public List<ArrayList<Spielkarten>> getSticheDerSpieler(int spieler) {
@@ -227,7 +227,7 @@ public class SchafkopfSpielsituation implements ISpielsituation {
 	}
 
 	/**
-	 * Gibt den Index des Spielers zurück, der diese Runde ausgeteilt hat.
+	 * Gibt den Index des Spielers zurï¿½ck, der diese Runde ausgeteilt hat.
 	 * Der nachfolgende Spieler spielt beim ersten Stich aus.
 	 * @return Der Index des Spielers, der diese Runde ausgeteilt hat.
 	 */
@@ -236,7 +236,7 @@ public class SchafkopfSpielsituation implements ISpielsituation {
 	}
 	
 	/**
-	 * Gibt den Index des Spielers zurück, der bei diesem Stich ausgespielt hat. 
+	 * Gibt den Index des Spielers zurï¿½ck, der bei diesem Stich ausgespielt hat. 
 	 * @return Der Index des Spielers, der bei diesem Stich ausgespielt hat.
 	 */
 	public int getAusspielenderSpieler() {
@@ -253,7 +253,7 @@ public class SchafkopfSpielsituation implements ISpielsituation {
 
 	public void spielenJaNein(boolean ja) throws Exception {
 		if (status != Status.WARTE_AUF_SPIELEN_JA_NEIN)
-			throw new Exception("Falscher Status für spielenJaNein!");
+			throw new Exception("Falscher Status fï¿½r spielenJaNein!");
 		
 		if (ja) {
 			spielerMitSpielabsicht.add(spielerAmZug);
@@ -283,7 +283,7 @@ public class SchafkopfSpielsituation implements ISpielsituation {
 
 	public void waehleSpielart(Spielartwahl zug) throws Exception {
 		if (status != Status.WARTE_AUF_SPIELARTWAHL)
-			throw new Exception("Falscher Status für die Spielartwahl!");
+			throw new Exception("Falscher Status fï¿½r die Spielartwahl!");
 		
 		if (zug.getGewaehltesSpiel() != null) {
 			aktuellesSpiel = zug.getGewaehltesSpiel();
@@ -318,11 +318,11 @@ public class SchafkopfSpielsituation implements ISpielsituation {
 	
 	/**
 	 * Spielt eine Karte aus.
-	 * @param zug Die Information über eine auszuspielende Karte.
+	 * @param zug Die Information ï¿½ber eine auszuspielende Karte.
 	 */
 	public void ausspielen(Ausspielvorgang zug) throws Exception {
 		if (status != Status.WARTE_AUF_AUSSPIELEN)
-			throw new Exception("Falscher Status für den Ausspielvorgang!");
+			throw new Exception("Falscher Status fï¿½r den Ausspielvorgang!");
 		
 		ArrayList<Spielkarten> eigeneKarten = kartenDerSpieler[spielerAmZug];
 		Spielkarten zuSpielendeKarte = zug.getAusgespielteKarte();
@@ -332,7 +332,7 @@ public class SchafkopfSpielsituation implements ISpielsituation {
 		}
 		
 		try {
-			aktuellesSpiel.prüfeAufGültigeKarte(this, zuSpielendeKarte);
+			aktuellesSpiel.pruefeAufGueltigeKarte(this, zuSpielendeKarte);
 			
 			if (stich.size()==4) {
 				stich = new ArrayList<Spielkarten>(4);
@@ -363,7 +363,7 @@ public class SchafkopfSpielsituation implements ISpielsituation {
 	
 	public void bestaetigeStich(Stichbestaetigung sb) throws Exception {
 		if (status != Status.WARTE_AUF_STICHBESTAETIGUNG)
-			throw new Exception("Falscher Status für Stichbestätigung!");
+			throw new Exception("Falscher Status fï¿½r Stichbestï¿½tigung!");
 
 		spielerAmZug++;
 		
@@ -397,7 +397,7 @@ public class SchafkopfSpielsituation implements ISpielsituation {
 	}
 	
 	/**
-	 * Gibt die Farbe einer Spielkarte zurück.
+	 * Gibt die Farbe einer Spielkarte zurï¿½ck.
 	 * @param sp Die Spielkarte, deren Farbe bestimmt werden soll.
 	 * @return Der Farbwert der Spielkarte aus der Enumeration Farben.
 	 */
@@ -409,7 +409,7 @@ public class SchafkopfSpielsituation implements ISpielsituation {
 		case Zehn_Eichel:
 		case Unter_Eichel: 
 		case Ober_Eichel:
-		case König_Eichel: 
+		case Koenig_Eichel: 
 		case As_Eichel:
 			return Farben.EICHEL;
 			
@@ -419,7 +419,7 @@ public class SchafkopfSpielsituation implements ISpielsituation {
 		case Zehn_Gras:
 		case Unter_Gras: 
 		case Ober_Gras:
-		case König_Gras: 
+		case Koenig_Gras: 
 		case As_Gras:
 			return Farben.GRAS;
 			
@@ -429,7 +429,7 @@ public class SchafkopfSpielsituation implements ISpielsituation {
 		case Zehn_Herz:
 		case Unter_Herz: 
 		case Ober_Herz:
-		case König_Herz: 
+		case Koenig_Herz: 
 		case As_Herz:
 			return Farben.HERZ;
 			
@@ -439,7 +439,7 @@ public class SchafkopfSpielsituation implements ISpielsituation {
 		case Zehn_Schellen:
 		case Unter_Schellen: 
 		case Ober_Schellen:
-		case König_Schellen: 
+		case Koenig_Schellen: 
 		case As_Schellen:
 			return Farben.SCHELLEN;
 		}
@@ -462,8 +462,8 @@ public class SchafkopfSpielsituation implements ISpielsituation {
 	}
 
 	/**
-	 * Gibt die Punktzahl einer Spielkarte zurück.
-	 * @param sp Die Spielkarte, dessen Punktzahl zurückgegeben werden soll.
+	 * Gibt die Punktzahl einer Spielkarte zurï¿½ck.
+	 * @param sp Die Spielkarte, dessen Punktzahl zurï¿½ckgegeben werden soll.
 	 * @return Die Punktzahl der Spielkarte.
 	 */
 	public static int getPunkte(Spielkarten sp) {
@@ -472,7 +472,7 @@ public class SchafkopfSpielsituation implements ISpielsituation {
 			return 11;
 		case ZEHN:
 			return 10;
-		case KÖNIG:
+		case KOENIG:
 			return 4;
 		case OBER:
 			return 3;
@@ -484,8 +484,8 @@ public class SchafkopfSpielsituation implements ISpielsituation {
 	}
 
 	/**
-	 * Gibt für eine Spielkarte das entsprechende Bild/Symbol/Zahl zurück.
-	 * @param sp Die Spielkarte, für die das Bild zurückgegeben werden soll.
+	 * Gibt fï¿½r eine Spielkarte das entsprechende Bild/Symbol/Zahl zurï¿½ck.
+	 * @param sp Die Spielkarte, fï¿½r die das Bild zurï¿½ckgegeben werden soll.
 	 * @return Das Bild der Spielkarte aus der Enumeration Bilder. 
 	 */
 	public static Bilder getBild(Spielkarten sp) {
@@ -526,11 +526,11 @@ public class SchafkopfSpielsituation implements ISpielsituation {
 		case Ober_Schellen:
 			return Bilder.OBER;
 
-		case König_Eichel: 
-		case König_Gras: 
-		case König_Herz: 
-		case König_Schellen: 
-			return Bilder.KÖNIG;
+		case Koenig_Eichel: 
+		case Koenig_Gras: 
+		case Koenig_Herz: 
+		case Koenig_Schellen: 
+			return Bilder.KOENIG;
 
 		case As_Eichel:
 		case As_Gras:
@@ -543,7 +543,7 @@ public class SchafkopfSpielsituation implements ISpielsituation {
 	}
 
 	/**
-	 * Gibt den Index des Spielers zurück, der am Zug ist.
+	 * Gibt den Index des Spielers zurï¿½ck, der am Zug ist.
 	 * @return Der Index des Spielers, der am Zug ist.
 	 */
 	public int getSpielerAmZug() {
@@ -551,7 +551,7 @@ public class SchafkopfSpielsituation implements ISpielsituation {
 	}
 
 	/**
-	 * Gibt das aktuell gespielte Spiel zurück.
+	 * Gibt das aktuell gespielte Spiel zurï¿½ck.
 	 * @return Das Spiel, das aktuell gespielt wird.
 	 */
 	public ISpielart getAktuellesSpiel() {
@@ -567,7 +567,7 @@ public class SchafkopfSpielsituation implements ISpielsituation {
 	}
 
 	/**
-	 * Gibt den aktuellen Spielstatus zurück.
+	 * Gibt den aktuellen Spielstatus zurï¿½ck.
 	 * @return Der aktuellen Spielstatus.
 	 */
 	public Status getStatus() {
