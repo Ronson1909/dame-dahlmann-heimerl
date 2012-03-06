@@ -24,21 +24,21 @@ public abstract class AbstractSoli extends AbstractSpielart {
 
 	public Spielkarten getHoechsteKarte(List<Spielkarten> stich) {
 		if (stich == null || stich.size()>4 || stich.size() < 1)
-			throw new IllegalArgumentException("Ungültiger Stich in getHoechsteKarte");
+			throw new IllegalArgumentException("Ungï¿½ltiger Stich in getHoechsteKarte");
 		
 		//ist erste Karte Trumpf?
 		if (isTrumpf(stich.get(0))) {
-			//dann zählt die höchste Karte
+			//dann zï¿½hlt die hï¿½chste Karte
 			return Collections.max(stich, this);
 		}
 		else {
-			//wenn nicht, wurde überhaupt ein Trumpf gespielt? Der höchste sticht.
+			//wenn nicht, wurde ï¿½berhaupt ein Trumpf gespielt? Der hï¿½chste sticht.
 			Spielkarten max = Collections.max(stich, this);
 			
 			if (isTrumpf(max))
 				return max;
 			else {
-				//sonst zählt der höchste der Farbe der ersten Karte.
+				//sonst zï¿½hlt der hï¿½chste der Farbe der ersten Karte.
 				return Collections.max(getKartenDerFarbe(stich, SchafkopfSpielsituation.getFarbe(stich.get(0))), this);
 			}
 		}
@@ -76,7 +76,7 @@ public abstract class AbstractSoli extends AbstractSpielart {
 		return kart;
 	}
 
-	public static ArrayList<Spielkarten> getTrümpfe(Collection<Spielkarten> hand, Bilder[] trumpfBilder, Farben[] trumpfFarben) {
+	public static ArrayList<Spielkarten> getTruempfe(Collection<Spielkarten> hand, Bilder[] trumpfBilder, Farben[] trumpfFarben) {
 		ArrayList<Spielkarten> tr = new ArrayList<Spielkarten>();
 		
 		for (Spielkarten karte : hand)
@@ -86,11 +86,11 @@ public abstract class AbstractSoli extends AbstractSpielart {
 		return tr;
 	}
 
-	public final ArrayList<Spielkarten> getTrümpfe(Collection<Spielkarten> hand) {
-		return getTrümpfe(hand, trumpfBilder, trumpfFarben);
+	public final ArrayList<Spielkarten> getTruempfe(Collection<Spielkarten> hand) {
+		return getTruempfe(hand, trumpfBilder, trumpfFarben);
 	}
 
-	public final void prüfeAufGültigeKarte(SchafkopfSpielsituation sss, Spielkarten zuSpielendeKarte) {
+	public final void pruefeAufGueltigeKarte(SchafkopfSpielsituation sss, Spielkarten zuSpielendeKarte) {
 		List<Spielkarten> stich = sss.getStich();
 		
 		//erste Karte des Stichs?
@@ -105,7 +105,7 @@ public abstract class AbstractSoli extends AbstractSpielart {
 
 			//Trumpf zugeben
 			if (isTrumpf(ersteKarte)) {
-				if (getTrümpfe(eigeneKarten).size()>0) {
+				if (getTruempfe(eigeneKarten).size()>0) {
 					if (!isTrumpf(zuSpielendeKarte)) {
 						throw new IllegalArgumentException("Trumpf zugeben!");
 					}
@@ -188,7 +188,7 @@ public abstract class AbstractSoli extends AbstractSpielart {
 			}
 			else {
 				//zwei untersch. Trumpffarben (z.B. Herz und Schellen oder Herz und keine Trumpffarbe)
-				//dann entscheidet wer höher ist
+				//dann entscheidet wer hï¿½her ist
 				if (trumpfFarbeIndex0>trumpfFarbeIndex1) {
 					return 1;
 				}
@@ -207,7 +207,7 @@ public abstract class AbstractSoli extends AbstractSpielart {
 		}
 		else {
 			//zwei untersch. Trumpfbilder (z.B. Ober und Unter oder Ober und 9)
-			//dann entscheidet wer höher ist
+			//dann entscheidet wer hï¿½her ist
 			if (trumpfBildIndex0>trumpfBildIndex1) {
 				return 1;
 			}

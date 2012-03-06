@@ -57,7 +57,7 @@ public class SpielbrettReadOnlyComponent extends JComponent implements Component
 		for (int x=0;x<8;x++) {
 			for (int y=0;y<8;y++) {
 				//if (g.hitClip(x*Feldbreite, y*Feldbreite, Feldbreite, Feldbreite)) {
-					//oben links weiß
+					//oben links weiï¿½
 					if ((x+y) % 2 ==0)
 						g.setColor(java.awt.Color.white);
 					else
@@ -98,8 +98,8 @@ public class SpielbrettReadOnlyComponent extends JComponent implements Component
 	 * Zeichnet einen Stein an der entsprechenden Stelle mit den Farben, die figur vorgibt.
 	 * @param g Das Graphikobjekt.
 	 * @param figur Der Stein (also normal oder Dame und welche Farbe).
-	 * @param kreisX Die X-Koordinate des Zentrums des Kreises der Bodenfläche.
-	 * @param kreisY Die Y-Koordinate des Zentrums des Kreises der Bodenfläche.
+	 * @param kreisX Die X-Koordinate des Zentrums des Kreises der Bodenflï¿½che.
+	 * @param kreisY Die Y-Koordinate des Zentrums des Kreises der Bodenflï¿½che.
 	 */
 	protected void zeichneFigur(Graphics g, int figur, int kreisX, int kreisY) {
 		switch (figur) {
@@ -118,10 +118,10 @@ public class SpielbrettReadOnlyComponent extends JComponent implements Component
 	 * Zeichnet einen Stein an der entsprechenden Stelle mit den entsprechenden Farben.
 	 * @param g Das Graphikobjekt.
 	 * @param figur Der Stein (also normal oder Dame und welche Farbe, die aber nicht wichtig ist).
-	 * @param kreisX Die X-Koordinate des Zentrums des Kreises der Bodenfläche.
-	 * @param kreisY Die Y-Koordinate des Zentrums des Kreises der Bodenfläche.
-	 * @param foreground Vordergrundfarbe für Rand.
-	 * @param background Hintergrundfarbe für Füllung.
+	 * @param kreisX Die X-Koordinate des Zentrums des Kreises der Bodenflï¿½che.
+	 * @param kreisY Die Y-Koordinate des Zentrums des Kreises der Bodenflï¿½che.
+	 * @param foreground Vordergrundfarbe fï¿½r Rand.
+	 * @param background Hintergrundfarbe fï¿½r Fï¿½llung.
 	 */
 	protected void zeichneFigur(Graphics g, int figur, int kreisX, int kreisY, java.awt.Color foreground, java.awt.Color background) {
 		final int ZweiterKreisOffset = (int)(feldbreite * ZweiterKreisOffsetPercentage / 100);
@@ -144,7 +144,7 @@ public class SpielbrettReadOnlyComponent extends JComponent implements Component
 			g.drawOval(kreisX-ZweiterKreisOffset, kreisY-ZweiterKreisOffset, kreisD, kreisD);
 		}
 
-		//Zum Zeichnen der Damen nochmal einen Doppelkreis drüber malen
+		//Zum Zeichnen der Damen nochmal einen Doppelkreis drï¿½ber malen
 		switch (figur) {
 		case Spielbrett.SCHWARZ_D:
 		case Spielbrett.WEISS_D:
@@ -160,7 +160,7 @@ public class SpielbrettReadOnlyComponent extends JComponent implements Component
 	}
 
 	/**
-	 * Berechnet gemäß der Größe der Komponente die Seitenlänge eines Feldquadrats in Pixeln.
+	 * Berechnet gemï¿½ï¿½ der Grï¿½ï¿½e der Komponente die Seitenlï¿½nge eines Feldquadrats in Pixeln.
 	 * @return Die Seiten eines Feldquadrats in Pixeln.
 	 */
 	//protected final int getFeldbreite() {
@@ -168,7 +168,7 @@ public class SpielbrettReadOnlyComponent extends JComponent implements Component
 	
 	/**
 	 * Konvertiert Grafikkoordinaten in Spielbrettkoordinaten bzw. (-1,-1),
-	 * wenn es außerhalb ist.
+	 * wenn es auï¿½erhalb ist.
 	 * @param xControl Die Grafik-X-Koordinate. 
 	 * @param yControl Die Grafik-X-Koordinate.
 	 * @return Die Spielbrettkoordinaten in einem java.awt.Point.
@@ -206,9 +206,9 @@ public class SpielbrettReadOnlyComponent extends JComponent implements Component
 	@Override
 	public Dimension getPreferredSize() {
 		Dimension d = this.getSize();
-		int seitenlänge = Math.min(d.height, d.width)/8;
-		seitenlänge*=8;
-		d.setSize(seitenlänge,seitenlänge);
+		int seitenlaenge = Math.min(d.height, d.width)/8;
+		seitenlaenge*=8;
+		d.setSize(seitenlaenge,seitenlaenge);
 		return d;
 	}
 	

@@ -35,22 +35,22 @@ public class HeimerlKI extends AbstractKI {
 		
 		switch (this.sss.getStatus()) {
 		case WARTE_AUF_SPIELEN_JA_NEIN:
-			ArrayList<Spielkarten> sauspielTrümpfe = Sauspiel.getTrümpfeStatic(eigeneKarten);
+			ArrayList<Spielkarten> sauspielTruempfe = Sauspiel.getTruempfeStatic(eigeneKarten);
 			
-			if (this.sss.getSpielerMitSpielabsicht().size()==0 && sauspielTrümpfe.size()>=5) {
+			if (this.sss.getSpielerMitSpielabsicht().size()==0 && sauspielTruempfe.size()>=5) {
 				beendeZug( new Spielen(true) );
 				return;
 			}
 			else {
 //				for (Farben farbe : Farben.values()) {
 //					Wenz w = new Wenz(farbe);
-//					if (w.getTrümpfe(eigeneKarten).size()>=6) {
+//					if (w.getTrï¿½mpfe(eigeneKarten).size()>=6) {
 //						beendeZug( new Spielen(true) );
 //						return;
 //					}
 //
 //					Geier g = new Geier(farbe);
-//					if (g.getTrümpfe(eigeneKarten).size()>=6) {
+//					if (g.getTrï¿½mpfe(eigeneKarten).size()>=6) {
 //						beendeZug( new Spielen(true) );
 //						return;
 //					}
@@ -68,7 +68,7 @@ public class HeimerlKI extends AbstractKI {
 //			ISpielart bestesSpiel=null; 
 //			for (ISpielart sa : sas) {
 //				if (sa instanceof Sauspiel) {
-//					if (sa.getTrümpfe(eigeneKarten).size()>=5)
+//					if (sa.getTrï¿½mpfe(eigeneKarten).size()>=5)
 //						bestesSpiel=sa;
 //				}
 //			}
@@ -79,14 +79,14 @@ public class HeimerlKI extends AbstractKI {
 			beendeZug( new Stichbestaetigung() );
 			break;
 		case WARTE_AUF_AUSSPIELEN:
-			ArrayList<Spielkarten> gültigeKarten = new ArrayList<Spielkarten>(eigeneKarten.size());
+			ArrayList<Spielkarten> gueltigeKarten = new ArrayList<Spielkarten>(eigeneKarten.size());
 			
 			for (Spielkarten karte : eigeneKarten) {
 				
 				try {
-					sss.getAktuellesSpiel().prüfeAufGültigeKarte(this.sss, karte);
+					sss.getAktuellesSpiel().pruefeAufGueltigeKarte(this.sss, karte);
 					
-					gültigeKarten.add(karte);
+					gueltigeKarten.add(karte);
 				}
 				catch (Exception ex) {
 				}
@@ -94,19 +94,19 @@ public class HeimerlKI extends AbstractKI {
 
 			List<Spielkarten> stich = this.sss.getStich();
 			
-			//Bei erster Karte im Stich, einfach erstbeste Karte wählen
+			//Bei erster Karte im Stich, einfach erstbeste Karte wï¿½hlen
 			if (stich.size()==0 || stich.size()==4) {
-				beendeZug(new Ausspielvorgang(gültigeKarten.get(0)));
+				beendeZug(new Ausspielvorgang(gueltigeKarten.get(0)));
 			}
 			else {
-				//sonst höchste Karte im Stich mit eigener höchster vergleichen
+				//sonst hï¿½chste Karte im Stich mit eigener hï¿½chster vergleichen
 				ISpielart spiel = this.sss.getAktuellesSpiel();
 				
 				Spielkarten maxStich = Collections.max(stich, spiel);
-				Spielkarten maxEigene = Collections.max(gültigeKarten, spiel);
+				Spielkarten maxEigene = Collections.max(gueltigeKarten, spiel);
 				
 				if (spiel.compare(maxStich, maxEigene)>0) {
-					beendeZug(new Ausspielvorgang( Collections.min(gültigeKarten, spiel) ));
+					beendeZug(new Ausspielvorgang( Collections.min(gueltigeKarten, spiel) ));
 				}
 				else {
 					beendeZug(new Ausspielvorgang( maxEigene ));

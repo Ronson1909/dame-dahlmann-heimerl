@@ -232,7 +232,7 @@ public class HalmaSpielbrettComponent extends JComponent implements	IBrettspielC
 
 					Zug z = new Zug(clickedCoord.x, clickedCoord.y, dest.x, dest.y);
 
-					//Zug prüfen
+					//Zug prï¿½fen
 					if (sb.isGueltigerZug(z)) {
 						beendeZug(z);
 					}
@@ -274,7 +274,7 @@ public class HalmaSpielbrettComponent extends JComponent implements	IBrettspielC
 	
 	/**
 	 * Konvertiert Grafikkoordinaten in Spielbrettkoordinaten bzw. (-1,-1),
-	 * wenn es außerhalb ist.
+	 * wenn es auï¿½erhalb ist.
 	 * @param xControl Die Grafik-X-Koordinate. 
 	 * @param yControl Die Grafik-X-Koordinate.
 	 * @return Die Spielbrettkoordinaten in einem java.awt.Point.
@@ -297,9 +297,9 @@ public class HalmaSpielbrettComponent extends JComponent implements	IBrettspielC
 	@Override
 	public Dimension getPreferredSize() {
 		Dimension d = this.getSize();
-		int seitenlänge = Math.min(d.height, d.width);
-		//seitenlänge*=8;
-		d.setSize(seitenlänge,seitenlänge);
+		int seitenlaenge = Math.min(d.height, d.width);
+		//seitenlï¿½nge*=8;
+		d.setSize(seitenlaenge,seitenlaenge);
 		return d;
 	}
 	

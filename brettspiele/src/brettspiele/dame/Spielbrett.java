@@ -113,7 +113,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	}
 	
 	/**
-	 * Erzeugt ein neues Spielbrett mit der übergebenen Aufstellung und dem übergebenen aktuellen Spieler. 
+	 * Erzeugt ein neues Spielbrett mit der ï¿½bergebenen Aufstellung und dem ï¿½bergebenen aktuellen Spieler. 
 	 * Diese Methode sollte nur von clone() aufgerufen werden!
 	 */
 	private Spielbrett(int[][] brett, int[][] brett_intern, boolean schwarzAmZug) {
@@ -131,7 +131,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	}
 	
 	/**
-	 * Gibt eine Kopie des übergebenen Spielbretts zurück
+	 * Gibt eine Kopie des ï¿½bergebenen Spielbretts zurï¿½ck
 	 */
 	private int[][] spielbrettKopie(int[][] sb) {
 		int[][] temp = new int[8][8];
@@ -166,7 +166,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	}
 	
 	/**
-	 * Transformiert eine Koordinate eines Zuges falls nötig
+	 * Transformiert eine Koordinate eines Zuges falls nï¿½tig
 	 */
 	private int transform(int k) {
 		if (!schwarzAmZug)
@@ -177,14 +177,14 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	//############################################################
 
 	/**
-	 * Gibt die aktuelle Belegung des gewünschten Feldes zurück.
+	 * Gibt die aktuelle Belegung des gewï¿½nschten Feldes zurï¿½ck.
 	 */
 	public int getFeld(int x, int y) {
 		return spielbrett[x][y];
 	}
 	
 	/**
-	 * Ändert die Ausrichtung des Brettes auf die Sichtweise des anderen Spielers
+	 * ï¿½ndert die Ausrichtung des Brettes auf die Sichtweise des anderen Spielers
 	 */
 	private void andererSpielerAmZug() {
 		if (schwarzAmZug)
@@ -194,7 +194,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	}
 	
 	/**
-	 * Ändert die Ausrichtung des Brettes auf die Sichtweise von Spieler Schwarz
+	 * ï¿½ndert die Ausrichtung des Brettes auf die Sichtweise von Spieler Schwarz
 	 */
 	private void schwarzAmZug() {
 		if (!schwarzAmZug) {
@@ -208,7 +208,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	}
 	
 	/**
-	 * Ändert die Ausrichtung des Brettes auf die Sichtweise von Spieler Weiss
+	 * ï¿½ndert die Ausrichtung des Brettes auf die Sichtweise von Spieler Weiss
 	 */
 	private void weissAmZug() {
 		if (schwarzAmZug) {
@@ -224,7 +224,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	//############################################################
 	
 	/**
-	 * Prüft ob für den aktuellen Spieler, ausgehend von Feld x,y ein Sprung in Richtung der anderen Parameter möglich ist.
+	 * Prï¿½ft ob fï¿½r den aktuellen Spieler, ausgehend von Feld x,y ein Sprung in Richtung der anderen Parameter mï¿½glich ist.
 	 */
 	private boolean pruefeSprung(int x, int y, int xRichtung, int yRichtung, boolean aufTempBrett) {
 		int xSollLeer = x+2*xRichtung;
@@ -244,8 +244,8 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	}
 	
 	/**
-	 * Prüft ob für den aktuellen Spieler überhaupt ein Sprung möglich ist.
-	 * Über den Parameter wird gesteuert, ob auf dem TEMP_spielbrett gearbeitet wird.
+	 * Prï¿½ft ob fï¿½r den aktuellen Spieler ï¿½berhaupt ein Sprung mï¿½glich ist.
+	 * ï¿½ber den Parameter wird gesteuert, ob auf dem TEMP_spielbrett gearbeitet wird.
 	 */
 	private boolean sprungIstMoeglich(boolean aufTempBrett) {
 		int[][] spielbrett_betrachtet = (aufTempBrett) ? TEMP_spielbrett : spielbrett_intern;
@@ -310,7 +310,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	}
 	
 	/**
-	 * Prüft ob für den aktuellen Spieler ausgehend vom Feld mit den übergebenen Koordinaten (x,y) und gespieltem Stein (normal/Dame) noch ein weiterer Sprung möglich ist.
+	 * Prï¿½ft ob fï¿½r den aktuellen Spieler ausgehend vom Feld mit den ï¿½bergebenen Koordinaten (x,y) und gespieltem Stein (normal/Dame) noch ein weiterer Sprung mï¿½glich ist.
 	 */
 	private boolean weitererSprungIstMoeglich(int x, int y, boolean sprungMitDame) {
 				
@@ -321,7 +321,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 			if (pruefeSprung(x, y, +1, +1, false))
 				return true;
 		}
-		//falls mit Dame gesprungen //Ausschließen dass vorherige Sprünge der Zugfolge wieder als Möglichkeiten gefunden werden: Arbeiten auf TEMP_spielbrett
+		//falls mit Dame gesprungen //Ausschlieï¿½en dass vorherige Sprï¿½nge der Zugfolge wieder als Mï¿½glichkeiten gefunden werden: Arbeiten auf TEMP_spielbrett
 		else {
 			int testX, testY;
 			
@@ -371,7 +371,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	//############################################################
 	
 	/**
-	 * Prüft ob der Zug z ein korrekter (erster) Zug und kein Sprung ist.
+	 * Prï¿½ft ob der Zug z ein korrekter (erster) Zug und kein Sprung ist.
 	 */
 	public boolean isZug(Zug z) {
 		int x1 = transform(z.gibStartX());
@@ -380,13 +380,13 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 		int y2 = transform(z.gibEndeY());
 		boolean zugMitDame = (spielbrett_intern[x1][y1] == eigeneDame);
 
-		//Teste alles mögliche
+		//Teste alles mï¿½gliche
 		if (!kgV_checkObZugOderSprung(z, x1, y1, x2, y2, zugMitDame))
 			return false;
 		
         //wenn keine Dame
 		if (!zugMitDame) {
-	        //prüfe: Felder liegen nebeneinander
+	        //prï¿½fe: Felder liegen nebeneinander
 			if (!zugVonStein(x1, y1, x2, y2))
 				return false;
 		} //end-if keine Dame
@@ -394,7 +394,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 		else { //wenn Dame
 			if (!((Math.abs(x2-x1) == 1) && (Math.abs(y2-y1) == 1))) { //wenn mehr als nur ein Feld weit gezogen
 
-				//prüfe: Alle Felder zwischen Startfeld und einem Feld vor Zielfeld leer
+				//prï¿½fe: Alle Felder zwischen Startfeld und einem Feld vor Zielfeld leer
 				if (!zwischenraumFrei(x1, y1, x2, y2, false))
 					return false;
 				
@@ -404,7 +404,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 				int testX = x2-xSchritt;
 				int testY = y2-ySchritt;
 
-				//prüfe: Feld vor Zielfeld muss Frei sein, da kein Sprung
+				//prï¿½fe: Feld vor Zielfeld muss Frei sein, da kein Sprung
 				if (!isLeer_intern(testX, testY, false))
 					return false;
 			}
@@ -417,7 +417,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	}
 	
 	/**
-	 * Prüft ob Zug z ein korrekter (erster) Sprung ist.
+	 * Prï¿½ft ob Zug z ein korrekter (erster) Sprung ist.
 	 */
 	public boolean isSprung(Zug z) {
 		int x1 = transform(z.gibStartX());
@@ -426,13 +426,13 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 		int y2 = transform(z.gibEndeY());
 		boolean zugMitDame = (spielbrett_intern[x1][y1] == eigeneDame);
 		
-		//Teste alles mögliche
+		//Teste alles mï¿½gliche
 		if (!kgV_checkObZugOderSprung(z, x1, y1, x2, y2, zugMitDame))
 			return false;
 		
         //wenn keine Dame
 		if (!zugMitDame) {			
-	        //prüfe: erlaubter Sprung über Gegner
+	        //prï¿½fe: erlaubter Sprung ï¿½ber Gegner
 			if (!sprungVonStein(x1, y1, x2, y2))
 				return false;
 		} //end-if keine Dame
@@ -444,7 +444,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 			int testX = x2-xSchritt;
 			int testY = y2-ySchritt;
 							
-			//prüfe: Ein Feld vor Zielfeld mit gegnerischem Stein belegt
+			//prï¿½fe: Ein Feld vor Zielfeld mit gegnerischem Stein belegt
 			if (!isGegner_intern(testX, testY, false))
 				return false;
 		}
@@ -455,14 +455,14 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	//############################################################
 	
 	/**
-	 * Prüft ob eine Zugfolge gültig ist, vorausgesetzt sie ist schon komplett.
+	 * Prï¿½ft ob eine Zugfolge gï¿½ltig ist, vorausgesetzt sie ist schon komplett.
 	 */
 	public boolean zugIstGueltig(ArrayList<Zug> z) {
 		return zugIstGueltig(z, true);
 	}
 	
 	/**
-	 * Prüft ob eine Zugfolge gültig ist, in Abhängigkeit davon ob sie schon komplett ist.
+	 * Prï¿½ft ob eine Zugfolge gï¿½ltig ist, in Abhï¿½ngigkeit davon ob sie schon komplett ist.
 	 */
 	public boolean zugIstGueltig(ArrayList<Zug> z, boolean zugfolgeKomplett) {
 		if (z.size() == 0) return false;
@@ -471,7 +471,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 		boolean zugMitDame = (spielbrett_intern[transform(temp.gibStartX())][transform(temp.gibStartY())] == eigeneDame);
 		
 		if (zugMitDame)// && zugfolgeKomplett) //
-			TEMP_spielbrett = spielbrettKopie(spielbrett_intern); //Um die übersprungenen Steine für die Tests entfernen zu können
+			TEMP_spielbrett = spielbrettKopie(spielbrett_intern); //Um die ï¿½bersprungenen Steine fï¿½r die Tests entfernen zu kï¿½nnen
 		
 		if (z.size() == 1) {
 			if (zugfolgeKomplett)
@@ -484,25 +484,25 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 		int ende_x1 = temp.gibEndeX();
 		int ende_y1 = temp.gibEndeY();
 		int start_x2, start_y2;
-		for (int i=1; i<z.size(); i++) { //Züge durchgehen
+		for (int i=1; i<z.size(); i++) { //Zï¿½ge durchgehen
 			temp = z.get(i);
 			start_x2 = temp.gibStartX();
 			start_y2 = temp.gibStartY();
-			if ((ende_x1 != start_x2) || (ende_y1 != start_y2)) { //Prüfen ob Ende des vorherigen = Start des aktuellen
+			if ((ende_x1 != start_x2) || (ende_y1 != start_y2)) { //Prï¿½fen ob Ende des vorherigen = Start des aktuellen
 				return false;
 			}
 			ende_x1 = temp.gibEndeX();
 			ende_y1 = temp.gibEndeY();
 		}
 			
-		//Prüfe ob alle einzelnen Züge gültig
-		if (!zugIstGueltig(z.get(0), true, false, zugMitDame)) //Beim ersten Zug auch prüfen ob Ausgangspunkt eigener Stein
+		//Prï¿½fe ob alle einzelnen Zï¿½ge gï¿½ltig
+		if (!zugIstGueltig(z.get(0), true, false, zugMitDame)) //Beim ersten Zug auch prï¿½fen ob Ausgangspunkt eigener Stein
 			return false;
 		for (int i=1; i<z.size()-1; i++) {
-			if (!zugIstGueltig(z.get(i), false, false, zugMitDame)) //Bei den mittleren Zügen Korrektheit ohne Sonderfälle prüfen
+			if (!zugIstGueltig(z.get(i), false, false, zugMitDame)) //Bei den mittleren Zï¿½gen Korrektheit ohne Sonderfï¿½lle prï¿½fen
 				return false;
 		}
-		if (!zugIstGueltig(z.get(z.size()-1), false, zugfolgeKomplett, zugMitDame)) //Beim letzten Sprung prüfen, ob weiterer Sprung möglich wäre
+		if (!zugIstGueltig(z.get(z.size()-1), false, zugfolgeKomplett, zugMitDame)) //Beim letzten Sprung prï¿½fen, ob weiterer Sprung mï¿½glich wï¿½re
 			return false;
 		
 		//Dann ist die Zugfolge wohl gueltig.
@@ -510,14 +510,14 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	}
 	
 	/**
-	 * Prüft ob der Zug gültig ist.
+	 * Prï¿½ft ob der Zug gï¿½ltig ist.
 	 */
 	private boolean zugIstGueltig(Zug z) {
 		return zugIstGueltig(z, true, true, false);
 	}
 	
 	/**
-	 * Prüft ob der Zug gültig ist.
+	 * Prï¿½ft ob der Zug gï¿½ltig ist.
 	 */
 	private boolean zugIstGueltig(Zug z, boolean ersterZug, boolean letzterZug, boolean zugMitDame) {
 		boolean zugFolge = !(ersterZug && letzterZug); //Wenn zugleich erster und letzter Zug, dann keine Zugfolge
@@ -526,45 +526,45 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 		int x2 = transform(z.gibEndeX());
 		int y2 = transform(z.gibEndeY());
 		
-		//prüfe: Hat Zug gültige Koordinaten?
+		//prï¿½fe: Hat Zug gï¿½ltige Koordinaten?
 		if (!z.hatGueltigeKoordinaten())
 			return false;
 		
-        //prüfe: Ziel ist freies Feld
+        //prï¿½fe: Ziel ist freies Feld
 		if (!isLeer_intern(x2, y2, false))
 			return false;
 		
-		//prüfe: ist eigener Stein falls erster Zug
+		//prï¿½fe: ist eigener Stein falls erster Zug
 		if (ersterZug) { //alt.: if(!zugFolge) {
-			zugMitDame = (spielbrett_intern[x1][y1] == eigeneDame); //Beim ersten Zug wird bei einem einzelnen Zug nicht übergeben, ob mit einer Dame gezogen wurde.
+			zugMitDame = (spielbrett_intern[x1][y1] == eigeneDame); //Beim ersten Zug wird bei einem einzelnen Zug nicht ï¿½bergeben, ob mit einer Dame gezogen wurde.
 			if (!isEigener_intern(x1, y1, false))
 				return false;
 		}
 		
 		if (!zugMitDame) { //wenn keine Dame
-			//prüfe: richtige Richtung (nach oben)
+			//prï¿½fe: richtige Richtung (nach oben)
 			if (y2 <= y1)
 				return false;
 
-	        //prüfe: Felder liegen nebeneinander
+	        //prï¿½fe: Felder liegen nebeneinander
 			boolean angrenzendeFelder = zugVonStein(x1, y1, x2, y2);
 			
-	        //prüfe: oder erlaubter Sprung über Gegner
+	        //prï¿½fe: oder erlaubter Sprung ï¿½ber Gegner
 			boolean erlaubterSprung = sprungVonStein(x1, y1, x2, y2);
 			
-			//prüfe: Felder liegen nicht nebeneinander und gesprungen wurde auch nicht
+			//prï¿½fe: Felder liegen nicht nebeneinander und gesprungen wurde auch nicht
 			if (!angrenzendeFelder && !erlaubterSprung)
 				return false;
 			
-			//prüfe: Zugfolge darf nur aus Sprüngen bestehen
+			//prï¿½fe: Zugfolge darf nur aus Sprï¿½ngen bestehen
 			if (zugFolge && !erlaubterSprung) //Sollte gleichbedeutend sein mit if (zugFolge && angrenzendeFelder)
 				return false;
 			
-			//prüfe: Es wurde gesprungen, aber nicht alle möglichen Sprünge wurden ausgeführt.
+			//prï¿½fe: Es wurde gesprungen, aber nicht alle mï¿½glichen Sprï¿½nge wurden ausgefï¿½hrt.
 			if (letzterZug && erlaubterSprung && weitererSprungIstMoeglich(x2, y2, false))
 				return false;
 			
-			//prüfe: kein Sprung aber Sprung ist möglich (Zugfolge ist schon ausgeschlossen)
+			//prï¿½fe: kein Sprung aber Sprung ist mï¿½glich (Zugfolge ist schon ausgeschlossen)
 			if (angrenzendeFelder && sprungIstMoeglich(false))
 				return false;
 			
@@ -572,7 +572,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 		} //end-if keine Dame
 		
 		else { //wenn Dame
-			//prüfe: Zielfeld auf einer der Diagonalen vom Startfeld aus
+			//prï¿½fe: Zielfeld auf einer der Diagonalen vom Startfeld aus
 			if (!vonDameAusfuehrbar(x1, y1, x2, y2))
 				return false;
 			
@@ -582,7 +582,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 				erlaubterSprung = false;
 			}
 			else { //mehrere Felder weit gezogen
-				//prüfe: Alle Felder zwischen Startfeld und einem Feld vor Zielfeld leer
+				//prï¿½fe: Alle Felder zwischen Startfeld und einem Feld vor Zielfeld leer
 				if (!zwischenraumFrei(x1, y1, x2, y2, true))
 					return false;
 				
@@ -594,25 +594,25 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 
 				normalerZug = isLeer_intern(testX, testY, true); //Stimmt das true???????
 					
-				//prüfe: oder erlaubter Sprung über Gegner => Nur ein Feld vor Zielfeld mit gegnerischem Stein belegt, sonst alle leer
+				//prï¿½fe: oder erlaubter Sprung ï¿½ber Gegner => Nur ein Feld vor Zielfeld mit gegnerischem Stein belegt, sonst alle leer
 				erlaubterSprung = isGegner_intern(testX, testY, true);
 			}
 			
-			//prüfe: Sprung, aber inkorrekt
+			//prï¿½fe: Sprung, aber inkorrekt
 			if (!normalerZug && !erlaubterSprung)
 				return false;
 			
-			//prüfe: Zugfolge darf nur aus Sprüngen bestehen
+			//prï¿½fe: Zugfolge darf nur aus Sprï¿½ngen bestehen
 			if (zugFolge && !erlaubterSprung)
 				return false;
 			
-			//prüfe: kein Sprung aber Sprung ist möglich (Zugfolge ist schon ausgeschlossen)
+			//prï¿½fe: kein Sprung aber Sprung ist mï¿½glich (Zugfolge ist schon ausgeschlossen)
 			if (normalerZug && sprungIstMoeglich(true))
 				return false;
 			
-			 //auf dem temporären Brett den übersprungenen Stein entfernen
+			 //auf dem temporï¿½ren Brett den ï¿½bersprungenen Stein entfernen
 			if (erlaubterSprung) {
-				//x- und yKorrektur vom Zielfeld aus gesehen um übersprungen Stein zu erreichen
+				//x- und yKorrektur vom Zielfeld aus gesehen um ï¿½bersprungen Stein zu erreichen
 				int xKorrektur = (int) Math.signum(x1-x2); //(x2 > x1) ? -1 : +1;
 				int yKorrektur = (int) Math.signum(y1-y2); //(y2 > y1) ? -1 : +1;
 				TEMP_spielbrett[x2+xKorrektur][y2+yKorrektur] = LEER;
@@ -620,7 +620,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 				//TEMP_spielbrett[testX][testY] = LEER;
 			}
 			
-			//prüfe: Es wurde gesprungen, aber nicht alle möglichen Sprünge wurden ausgeführt. (Wird anhand TEMP_spielbrett geprüft).
+			//prï¿½fe: Es wurde gesprungen, aber nicht alle mï¿½glichen Sprï¿½nge wurden ausgefï¿½hrt. (Wird anhand TEMP_spielbrett geprï¿½ft).
 			if (letzterZug && erlaubterSprung) {
 				if (weitererSprungIstMoeglich(x2, y2, true))
 					return false;
@@ -634,11 +634,11 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	
 	
 	/**
-	 * Führt Zug aus.
+	 * Fï¿½hrt Zug aus.
 	 */
 	/*public void macheZug(Zug z) {
 		if (!zugIstGueltig(z)) {
-			throw new IllegalArgumentException("Dieser Zug ist nicht gültig!");
+			throw new IllegalArgumentException("Dieser Zug ist nicht gï¿½ltig!");
 		}
 		int x1 = transform(z.gibStartX());
 		int y1 = transform(z.gibStartY());
@@ -653,7 +653,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 			sb_set(x2, y2, spielbrett_intern[x1][y1]);
 		
 		sb_set(x1, y1, LEER);
-		//x- und yKorrektur vom Zielfeld aus gesehen um übersprungen Stein zu erreichen
+		//x- und yKorrektur vom Zielfeld aus gesehen um ï¿½bersprungen Stein zu erreichen
 		int xKorrektur = (int) Math.signum(x1-x2); //(x2 > x1) ? -1 : +1;
 		int yKorrektur = (int) Math.signum(y1-y2); //(y2 > y1) ? -1 : +1;
 		int xUebersprungen = x2+xKorrektur;
@@ -667,11 +667,11 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	}*/
 	
 	/**
-	 * Führt Zugfolge aus.
+	 * Fï¿½hrt Zugfolge aus.
 	 */
 	public void macheZug(ArrayList<Zug> z) {
 		if (!zugIstGueltig(z, true)) {
-			throw new IllegalArgumentException("Dieser Zug ist nicht gültig!");
+			throw new IllegalArgumentException("Dieser Zug ist nicht gï¿½ltig!");
 		}
 		int x1, y1, x2, y2, startStein = 0;
 		Zug teilZug;
@@ -692,7 +692,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 				sb_set(x2, y2, startStein);
 			
 			sb_set(x1, y1, LEER);
-			//x- und yKorrektur vom Zielfeld aus gesehen um übersprungen Stein zu erreichen
+			//x- und yKorrektur vom Zielfeld aus gesehen um ï¿½bersprungen Stein zu erreichen
 			int xKorrektur = (int) Math.signum(x1-x2); //(x2 > x1) ? -1 : +1;
 			int yKorrektur = (int) Math.signum(y1-y2); //(y2 > y1) ? -1 : +1;
 			int xUebersprungen = x2+xKorrektur;
@@ -708,11 +708,11 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	}
 	
 	/**
-	 * Macht Zugfolge rückgängig.
+	 * Macht Zugfolge rï¿½ckgï¿½ngig.
 	 */
 	public void undoZug(ArrayList<Zug> z) {
 		if (z.size() == 0)
-			throw new IllegalArgumentException("Zug der Länge 0!");
+			throw new IllegalArgumentException("Zug der Lï¿½nge 0!");
 		
 		andererSpielerAmZug();
 		
@@ -731,7 +731,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 			if ((teilZug.getZurDameGeworden() && endStein != eigeneDame) || (teilZug.getZurDameGeworden() && y2!=7))
 				System.out.println("PrOgRaMmIeRfEhLeR in undoZug()");
 				
-			if (y2 == 7 && teilZug.getZurDameGeworden() && endStein == eigeneDame) { //Ziel war oberste Zeile, es ist in dem Zug eine Dame geworden und Endstein ist eine Dame -> Rückumwandlung zum normalen Stein
+			if (y2 == 7 && teilZug.getZurDameGeworden() && endStein == eigeneDame) { //Ziel war oberste Zeile, es ist in dem Zug eine Dame geworden und Endstein ist eine Dame -> Rï¿½ckumwandlung zum normalen Stein
 				sb_set(x1, y1, eigenerStein);
 				teilZug.setZurDameGeworden(false);
 			}
@@ -740,15 +740,15 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 			
 			sb_set(x2, y2, LEER);
 			
-			//Übersprungenen Stein wieder hinstellen.
+			//ï¿½bersprungenen Stein wieder hinstellen.
 			int xUebersprungen = transform(teilZug.gibUebersprungenerSteinX());
 			int yUebersprungen = transform(teilZug.gibUebersprungenerSteinY());
 			int uebersprungenTyp = teilZug.getUebersprungenerSteinTyp();
 			if (xUebersprungen != -1 && yUebersprungen != -1 && uebersprungenTyp != -1) {
 				if (!isLeer_intern(xUebersprungen,yUebersprungen, false)) //Stimmt das false ?????
-					System.out.println("Fehler beim zurückstellen des übersprungenen Steins!");
+					System.out.println("Fehler beim zurï¿½ckstellen des ï¿½bersprungenen Steins!");
 				if (teilZug.getUebersprungenerSteinTyp() != gegnerStein && teilZug.getUebersprungenerSteinTyp() != gegnerDame)
-					System.out.println("FEHLER! Übersprungener und zurückgestellter Stein ist nicht vom Gegner!");
+					System.out.println("FEHLER! ï¿½bersprungener und zurï¿½ckgestellter Stein ist nicht vom Gegner!");
 				
 				sb_set(xUebersprungen, yUebersprungen, teilZug.getUebersprungenerSteinTyp());
 				teilZug.setzeUebersprungenerSteinX(-1);
@@ -762,7 +762,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	
 	
 	/**
-	 * Prüft ob die Koordinaten gültig sind
+	 * Prï¿½ft ob die Koordinaten gï¿½ltig sind
 	 */
 	public static boolean koordinatenGueltig(int x, int y) {
         //Feldbegrenzungen
@@ -773,7 +773,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
         if (x<0 || x>7)
             return false;
 
-        //weiße Felder sind ungültig
+        //weiï¿½e Felder sind ungï¿½ltig
         if (x%2 != y%2)
             return false;
 
@@ -783,21 +783,21 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	//#####
 	
 	/**
-	 *  Gibt die Farbe des Spielers zurück, der gerade am Zug ist.
+	 *  Gibt die Farbe des Spielers zurï¿½ck, der gerade am Zug ist.
 	 */
 	public int getFarbeAmZug() {
 		return (schwarzAmZug) ? SCHWARZ : WEISS;
 	}
 	
 	/**
-	 * Gibt zurück, ob Schwarz am Zug ist.
+	 * Gibt zurï¿½ck, ob Schwarz am Zug ist.
 	 */
 	public boolean getSchwarzAmZug() {
 		return schwarzAmZug;
 	}
 	
 	/**
-	 * Prüft ob das Spiel beendet ist. Gibt falls ja die Gewinnerfarbe zurück
+	 * Prï¿½ft ob das Spiel beendet ist. Gibt falls ja die Gewinnerfarbe zurï¿½ck
 	 */
 	public int isSpielBeendet() {
 		int schwarz = 0;
@@ -821,7 +821,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	}
 	
 	/**
-	 * Gibt id der Steine des aktuellen Spielers zurück.
+	 * Gibt id der Steine des aktuellen Spielers zurï¿½ck.
 	 */
 	public int getEigenerStein() {
 		return eigenerStein;
@@ -829,7 +829,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	
 	
 	/**
-	 * Gibt id der Damen des aktuellen Spielers zurück.
+	 * Gibt id der Damen des aktuellen Spielers zurï¿½ck.
 	 */
 	public int getEigeneDame() {
 		return eigeneDame;
@@ -837,7 +837,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	
 	
 	/**
-	 * Gibt id der Steine des aktuellen Gegenspielers zurück.
+	 * Gibt id der Steine des aktuellen Gegenspielers zurï¿½ck.
 	 */
 	public int getGegnerStein() {
 		return gegnerStein;
@@ -845,28 +845,28 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	
 	
 	/**
-	 * Gibt id der Damen des aktuellen Gegenspielers zurück.
+	 * Gibt id der Damen des aktuellen Gegenspielers zurï¿½ck.
 	 */
 	public int getGegnerDame() {
 		return gegnerDame;
 	}
 	
 	/**
-	 * Prüft ob Feld leer ist
+	 * Prï¿½ft ob Feld leer ist
 	 */
 	public boolean isLeer(int x, int y) {
 		return (spielbrett[x][y] == LEER);
 	}
 	
 	/**
-	 * Prüft ob Feld mit Stein des aktuellen Spielers besetzt ist.
+	 * Prï¿½ft ob Feld mit Stein des aktuellen Spielers besetzt ist.
 	 */
 	public boolean isEigener(int x, int y) {
 		return (spielbrett[x][y] == eigenerStein || spielbrett[x][y] == eigeneDame);
 	}
 	
 	/**
-	 * Prüft ob Feld mit Stein des aktuellen Gegenspielers besetzt ist.
+	 * Prï¿½ft ob Feld mit Stein des aktuellen Gegenspielers besetzt ist.
 	 */
 	public boolean isGegner(int x, int y) {
 		return (spielbrett[x][y] == gegnerStein || spielbrett[x][y] == gegnerDame);
@@ -875,7 +875,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	//#####
 	
 	/**
-	 * Prüft ob Feld leer ist
+	 * Prï¿½ft ob Feld leer ist
 	 */
 	private boolean isLeer_intern(int x, int y, boolean aufTempBrett) {
 		if (aufTempBrett)
@@ -885,7 +885,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	}
 	
 	/**
-	 * Prüft ob Feld mit Stein des aktuellen Spielers besetzt ist.
+	 * Prï¿½ft ob Feld mit Stein des aktuellen Spielers besetzt ist.
 	 */
 	private boolean isEigener_intern(int x, int y, boolean aufTempBrett) {
 		if (aufTempBrett)
@@ -895,7 +895,7 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	}
 	
 	/**
-	 * Prüft ob Feld mit Stein des aktuellen Gegenspielers besetzt ist.
+	 * Prï¿½ft ob Feld mit Stein des aktuellen Gegenspielers besetzt ist.
 	 */
 	private boolean isGegner_intern(int x, int y, boolean aufTempBrett) {
 		if (aufTempBrett)
@@ -905,14 +905,14 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	}
 	
 	/**
-	 * Prüft ob der durch die Koordinaten angegebene Zug (kein Sprung!) durch nicht-Dame ausführbar ist.
+	 * Prï¿½ft ob der durch die Koordinaten angegebene Zug (kein Sprung!) durch nicht-Dame ausfï¿½hrbar ist.
 	 */
 	private boolean zugVonStein(int x1, int y1, int x2, int y2) {
 		return ((y2 == y1+1) && (x2 == x1+1 || x2 == x1-1)) ? true : false;
 	}
 	
 	/**
-	 * Prüft ob der durch die Koordinaten angegebene Sprung durch nicht-Dame korrekt ist.
+	 * Prï¿½ft ob der durch die Koordinaten angegebene Sprung durch nicht-Dame korrekt ist.
 	 */
 	private boolean sprungVonStein(int x1, int y1, int x2, int y2) {
 		if ((y2 == y1+2) && (x2 == x1+2 || x2 == x1-2)) {
@@ -924,14 +924,14 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	}
 	
 	/**
-	 * Prüft ob der durch die Koordinaten angegebene Zug (auch Sprung) durch Dame ausführbar ist.
+	 * Prï¿½ft ob der durch die Koordinaten angegebene Zug (auch Sprung) durch Dame ausfï¿½hrbar ist.
 	 */
 	private boolean vonDameAusfuehrbar(int x1, int y1, int x2, int y2) {
 		return (Math.abs(x2-x1) == Math.abs(y2-y1));
 	}
 	
 	/**
-	 * Prüft ob alle Felder zwischen Startfeld und einem Feld vor Zielfeld leer
+	 * Prï¿½ft ob alle Felder zwischen Startfeld und einem Feld vor Zielfeld leer
 	 */
 	private boolean zwischenraumFrei(int x1, int y1, int x2, int y2, boolean aufTempBrett) {
 		//x- und ySchritt von Ursprungsposition aus gesehen!
@@ -952,33 +952,33 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 	}
 	
 	/**
-	 * Nur für isZug und isSprung! (Prüfungen für ersten Sprung) Daher wird TEMP_spielbrett nicht beachtet!
+	 * Nur fï¿½r isZug und isSprung! (Prï¿½fungen fï¿½r ersten Sprung) Daher wird TEMP_spielbrett nicht beachtet!
 	 */
 	private boolean kgV_checkObZugOderSprung(Zug z, int x1, int y1, int x2, int y2, boolean zugMitDame) {
-		//prüfe: Hat Zug gültige Koordinaten?
+		//prï¿½fe: Hat Zug gï¿½ltige Koordinaten?
 		if (!z.hatGueltigeKoordinaten())
 			return false;
 		
-        //prüfe: Ziel ist freies Feld
+        //prï¿½fe: Ziel ist freies Feld
 		if (!isLeer_intern(x2, y2, false))
 			return false;
 		
-		//prüfe: ist eigener Stein
+		//prï¿½fe: ist eigener Stein
 		if (!isEigener_intern(x1, y1, false))
 			return false;
 		
 		//wenn keine Dame
 		if (!zugMitDame) {
-			//prüfe: richtige Richtung (nach oben)
+			//prï¿½fe: richtige Richtung (nach oben)
 			if (y2 <= y1)
 				return false;
 		}
 		else { //wenn Dame
-			//prüfe: Zielfeld auf einer der Diagonalen vom Startfeld aus
+			//prï¿½fe: Zielfeld auf einer der Diagonalen vom Startfeld aus
 			if (!vonDameAusfuehrbar(x1, y1, x2, y2))
 				return false;
 			
-			//prüfe: Alle Felder zwischen Startfeld und einem Feld vor Zielfeld leer
+			//prï¿½fe: Alle Felder zwischen Startfeld und einem Feld vor Zielfeld leer
 			if (!zwischenraumFrei(x1, y1, x2, y2, false))
 				return false;
 		}
@@ -1051,43 +1051,43 @@ public class Spielbrett implements ISpielsituation, Cloneable {
 		T zf;
 
 		int stein = -1;
-		int minTeilZuglänge = 1;
+		int minTeilZuglaenge = 1;
 
 		if (bisherigeTeilZugfolge==null || bisherigeTeilZugfolge.size()==0) 
 			stein=sb.getFeld(x, y);
 		else {
 			System.out.println(bisherigeTeilZugfolge.size());
-			minTeilZuglänge=2;
+			minTeilZuglaenge=2;
 			Zug z = bisherigeTeilZugfolge.get(0);
 			stein=sb.getFeld(z.gibStartX(), z.gibStartY());
 		}
 		
-		int maxTeilZuglänge = 7;
+		int maxTeilZuglaenge = 7;
 		int richsY[] = null;
 		
 		switch (stein) {
 		case WEISS:
-			maxTeilZuglänge=2;
+			maxTeilZuglaenge=2;
 			richsY = new int[]{-1};
 			break;
 		case SCHWARZ:
-			maxTeilZuglänge=2;
+			maxTeilZuglaenge=2;
 			richsY = new int[]{1};
 			break;
 		case WEISS_D:
-			maxTeilZuglänge=7;
+			maxTeilZuglaenge=7;
 			richsY = new int[]{-1,1};
 			break;
 		case SCHWARZ_D:
-			maxTeilZuglänge=7;
+			maxTeilZuglaenge=7;
 			richsY = new int[]{-1,1};
 			break;
 		}
 		
-		//Züge und einfache Sprünge testen
+		//Zï¿½ge und einfache Sprï¿½nge testen
 		for (int richY : richsY) {
 			for (int richX=-1;richX<=1;richX+=2) {
-				for (int i=minTeilZuglänge;i<=maxTeilZuglänge;i++) {
+				for (int i=minTeilZuglaenge;i<=maxTeilZuglaenge;i++) {
 					if (!koordinatenGueltig(x+richX*i, y+richY*i))
 						break;
 
