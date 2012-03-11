@@ -462,6 +462,9 @@ public class BrettspieleFenster extends JFrame implements ZugBeendetListener<IZu
 	}
 
 	public void componentResized(ComponentEvent e) {
+		if (1==1) return;
+		
+		//macht Probleme wenn Bildschirm vertikal zu klein
 		JComponent scp = ((JComponent)sc);
 		if (scp != null && scp.isPreferredSizeSet()) {
 			java.awt.Dimension dCP = scp.getPreferredSize();

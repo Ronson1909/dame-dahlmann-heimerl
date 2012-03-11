@@ -112,14 +112,18 @@ public class SchafkopfSpielbrettComponent extends JComponent implements
 	
 	@Override
 	public void paint(Graphics g) {
+		//System.out.println("Called paint..." + System.currentTimeMillis());
+		
 		Graphics2D g2d = (Graphics2D)g;
 		Rectangle clip = g2d.getClipBounds();
 		g2d.setColor(new Color(0,100,0));
 		g2d.fillRect(clip.x, clip.y, clip.width, clip.height);
 		//g2d.clearRect(this.getBounds());// clip.x, clip.y, clip.width, clip.height);
 
-		if (ss == null)
+		if (ss == null) {
+			super.paint(g);
 			return;
+		}
 		
 		for (int sp=0;sp<=3;sp++) {
 			List<Spielkarten> kartenDesSpielers = ss.getSpielerkarten(sp);
@@ -128,22 +132,22 @@ public class SchafkopfSpielbrettComponent extends JComponent implements
 			
 			switch (sp) {
 			case 0:
-				startX=kartenhoehe;
+				startX=(int)(this.getWidth()-kartenbreite-7*abstand*kartenbreite)/2; //kartenhoehe;
 				startY=this.getHeight()-kartenhoehe;
 				rot=0;
 				break;
 			case 1:
-				startX=kartenhoehe;
+				startX=(int)(this.getHeight()-kartenbreite-7*abstand*kartenbreite)/2; //kartenhoehe;
 				startY=-kartenhoehe;
 				rot=90;
 				break;
 			case 2:
-				startX=-(this.getWidth()-kartenhoehe);
+				startX=-(this.getWidth()-(int)(this.getWidth()-kartenbreite-7*abstand*kartenbreite)/2); //-(this.getWidth()-kartenhoehe);
 				startY=-kartenhoehe;
 				rot=180;
 				break;
 			case 3:
-				startX=-(this.getHeight()-kartenhoehe);
+				startX=-(this.getHeight()-(int)(this.getHeight()-kartenbreite-7*abstand*kartenbreite)/2); //-(this.getHeight()-kartenhoehe);
 				startY=this.getWidth()-kartenhoehe;
 				rot=270;
 				break;
@@ -232,6 +236,8 @@ public class SchafkopfSpielbrettComponent extends JComponent implements
 		}
 
 		g2d.setTransform(new AffineTransform());
+		
+		super.paint(g);
 	}
 
 	protected void processMouseEvent(MouseEvent e) {
